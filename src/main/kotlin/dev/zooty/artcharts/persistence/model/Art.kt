@@ -27,7 +27,7 @@ class Art(
     val note: String?,
     @ManyToOne
     @JoinColumn(name = "artistId")
-    val arist: Artist,
+    val artist: Artist,
     val isNsfw: Boolean,
     val link: String
 )
