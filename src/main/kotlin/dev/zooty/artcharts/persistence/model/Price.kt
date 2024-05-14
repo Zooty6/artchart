@@ -3,11 +3,11 @@ package dev.zooty.artcharts.persistence.model
 import lombok.EqualsAndHashCode
 
 @EqualsAndHashCode
-class Price(val currency: Currency, val amount: Number)
+class Price(val currency: Currency, val amount: Int)
 
 enum class Currency {
     USD,
-    EURO,
+    EUR,
     HUF,
     Gift,
     UNKNOWN

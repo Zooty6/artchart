@@ -1,4 +1,4 @@
-package dev.zooty.artcharts.persistence.controllers.api
+package dev.zooty.artcharts.controllers.api
 
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping

@@ -33,10 +33,10 @@ class PriceType : UserType<Price> {
         val priceString = rs?.getString(position)
         return when {
             priceString?.startsWith("$") == true -> Price(Currency.USD, priceString.split("$")[1].trim().toInt())
-            priceString?.startsWith("€") == true -> Price(Currency.EURO, priceString.split("€")[1].trim().toInt())
-            priceString?.startsWith("HUF", true) == true -> Price(
+            priceString?.startsWith("€") == true -> Price(Currency.EUR, priceString.split("€")[1].trim().toInt())
+            priceString?.startsWith("Ft", true) == true -> Price(
                 Currency.HUF,
-                priceString.split("HUF")[1].trim().toInt()
+                priceString.split("Ft")[1].trim().toInt()
             )
 
             priceString?.trim()?.lowercase() == "gift" -> Price(Currency.Gift, 0)
@@ -75,7 +75,7 @@ class PriceType : UserType<Price> {
                 st?.setString(
                     index, when (value.currency) {
                         Currency.USD -> "\$${value.amount}"
-                        Currency.EURO -> "€${value.amount}"
+                        Currency.EUR -> "€${value.amount}"
                         Currency.HUF -> "Ft ${value.amount}"
                         Currency.Gift -> "gift"
                         Currency.UNKNOWN -> "?"

@@ -1,4 +1,4 @@
-package dev.zooty.artcharts.persistence.controllers.api
+package dev.zooty.artcharts.controllers.api
 
 import dev.zooty.artcharts.persistence.ArtistRepository
 import dev.zooty.artcharts.persistence.model.Artist
