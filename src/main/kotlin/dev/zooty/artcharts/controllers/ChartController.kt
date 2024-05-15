@@ -26,4 +26,9 @@ class ChartController(private val chartService: ChartService) {
     fun nsfwRatio(@RequestParam("width") width: Int?, @RequestParam("height") height: Int?): String {
         return chartService.nsfwRatio(width, height)
     }
+
+    @GetMapping("/chart/speciesDistribution", produces = ["image/svg+xml"])
+    fun speciesDistribution(@RequestParam("width") width: Int?, @RequestParam("height") height: Int?): String {
+        return chartService.speciesDistribution(width, height)
+    }
 }
