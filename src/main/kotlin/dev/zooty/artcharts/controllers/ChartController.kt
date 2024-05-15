@@ -21,4 +21,9 @@ class ChartController(private val chartService: ChartService) {
     fun spendOverTime(@RequestParam("width") width: Int?, @RequestParam("height") height: Int?): String {
         return chartService.spendOverTime(width, height)
     }
+
+    @GetMapping("/chart/nsfwRatio", produces = ["image/svg+xml"])
+    fun nsfwRatio(@RequestParam("width") width: Int?, @RequestParam("height") height: Int?): String {
+        return chartService.nsfwRatio(width, height)
+    }
 }

@@ -9,6 +9,8 @@ import org.jfree.chart.JFreeChart
 import org.jfree.chart.plot.PlotOrientation
 import org.jfree.data.category.CategoryDataset
 import org.jfree.data.category.DefaultCategoryDataset
+import org.jfree.data.general.DefaultPieDataset
+import org.jfree.data.general.PieDataset
 import org.jfree.graphics2d.svg.SVGGraphics2D
 import org.springframework.stereotype.Service
 import java.awt.geom.Rectangle2D
@@ -65,6 +67,30 @@ class ChartService(
         return exportToSvg(width ?: defaultWidth, height ?: defaultHeight, chart)
     }
 
+    fun nsfwRatio(width: Int?, height: Int?): String {
+        val chart = ChartFactory.createPieChart(
+            null,
+            createNsfwRatioDataSet(),
+            true,
+            true,
+            false
+        )
+        return exportToSvg(width ?: defaultWidth, height ?: defaultHeight, chart)
+    }
+
+    private fun createNsfwRatioDataSet(): PieDataset {
+        val dataset = DefaultPieDataset()
+        artRepository.findAll()
+            .groupingBy { it.isNsfw }
+            .eachCount()
+            .forEach { when(it.key) {
+                true -> dataset.setValue("NSFW", it.value)
+                false -> dataset.setValue("SFW", it.value)
+            } }
+
+        return dataset
+    }
+
     private fun createYearlySpendDataSet(): CategoryDataset {
         val dataset = DefaultCategoryDataset()
         artRepository.findAll()
@@ -107,6 +133,7 @@ class ChartService(
             }
         return dataset
     }
+
 
     private fun getYear(date: String): Int {
         return date.split("-")[0].toInt()
