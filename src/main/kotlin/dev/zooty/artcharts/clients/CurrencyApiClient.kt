@@ -9,6 +9,7 @@ import org.springframework.web.client.RestClient.ResponseSpec
 
 @Component
 class CurrencyApiClient(@Value("\${artcharts.currencyapi.apiKey}") private val apiKey: String) {
+    val mapper = ObjectMapper()
     val cache = HashMap<Pair<String, String>, Double>()
     private var client: RestClient = RestClient.builder()
         .requestFactory(HttpComponentsClientHttpRequestFactory())
@@ -29,7 +30,7 @@ class CurrencyApiClient(@Value("\${artcharts.currencyapi.apiKey}") private val a
             .uri("/api/v3/latest?base_currency={base}&currencies={currency}", from, to)
             .retrieve()
         val body: String? = response.body(String::class.java)
-        val jsonNode = ObjectMapper().readTree(body)
+        val jsonNode = mapper.readTree(body)
         return jsonNode["data"][to]["value"].asDouble()
     }
 }
