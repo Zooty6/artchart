@@ -40,7 +40,7 @@ class ChartService(
         val chart = ChartFactory.createStackedBarChart(
             null,
             "year",
-            "amount",
+            "amount (USD)",
             createYearlySpentDataSet(filterList),
             PlotOrientation.VERTICAL,
             true,
@@ -91,7 +91,7 @@ class ChartService(
         val dataset = DefaultPieDataset()
         artRepository.findAll()
             .filter { it.species != null }
-            .groupingBy { it.species!!.split(",")[0]  }
+            .groupingBy { it.species!!.split(",")[0] }
             .eachCount()
             .forEach { (species, count) -> dataset.setValue("$species($count)", count) }
         return dataset
@@ -118,8 +118,8 @@ class ChartService(
             .filter { it.price.currency != Currency.UNKNOWN && it.price.currency != Currency.Gift }
             .groupBy { getYear(it.deliveredDate!!) }
             .mapValues {
-                it.value.sumOf {
-                    art -> if (art.price.currency != Currency.USD) convertToUsd(art.price) else art.price.amount
+                it.value.sumOf { art ->
+                    if (art.price.currency != Currency.USD) convertToUsd(art.price) else art.price.amount
                 }
             }
             .forEach { dataset.addValue(it.value, "", it.key) }
@@ -130,6 +130,9 @@ class ChartService(
         return currencyService.convertCurrency(price.amount, price.currency.name, "USD").toInt()
     }
 
+    private fun convertToUsd(fromCurrency: String, amount: Int): Int {
+        return currencyService.convertCurrency(amount, fromCurrency, "USD").toInt()
+    }
 
     private fun createYearlySpentDataSet(filterList: List<String>): DefaultCategoryDataset {
         val arts = artRepository.findAll()
@@ -147,7 +150,7 @@ class ChartService(
                     .toList()
                     .forEach { currencySumPair ->
                         dataset.addValue(
-                            currencySumPair.second,
+                            convertToUsd(currencySumPair.first.name, currencySumPair.second),
                             currencySumPair.first,
                             year.toString(),
                         )
