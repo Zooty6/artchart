@@ -38,6 +38,10 @@ class PriceType : UserType<Price> {
                 Currency.HUF,
                 priceString.split("Ft")[1].trim().toInt()
             )
+            priceString?.startsWith("JPY", true) == true -> Price(
+                Currency.JPY,
+                priceString.split("JPY")[1].trim().toInt()
+            )
 
             priceString?.trim()?.lowercase() == "gift" -> Price(Currency.Gift, 0)
             else -> Price(Currency.UNKNOWN, 0)
@@ -77,6 +81,7 @@ class PriceType : UserType<Price> {
                         Currency.USD -> "\$${value.amount}"
                         Currency.EUR -> "€${value.amount}"
                         Currency.HUF -> "Ft ${value.amount}"
+                        Currency.JPY -> "JPZ ${value.amount}"
                         Currency.Gift -> "gift"
                         Currency.UNKNOWN -> "?"
                     }

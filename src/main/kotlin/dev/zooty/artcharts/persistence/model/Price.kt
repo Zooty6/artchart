@@ -9,6 +9,7 @@ enum class Currency {
     USD,
     EUR,
     HUF,
+    JPY,
     Gift,
     UNKNOWN
 }
