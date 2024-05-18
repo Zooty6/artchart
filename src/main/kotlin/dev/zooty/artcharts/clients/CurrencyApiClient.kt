@@ -9,9 +9,9 @@ import org.springframework.web.client.RestClient.ResponseSpec
 
 @Component
 class CurrencyApiClient(@Value("\${artcharts.currencyapi.apiKey}") private val apiKey: String) {
-    val mapper = ObjectMapper()
-    val cache = HashMap<Pair<String, String>, Double>()
-    private var client: RestClient = RestClient.builder()
+    private val mapper = ObjectMapper()
+    private val cache = HashMap<Pair<String, String>, Double>()
+    private val client: RestClient = RestClient.builder()
         .requestFactory(HttpComponentsClientHttpRequestFactory())
         .baseUrl("https://currencyapi.com")
         .defaultHeader("apikey", apiKey)
