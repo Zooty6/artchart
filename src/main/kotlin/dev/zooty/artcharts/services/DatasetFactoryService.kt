@@ -14,7 +14,7 @@ class DatasetFactoryService(
     private val artRepository: ArtRepository,
     private val currencyService: CurrencyService
 ) {
-    fun createSpeciesDistributionDataSet(): PieDataset {
+    fun createSpeciesDistributionDataset(): PieDataset {
         val dataset = DefaultPieDataset()
         artRepository.findAll()
             .filter { it.species != null }
@@ -24,7 +24,7 @@ class DatasetFactoryService(
         return dataset
     }
 
-    fun createNsfwRatioDataSet(): PieDataset {
+    fun createNsfwRatioDataset(): PieDataset {
         val dataset = DefaultPieDataset()
         artRepository.findAll()
             .groupingBy { it.isNsfw }
@@ -38,7 +38,7 @@ class DatasetFactoryService(
         return dataset
     }
 
-    fun createYearlySpentDataSet(filterList: List<String>): DefaultCategoryDataset {
+    fun createCurrencyDistributionDataset(filterList: List<String>): DefaultCategoryDataset {
         val arts = artRepository.findAll()
         val dataset = DefaultCategoryDataset()
         arts.filter { it.price.currency != Currency.Gift && it.price.currency != Currency.UNKNOWN }
@@ -71,7 +71,7 @@ class DatasetFactoryService(
         return dataset
     }
 
-    fun createYearlySpendDataSet(): CategoryDataset {
+    fun createYearlySpendDataset(): CategoryDataset {
         val dataset = DefaultCategoryDataset()
         artRepository.findAll()
             .filter { it.price.currency != Currency.UNKNOWN && it.price.currency != Currency.Gift }

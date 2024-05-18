@@ -12,9 +12,9 @@ class ChartController(private val chartService: ChartService) {
         return chartService.artistDistribution(width, height)
     }
 
-    @GetMapping("/chart/spendYearly", produces = ["image/svg+xml"])
-    fun spendYearly(@RequestParam("width") width: Int?, @RequestParam("height") height: Int?, @RequestParam("filterList") filterList: List<String>?): String {
-        return chartService.spendYearly(width, height, filterList ?: listOf())
+    @GetMapping("/chart/currencyDistribution", produces = ["image/svg+xml"])
+    fun currencyDistribution(@RequestParam("width") width: Int?, @RequestParam("height") height: Int?, @RequestParam("filterList") filterList: List<String>?): String {
+        return chartService.currencyDistribution(width, height, filterList ?: listOf())
     }
 
     @GetMapping("/chart/spendOverTime", produces = ["image/svg+xml"])

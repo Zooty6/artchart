@@ -29,12 +29,12 @@ class ChartService(
         return exportToSvg(width ?: defaultWidth, height ?: defaultHeight, chart)
     }
 
-    fun spendYearly(width: Int?, height: Int?, filterList: List<String>): String {
+    fun currencyDistribution(width: Int?, height: Int?, filterList: List<String>): String {
         val chart = ChartFactory.createStackedBarChart(
             null,
             "year",
             "amount (USD)",
-            datasetFactoryService.createYearlySpentDataSet(filterList),
+            datasetFactoryService.createCurrencyDistributionDataset(filterList),
             PlotOrientation.VERTICAL,
             true,
             true,
@@ -48,7 +48,7 @@ class ChartService(
             null,
             "year",
             "spending (USD)",
-            datasetFactoryService.createYearlySpendDataSet(),
+            datasetFactoryService.createYearlySpendDataset(),
             PlotOrientation.VERTICAL,
             false,
             true,
@@ -61,7 +61,7 @@ class ChartService(
     fun nsfwRatio(width: Int?, height: Int?): String {
         val chart = ChartFactory.createPieChart(
             null,
-            datasetFactoryService.createNsfwRatioDataSet(),
+            datasetFactoryService.createNsfwRatioDataset(),
             true,
             true,
             false
@@ -72,7 +72,7 @@ class ChartService(
     fun speciesDistribution(width: Int?, height: Int?): String {
         val chart = ChartFactory.createPieChart(
             "Distribution of Species",
-            datasetFactoryService.createSpeciesDistributionDataSet(),
+            datasetFactoryService.createSpeciesDistributionDataset(),
             true,
             true,
             false
