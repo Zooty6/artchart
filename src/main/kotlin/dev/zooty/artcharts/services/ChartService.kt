@@ -13,11 +13,11 @@ class ChartService(
     private val currencyService: CurrencyService
 ) {
     private val defaultWidth: Int = 1800
-    private val defaultHeight: Int = 800
+    private val defaultHeight: Int = 900
 
     fun artistDistribution(width: Int?, height: Int?): String {
         val chart = ChartFactory.createBarChart(
-            null,
+            "Artist commission amounts",
             "artists",
             "purchases",
             datasetFactoryService.createArtistDistributionDataset(),
@@ -31,7 +31,7 @@ class ChartService(
 
     fun currencyDistribution(width: Int?, height: Int?, filterList: List<String>): String {
         val chart = ChartFactory.createStackedBarChart(
-            null,
+            "Spending yearly distribution",
             "year",
             "amount (USD)",
             datasetFactoryService.createCurrencyDistributionDataset(filterList),
@@ -45,7 +45,7 @@ class ChartService(
 
     fun spendOverTime(width: Int?, height: Int?): String {
         val chart = ChartFactory.createLineChart(
-            null,
+            "Spending",
             "year",
             "spending (USD)",
             datasetFactoryService.createYearlySpendDataset(),
