@@ -11,6 +11,7 @@ enum class Currency {
     HUF,
     JPY,
     GBP,
+    MXN,
     Gift,
     UNKNOWN
 }

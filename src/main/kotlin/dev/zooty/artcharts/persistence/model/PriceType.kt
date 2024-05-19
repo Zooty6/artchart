@@ -49,6 +49,11 @@ class PriceType : UserType<Price> {
                 extractValue(priceString, "GBP")
             )
 
+            priceString?.startsWith("MXN", true) == true -> Price(
+                Currency.MXN,
+                extractValue(priceString, "MXN")
+            )
+
             priceString?.trim()?.lowercase() == "gift" -> Price(Currency.Gift, 0)
             else -> Price(Currency.UNKNOWN, 0)
         }
@@ -93,6 +98,7 @@ class PriceType : UserType<Price> {
                         Currency.HUF -> "Ft ${value.amount}"
                         Currency.JPY -> "JPZ ${value.amount}"
                         Currency.GBP -> "GBP ${value.amount}"
+                        Currency.MXN -> "MXN ${value.amount}"
                         Currency.Gift -> "gift"
                         Currency.UNKNOWN -> "?"
                     }
