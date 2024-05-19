@@ -9,7 +9,7 @@ import java.sql.Types
 
 class PriceType : UserType<Price> {
     override fun equals(x: Price?, y: Price?): Boolean {
-       return x?.equals(y) == true
+        return x?.equals(y) == true
     }
 
     override fun hashCode(x: Price?): Int {
@@ -32,20 +32,30 @@ class PriceType : UserType<Price> {
     ): Price {
         val priceString = rs?.getString(position)
         return when {
-            priceString?.startsWith("$") == true -> Price(Currency.USD, priceString.split("$")[1].trim().toInt())
-            priceString?.startsWith("€") == true -> Price(Currency.EUR, priceString.split("€")[1].trim().toInt())
+            priceString?.startsWith("$") == true -> Price(Currency.USD, extractValue(priceString, "$"))
+            priceString?.startsWith("€") == true -> Price(Currency.EUR, extractValue(priceString, "€"))
             priceString?.startsWith("Ft", true) == true -> Price(
                 Currency.HUF,
-                priceString.split("Ft")[1].trim().toInt()
+                extractValue(priceString, "Ft")
             )
+
             priceString?.startsWith("JPY", true) == true -> Price(
                 Currency.JPY,
-                priceString.split("JPY")[1].trim().toInt()
+                extractValue(priceString, "JPY")
+            )
+
+            priceString?.startsWith("GBP", true) == true -> Price(
+                Currency.GBP,
+                extractValue(priceString, "GBP")
             )
 
             priceString?.trim()?.lowercase() == "gift" -> Price(Currency.Gift, 0)
             else -> Price(Currency.UNKNOWN, 0)
         }
+    }
+
+    private fun extractValue(priceString: String, currencyString: String): Int {
+        return priceString.split(currencyString)[1].trim().toInt()
     }
 
     override fun isMutable(): Boolean {
@@ -82,6 +92,7 @@ class PriceType : UserType<Price> {
                         Currency.EUR -> "€${value.amount}"
                         Currency.HUF -> "Ft ${value.amount}"
                         Currency.JPY -> "JPZ ${value.amount}"
+                        Currency.GBP -> "GBP ${value.amount}"
                         Currency.Gift -> "gift"
                         Currency.UNKNOWN -> "?"
                     }
