@@ -1,11 +1,14 @@
 package dev.zooty.artcharts.persistence.model
 
+import mu.KotlinLogging
 import org.hibernate.engine.spi.SharedSessionContractImplementor
 import org.hibernate.usertype.UserType
 import java.io.Serializable
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.Types
+
+private val logger = KotlinLogging.logger {}
 
 class PriceType : UserType<Price> {
     override fun equals(x: Price?, y: Price?): Boolean {
@@ -39,6 +42,11 @@ class PriceType : UserType<Price> {
                 extractValue(priceString, "Ft")
             )
 
+            priceString?.startsWith("HUF", true) == true -> Price(
+                Currency.HUF,
+                extractValue(priceString, "HUF")
+            )
+
             priceString?.startsWith("JPY", true) == true -> Price(
                 Currency.JPY,
                 extractValue(priceString, "JPY")
@@ -54,8 +62,16 @@ class PriceType : UserType<Price> {
                 extractValue(priceString, "MXN")
             )
 
-            priceString?.trim()?.lowercase() == "gift" -> Price(Currency.Gift, 0)
-            else -> Price(Currency.UNKNOWN, 0)
+            priceString?.startsWith("gift", true) == true
+                    || priceString?.contains("reward", true) == true
+                    || priceString?.contains("request", true) == true
+            -> Price(Currency.Gift, 0)
+
+            priceString?.trim() == "?" -> Price(Currency.UNKNOWN, 0)
+            else -> {
+                logger.warn { "Unparsable price value: $priceString" }
+                return Price(Currency.UNKNOWN, 0)
+            }
         }
     }
 
