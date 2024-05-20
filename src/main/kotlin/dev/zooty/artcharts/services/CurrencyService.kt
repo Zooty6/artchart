@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service
 class CurrencyService(
     private val currencyApiClient: CurrencyApiClient,
 ) {
-    fun convertCurrency(amount: Int, from: String, to: String): Double {
+    fun convertCurrency(amount: Double, from: String, to: String): Double {
         val convertRate = currencyApiClient.getConvertRate(from, to)
         return amount * convertRate
     }

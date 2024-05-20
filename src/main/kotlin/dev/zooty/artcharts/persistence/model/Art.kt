@@ -15,12 +15,12 @@ class Art(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
     val otherCharacters: String?,
-    val type: String?,
+    val type: String,
     val quality: String?,
-    val species: String?,
+    val species: String,
     val orderedDate: String?,
     val payedDate: String?,
-    val deliveredDate: String?,
+    val deliveredDate: String,
     val fileName: String,
     @Type(value = PriceType::class)
     val price: Price,

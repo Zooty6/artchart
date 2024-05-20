@@ -9,8 +9,7 @@ import java.awt.geom.Rectangle2D
 
 @Service
 class ChartService(
-    private val datasetFactoryService: DatasetFactoryService,
-    private val currencyService: CurrencyService
+    private val datasetFactoryService: DatasetFactoryService
 ) {
     private val defaultWidth: Int = 1800
     private val defaultHeight: Int = 900
@@ -54,7 +53,6 @@ class ChartService(
             true,
             false
         )
-        currencyService.convertCurrency(4, "HUF", "USD").toInt()
         return exportToSvg(width ?: defaultWidth, height ?: defaultHeight, chart)
     }
 

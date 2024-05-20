@@ -17,8 +17,7 @@ class DatasetFactoryService(
     fun createSpeciesDistributionDataset(): PieDataset {
         val dataset = DefaultPieDataset()
         artRepository.findAll()
-            .filter { it.species != null }
-            .groupingBy { it.species!!.split(",")[0] }
+            .groupingBy { it.species.split(",")[0] }
             .eachCount()
             .forEach { (species, count) -> dataset.setValue("$species($count)", count) }
         return dataset
@@ -43,10 +42,10 @@ class DatasetFactoryService(
         val dataset = DefaultCategoryDataset()
         arts.filter { it.price.currency != Currency.Gift && it.price.currency != Currency.UNKNOWN }
             .associate {
-                val year = getYear(it.deliveredDate!!)
+                val year = getYear(it.deliveredDate)
                 year to arts
                     .asSequence()
-                    .filter { art -> getYear(art.deliveredDate!!) == year }
+                    .filter { art -> getYear(art.deliveredDate) == year }
                     .filter { art -> art.price.currency != Currency.UNKNOWN && art.price.currency != Currency.Gift }
                     .filter { art -> !filterList.contains(art.price.currency.name) }
                     .groupBy { art -> art.price.currency }
@@ -75,7 +74,7 @@ class DatasetFactoryService(
         val dataset = DefaultCategoryDataset()
         artRepository.findAll()
             .filter { it.price.currency != Currency.UNKNOWN && it.price.currency != Currency.Gift }
-            .groupBy { getYear(it.deliveredDate!!) }
+            .groupBy { getYear(it.deliveredDate) }
             .mapValues {
                 it.value.sumOf { art ->
                     if (art.price.currency != Currency.USD) convertToUsd(art.price) else art.price.amount
@@ -85,11 +84,11 @@ class DatasetFactoryService(
         return dataset
     }
 
-    private fun convertToUsd(price: Price): Int {
-        return currencyService.convertCurrency(price.amount, price.currency.name, "USD").toInt()
+    private fun convertToUsd(price: Price): Double {
+        return currencyService.convertCurrency(price.amount, price.currency.name, "USD")
     }
 
-    private fun convertToUsd(fromCurrency: String, amount: Int): Int {
+    private fun convertToUsd(fromCurrency: String, amount: Double): Int {
         return currencyService.convertCurrency(amount, fromCurrency, "USD").toInt()
     }
 

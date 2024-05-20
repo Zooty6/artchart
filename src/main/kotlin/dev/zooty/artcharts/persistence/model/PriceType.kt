@@ -70,18 +70,18 @@ class PriceType : UserType<Price> {
             priceString?.startsWith("gift", true) == true
                     || priceString?.contains("reward", true) == true
                     || priceString?.contains("request", true) == true
-            -> Price(Currency.Gift, 0)
+            -> Price(Currency.Gift, 0.0)
 
-            priceString?.trim() == "?" -> Price(Currency.UNKNOWN, 0)
+            priceString?.trim() == "?" -> Price(Currency.UNKNOWN, 0.0)
             else -> {
                 logger.warn { "Unparsable price value: $priceString" }
-                return Price(Currency.UNKNOWN, 0)
+                return Price(Currency.UNKNOWN, 0.0)
             }
         }
     }
 
-    private fun extractValue(priceString: String, currencyString: String): Int {
-        return priceString.split(currencyString)[1].trim().toInt()
+    private fun extractValue(priceString: String, currencyString: String): Double {
+        return priceString.split(currencyString)[1].trim().toDouble()
     }
 
     override fun isMutable(): Boolean {
@@ -89,7 +89,7 @@ class PriceType : UserType<Price> {
     }
 
     override fun assemble(cached: Serializable?, owner: Any?): Price {
-        return Price(Currency.UNKNOWN, 0)
+        return Price(Currency.UNKNOWN, 0.0)
     }
 
     override fun disassemble(value: Price?): Serializable {
@@ -98,7 +98,7 @@ class PriceType : UserType<Price> {
 
     override fun deepCopy(value: Price?): Price {
         return if (value == null)
-            Price(Currency.UNKNOWN, 0)
+            Price(Currency.UNKNOWN, 0.0)
         else
             Price(value.currency, value.amount)
     }
