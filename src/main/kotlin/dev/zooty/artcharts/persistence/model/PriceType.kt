@@ -67,6 +67,11 @@ class PriceType : UserType<Price> {
                 extractValue(priceString, "RUB")
             )
 
+            priceString?.startsWith("PLN", true) == true -> Price(
+                Currency.PLN,
+                extractValue(priceString, "PLN")
+            )
+
             priceString?.startsWith("gift", true) == true
                     || priceString?.contains("reward", true) == true
                     || priceString?.contains("request", true) == true
@@ -121,6 +126,7 @@ class PriceType : UserType<Price> {
                         Currency.GBP -> "GBP ${value.amount}"
                         Currency.MXN -> "MXN ${value.amount}"
                         Currency.RUB -> "RUB ${value.amount}"
+                        Currency.PLN -> "PLN ${value.amount}"
                         Currency.Gift -> "gift"
                         Currency.UNKNOWN -> "?"
                     }
