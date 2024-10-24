@@ -28,12 +28,12 @@ class PriceType : UserType<Price> {
     }
 
     override fun nullSafeGet(
-        rs: ResultSet?,
+        resultSet: ResultSet?,
         position: Int,
         session: SharedSessionContractImplementor?,
         owner: Any?
     ): Price {
-        val priceString = rs?.getString(position)
+        val priceString = resultSet?.getString(position)
         return when {
             priceString?.startsWith("$") == true -> Price(Currency.USD, extractValue(priceString, "$"))
             priceString?.startsWith("€") == true -> Price(Currency.EUR, extractValue(priceString, "€"))
