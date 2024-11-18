@@ -1,11 +1,23 @@
 package dev.zooty.artcharts.services
 
+import com.mxgraph.layout.mxCircleLayout
+import com.mxgraph.layout.mxFastOrganicLayout
+import com.mxgraph.layout.mxGraphLayout
+import com.mxgraph.layout.mxOrganicLayout
+import com.mxgraph.util.mxCellRenderer
 import org.jfree.chart.ChartFactory
 import org.jfree.chart.JFreeChart
 import org.jfree.chart.plot.PlotOrientation
 import org.jfree.graphics2d.svg.SVGGraphics2D
+import org.jgrapht.Graph
+import org.jgrapht.ext.JGraphXAdapter
 import org.springframework.stereotype.Service
+import java.awt.Color
 import java.awt.geom.Rectangle2D
+import java.io.StringWriter
+import javax.xml.transform.TransformerFactory
+import javax.xml.transform.dom.DOMSource
+import javax.xml.transform.stream.StreamResult
 
 @Service
 class ChartService(
@@ -76,6 +88,25 @@ class ChartService(
             false
         )
         return exportToSvg(width ?: defaultWidth, height ?: defaultHeight, chart)
+    }
+
+    fun characterGraph(graphLayout: GraphLayout): String {
+        val graph = datasetFactoryService.createCharacterGraph()
+        return exportGraphToSvg(graph, graphLayout)
+    }
+
+    private fun exportGraphToSvg(graph: Graph<String, VisibleWeightedEdge>, graphLayout: GraphLayout): String {
+        val graphXAdapter = JGraphXAdapter(graph)
+        val layout: mxGraphLayout = when (graphLayout) {
+            GraphLayout.CIRCLE -> mxCircleLayout(graphXAdapter)
+            GraphLayout.ORGANIC -> mxOrganicLayout(graphXAdapter)
+            GraphLayout.FAST_ORGANIC -> mxFastOrganicLayout(graphXAdapter)
+        }
+        layout.execute(graphXAdapter.getDefaultParent())
+        val document = mxCellRenderer.createSvgDocument(graphXAdapter, null, 2.0, Color.WHITE, null)
+        val writer = StringWriter()
+        TransformerFactory.newInstance().newTransformer().transform(DOMSource(document), StreamResult(writer))
+        return writer.toString()
     }
 
     private fun exportToSvg(width: Int, height: Int, chart: JFreeChart): String {

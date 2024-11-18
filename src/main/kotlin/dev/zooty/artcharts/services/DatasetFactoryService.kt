@@ -7,7 +7,10 @@ import org.jfree.data.category.CategoryDataset
 import org.jfree.data.category.DefaultCategoryDataset
 import org.jfree.data.general.DefaultPieDataset
 import org.jfree.data.general.PieDataset
+import org.jgrapht.Graph
+import org.jgrapht.graph.SimpleWeightedGraph
 import org.springframework.stereotype.Service
+
 
 @Service
 class DatasetFactoryService(
@@ -82,6 +85,35 @@ class DatasetFactoryService(
             }
             .forEach { dataset.addValue(it.value, "", it.key) }
         return dataset
+    }
+
+    fun createCharacterGraph(): Graph<String, VisibleWeightedEdge> {
+        val graph = SimpleWeightedGraph<String, VisibleWeightedEdge>(VisibleWeightedEdge::class.java)
+        artRepository.findAll()
+            .filter { it.otherCharacters?.isNotBlank() ?: false }
+            .map { it.otherCharacters!!.split(", ") }
+            .flatMap(::createConnections)
+            .groupingBy { it }
+            .eachCount()
+            .forEach {
+                graph.addVertex(it.key.first)
+                graph.addVertex(it.key.second)
+                val edge = graph.addEdge(it.key.first, it.key.second)
+                graph.setEdgeWeight(edge, it.value.toDouble())
+            }
+
+        return graph
+    }
+
+    private fun createConnections(characters: List<String>): List<Pair<String, String>> {
+        val listWithZooty: List<String> = (characters).sorted()
+        val combinations = mutableListOf<Pair<String, String>>()
+        for (i in listWithZooty.indices) {
+            for (j in i + 1 until listWithZooty.size) {
+                combinations.add(Pair(listWithZooty[i], listWithZooty[j]))
+            }
+        }
+        return combinations
     }
 
     private fun convertToUsd(price: Price): Double {
