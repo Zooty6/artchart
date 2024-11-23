@@ -90,8 +90,8 @@ class ChartService(
         return exportToSvg(width ?: defaultWidth, height ?: defaultHeight, chart)
     }
 
-    fun characterGraph(graphLayout: GraphLayout): String {
-        val graph = datasetFactoryService.createCharacterGraph()
+    fun characterGraph(graphLayout: GraphLayout, isSelfIncluded: Boolean): String {
+        val graph = datasetFactoryService.createCharacterGraph(isSelfIncluded)
         return exportGraphToSvg(graph, graphLayout)
     }
 

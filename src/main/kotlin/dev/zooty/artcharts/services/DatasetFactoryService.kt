@@ -87,12 +87,12 @@ class DatasetFactoryService(
         return dataset
     }
 
-    fun createCharacterGraph(): Graph<String, VisibleWeightedEdge> {
+    fun createCharacterGraph(isSelfIncluded: Boolean): Graph<String, VisibleWeightedEdge> {
         val graph = SimpleWeightedGraph<String, VisibleWeightedEdge>(VisibleWeightedEdge::class.java)
         artRepository.findAll()
             .filter { it.otherCharacters?.isNotBlank() ?: false }
             .map { it.otherCharacters!!.split(", ") }
-            .flatMap(::createConnections)
+            .flatMap { createConnections(it, isSelfIncluded) }
             .groupingBy { it }
             .eachCount()
             .forEach {
@@ -105,15 +105,15 @@ class DatasetFactoryService(
         return graph
     }
 
-    private fun createConnections(characters: List<String>): List<Pair<String, String>> {
-        val listWithZooty: List<String> = (characters).sorted()
-        val combinations = mutableListOf<Pair<String, String>>()
-        for (i in listWithZooty.indices) {
-            for (j in i + 1 until listWithZooty.size) {
-                combinations.add(Pair(listWithZooty[i], listWithZooty[j]))
-            }
-        }
-        return combinations
+    private fun createConnections(characters: List<String>, selfIncluded: Boolean): List<Pair<String, String>> {
+        val charactersWithZooty = (if (selfIncluded) characters + "Zooty" else characters).sorted()
+        return charactersWithZooty
+            .indices
+            .flatMap { i ->
+                (i + 1 until charactersWithZooty.size).map { j ->
+                    Pair(charactersWithZooty[i], charactersWithZooty[j])
+                }
+            }.toList()
     }
 
     private fun convertToUsd(price: Price): Double {

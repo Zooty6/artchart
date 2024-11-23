@@ -34,7 +34,7 @@ class ChartController(private val chartService: ChartService) {
     }
 
     @GetMapping("/chart/characterGraph", produces = ["image/svg+xml"])
-    fun characterGraph(@RequestParam("layout") graphLayout: GraphLayout?): String {
-        return chartService.characterGraph(graphLayout ?: GraphLayout.ORGANIC )
+    fun characterGraph(@RequestParam("layout") graphLayout: GraphLayout?, @RequestParam("selfIncluded") isSelfIncluded: Boolean?): String {
+        return chartService.characterGraph(graphLayout ?: GraphLayout.ORGANIC, isSelfIncluded ?: false )
     }
 }
