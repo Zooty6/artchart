@@ -96,14 +96,21 @@ class ChartService(
     }
 
     private fun exportGraphToSvg(graph: Graph<String, VisibleWeightedEdge>, graphLayout: GraphLayout): String {
-        val graphXAdapter = JGraphXAdapter(graph)
-        val layout: mxGraphLayout = when (graphLayout) {
-            GraphLayout.CIRCLE -> mxCircleLayout(graphXAdapter)
-            GraphLayout.ORGANIC -> mxOrganicLayout(graphXAdapter)
-            GraphLayout.FAST_ORGANIC -> mxFastOrganicLayout(graphXAdapter)
+        return when (graphLayout) {
+            GraphLayout.CIRCLE -> mxSvgExport(mxCircleLayout(JGraphXAdapter(graph)))
+            GraphLayout.ORGANIC -> mxSvgExport(mxOrganicLayout(JGraphXAdapter(graph)))
+            GraphLayout.FAST_ORGANIC -> mxSvgExport(mxFastOrganicLayout(JGraphXAdapter(graph)))
+            GraphLayout.LIST -> renderGraphAsListSvg(graph)
         }
-        layout.execute(graphXAdapter.getDefaultParent())
-        val document = mxCellRenderer.createSvgDocument(graphXAdapter, null, 2.0, Color.WHITE, null)
+    }
+
+    private fun renderGraphAsListSvg(graph: Graph<String, VisibleWeightedEdge>): String {
+        TODO("Not yet implemented")
+    }
+
+    private fun mxSvgExport(layout: mxGraphLayout): String {
+        layout.execute(layout.graph.getDefaultParent())
+        val document = mxCellRenderer.createSvgDocument(layout.graph, null, 2.0, Color.WHITE, null)
         val writer = StringWriter()
         TransformerFactory.newInstance().newTransformer().transform(DOMSource(document), StreamResult(writer))
         return writer.toString()
