@@ -75,6 +75,7 @@ class PriceType : UserType<Price> {
             priceString?.startsWith("gift", true) == true
                     || priceString?.contains("reward", true) == true
                     || priceString?.contains("request", true) == true
+                    || priceString?.contains("raffle", true) == true
             -> Price(Currency.Gift, 0.0)
 
             priceString?.trim() == "?" -> Price(Currency.UNKNOWN, 0.0)
