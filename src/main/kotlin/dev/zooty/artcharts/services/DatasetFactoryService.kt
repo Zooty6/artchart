@@ -33,15 +33,15 @@ class DatasetFactoryService(
             .eachCount()
             .forEach {
                 when (it.key) {
-                    true -> dataset.setValue("NSFW", it.value)
-                    false -> dataset.setValue("SFW", it.value)
+                    true -> dataset.setValue("NSFW(${it.value})", it.value)
+                    false -> dataset.setValue("SFW(${it.value})", it.value)
                 }
             }
         return dataset
     }
 
     fun createCurrencyDistributionDataset(filterList: List<String>): DefaultCategoryDataset {
-        val arts = artRepository.findAll()
+        val arts = artRepository.findAll().toList()
         val dataset = DefaultCategoryDataset()
         arts.filter { it.price.currency != Currency.Gift && it.price.currency != Currency.UNKNOWN }
             .associate {
@@ -69,7 +69,7 @@ class DatasetFactoryService(
         val dataset = DefaultCategoryDataset()
         artRepository.findAllGroupByArtist()
             .filter { it[0] as String != "unknown" }
-            .forEach { dataset.addValue(it[1] as Long, it[0] as String, "") }
+            .forEach { dataset.addValue(it[1] as Long, it[0] as String + "(${it[1]})", "") }
         return dataset
     }
 
