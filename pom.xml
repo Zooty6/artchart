@@ -2,21 +2,25 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.4.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+    
     <groupId>dev.zooty</groupId>
     <artifactId>artcharts</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>artcharts</name>
     <description>artcharts</description>
+    
     <properties>
         <java.version>17</java.version>
         <kotlin.version>1.9.24</kotlin.version>
     </properties>
+    
     <dependencies>
         <dependency>
             <groupId>org.xerial</groupId>
@@ -53,6 +57,11 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-maven-lombok</artifactId>
+            <version>${kotlin.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -156,6 +165,7 @@
                     <compilerPlugins>
                         <plugin>spring</plugin>
                         <plugin>jpa</plugin>
+                        <plugin>lombok</plugin>
                     </compilerPlugins>
                     <jvmTarget>21</jvmTarget>
                 </configuration>
@@ -174,5 +184,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

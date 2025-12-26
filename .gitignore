@@ -35,3 +35,4 @@ build/
 ### Project ###
 /src/main/resources/application-zooty.properties
 /qodana.yaml
+/.env
