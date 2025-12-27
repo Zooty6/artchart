@@ -1,4 +1,4 @@
-package dev.zooty.artcharts.persistence.model
+package dev.zooty.artcharts.persistence.entity
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.Entity
@@ -22,5 +22,5 @@ class Tag (
         joinColumns = [JoinColumn(name = "tagName")],
         inverseJoinColumns = [JoinColumn(name = "artId")]
     )
-    val arts : MutableSet<Art>
+    val arts : MutableSet<Art> = mutableSetOf()
 )

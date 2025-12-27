@@ -1,4 +1,4 @@
-package dev.zooty.artcharts.persistence.model
+package dev.zooty.artcharts.persistence.entity
 
 import mu.KotlinLogging
 import org.hibernate.engine.spi.SharedSessionContractImplementor
@@ -82,7 +82,7 @@ class PriceType : UserType<Price> {
             priceString?.trim() == "?" -> Price(Currency.UNKNOWN, 0.0)
             else -> {
                 logger.warn { "Unparsable price value: $priceString" }
-                return Price(Currency.UNKNOWN, 0.0)
+                Price(Currency.UNKNOWN, 0.0)
             }
         }
     }

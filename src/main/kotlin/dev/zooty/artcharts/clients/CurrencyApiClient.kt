@@ -6,9 +6,10 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.RestClient.ResponseSpec
+import org.springframework.web.client.body
 
 @Component
-class CurrencyApiClient(@Value("\${artcharts.currencyapi.apiKey}") private val apiKey: String) {
+class CurrencyApiClient(@param:Value("\${artcharts.currencyapi.apiKey}") private val apiKey: String) {
     private val mapper = ObjectMapper()
     private val cache = HashMap<Pair<String, String>, Double>()
     private val client: RestClient = RestClient.builder()
@@ -29,7 +30,7 @@ class CurrencyApiClient(@Value("\${artcharts.currencyapi.apiKey}") private val a
         val response: ResponseSpec = client.get()
             .uri("/api/v3/latest?base_currency={base}&currencies={currency}", from, to)
             .retrieve()
-        val body: String? = response.body(String::class.java)
+        val body: String? = response.body<String>()
         val jsonNode = mapper.readTree(body)
         return jsonNode["data"][to]["value"].asDouble()
     }

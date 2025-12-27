@@ -1,7 +1,7 @@
 package dev.zooty.artcharts.controllers.api
 
 import dev.zooty.artcharts.persistence.ArtistRepository
-import dev.zooty.artcharts.persistence.model.Artist
+import dev.zooty.artcharts.persistence.entity.Artist
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

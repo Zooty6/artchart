@@ -1,6 +1,6 @@
 package dev.zooty.artcharts.persistence
 
-import dev.zooty.artcharts.persistence.model.Artist
+import dev.zooty.artcharts.persistence.entity.Artist
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 

@@ -1,4 +1,4 @@
-package dev.zooty.artcharts.persistence.model
+package dev.zooty.artcharts.persistence.entity
 
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -39,5 +39,5 @@ class Art(
         joinColumns = [JoinColumn(name = "artId")],
         inverseJoinColumns = [JoinColumn(name = "tagName")]
     )
-    val tags: MutableList<Tag> = mutableListOf(),
+    val tags: MutableSet<Tag> = mutableSetOf(),
 )

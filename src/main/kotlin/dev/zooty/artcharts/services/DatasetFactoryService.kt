@@ -1,8 +1,8 @@
 package dev.zooty.artcharts.services
 
 import dev.zooty.artcharts.persistence.ArtRepository
-import dev.zooty.artcharts.persistence.model.Currency
-import dev.zooty.artcharts.persistence.model.Price
+import dev.zooty.artcharts.persistence.entity.Currency
+import dev.zooty.artcharts.persistence.entity.Price
 import org.jfree.data.category.CategoryDataset
 import org.jfree.data.category.DefaultCategoryDataset
 import org.jfree.data.general.DefaultPieDataset

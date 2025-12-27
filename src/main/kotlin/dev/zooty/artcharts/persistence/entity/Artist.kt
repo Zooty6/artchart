@@ -1,4 +1,4 @@
-package dev.zooty.artcharts.persistence.model
+package dev.zooty.artcharts.persistence.entity
 
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
