@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor
 @Entity
 @NoArgsConstructor
 @Table(name = "artists")
+@Suppress("unused", "JpaDataSourceORMInspection")
 class Artist(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,

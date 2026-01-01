@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor
 
 @Entity
 @NoArgsConstructor
+@Suppress("unused", "JpaDataSourceORMInspection")
 class Tag (
     @Id val name: String,
     val category: String,

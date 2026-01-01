@@ -121,7 +121,7 @@ class PriceType : UserType<Price> {
             else -> {
                 st?.setString(
                     index, when (value.currency) {
-                        Currency.USD -> "\$${value.amount}"
+                        Currency.USD -> "$${value.amount}"
                         Currency.EUR -> "€${value.amount}"
                         Currency.HUF -> "Ft ${value.amount}"
                         Currency.JPY -> "JPZ ${value.amount}"

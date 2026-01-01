@@ -14,6 +14,7 @@ import org.hibernate.annotations.Type
 
 @Entity
 @NoArgsConstructor
+@Suppress("unused", "JpaDataSourceORMInspection")
 class Art(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
