@@ -24,4 +24,9 @@ class Tag (
         inverseJoinColumns = [JoinColumn(name = "artId")]
     )
     val arts : MutableSet<Art> = mutableSetOf()
-)
+) {
+    fun addArt(art: Art): Tag {
+        this.arts.add(art)
+        return this
+    }
+}
