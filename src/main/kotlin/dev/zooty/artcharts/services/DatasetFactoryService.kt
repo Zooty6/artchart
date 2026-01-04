@@ -80,7 +80,10 @@ class DatasetFactoryService(
             .groupBy { getYear(it.deliveredDate) }
             .mapValues {
                 it.value.sumOf { art ->
-                    if (art.price.currency != Currency.USD) convertToUsd(art.price) else art.price.amount
+                    when {
+                        art.price.currency == Currency.USD -> art.price.amount
+                        else -> convertToUsd(art.price)
+                    }
                 }
             }
             .forEach { dataset.addValue(it.value, "", it.key) }

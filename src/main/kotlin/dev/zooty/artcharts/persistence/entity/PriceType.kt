@@ -71,7 +71,7 @@ class PriceType : UserType<Price> {
                 Currency.PLN,
                 extractValue(priceString, "PLN")
             )
-            
+
             priceString?.startsWith("CAD", ignoreCase = true) == true -> Price(
                 Currency.CAD,
                 extractValue(priceString, "CAD")
@@ -82,7 +82,7 @@ class PriceType : UserType<Price> {
                     || priceString?.contains("request", true) == true
                     || priceString?.contains("raffle", true) == true
                     || priceString?.contains("alt version", true) == true
-            -> Price(Currency.Gift, 0.0)
+                -> Price(Currency.Gift, 0.0)
 
             priceString?.trim() == "?" -> Price(Currency.UNKNOWN, 0.0)
             else -> {
@@ -129,7 +129,7 @@ class PriceType : UserType<Price> {
                         Currency.USD -> "$${value.amount}"
                         Currency.EUR -> "€${value.amount}"
                         Currency.HUF -> "Ft ${value.amount}"
-                        Currency.JPY -> "JPZ ${value.amount}"
+                        Currency.JPY -> "JPY ${value.amount}"
                         Currency.GBP -> "GBP ${value.amount}"
                         Currency.MXN -> "MXN ${value.amount}"
                         Currency.RUB -> "RUB ${value.amount}"
