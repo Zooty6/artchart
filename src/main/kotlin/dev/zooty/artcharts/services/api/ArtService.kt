@@ -17,9 +17,8 @@ class ArtService(val artRepository: ArtRepository, val tagRepository: TagReposit
                 { art ->
                     art.tags.add(
                         tagRepository.findByName(tag.name)
-                            .orElse(createTag(tag))
+                            .orElseGet { createTag(tag) }
                     )
-                    artRepository.save(art)
                 },
                 { throw ResourceNotFoundException("Art with id $id not found") })
     }
