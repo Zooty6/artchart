@@ -9,11 +9,9 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.JoinTable
 import jakarta.persistence.ManyToMany
 import jakarta.persistence.ManyToOne
-import lombok.NoArgsConstructor
 import org.hibernate.annotations.Type
 
 @Entity
-@NoArgsConstructor
 @Suppress("unused", "JpaDataSourceORMInspection")
 class Art(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,7 +19,7 @@ class Art(
     val otherCharacters: String?,
     val type: String,
     val quality: String?,
-    val species: String,
+    var species: String,
     val orderedDate: String?,
     val payedDate: String?,
     val deliveredDate: String,
