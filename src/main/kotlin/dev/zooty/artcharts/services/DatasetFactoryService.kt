@@ -20,7 +20,7 @@ class DatasetFactoryService(
     fun createSpeciesDistributionDataset(): PieDataset {
         val dataset = DefaultPieDataset()
         artRepository.findAll()
-            .groupingBy { it.species.split(",")[0] }
+            .groupingBy { it.species }
             .eachCount()
             .forEach { (species, count) -> dataset.setValue("$species($count)", count) }
         return dataset
