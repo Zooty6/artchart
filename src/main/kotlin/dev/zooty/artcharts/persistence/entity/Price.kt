@@ -14,6 +14,7 @@ enum class Currency {
     MXN,
     RUB,
     PLN,
+    CAD,
     Gift,
     UNKNOWN
 }
