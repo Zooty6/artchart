@@ -24,5 +24,6 @@ class Artist(
     val site: String?,
     val boosty: String?,
     val telegram: String?,
-    val facebook: String?
+    val facebook: String?,
+    val vgen: String?
 )
