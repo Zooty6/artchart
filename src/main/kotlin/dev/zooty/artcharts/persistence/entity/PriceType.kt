@@ -1,7 +1,7 @@
 package dev.zooty.artcharts.persistence.entity
 
 import mu.KotlinLogging
-import org.hibernate.engine.spi.SharedSessionContractImplementor
+import org.hibernate.type.descriptor.WrapperOptions
 import org.hibernate.usertype.UserType
 import java.io.Serializable
 import java.sql.PreparedStatement
@@ -30,8 +30,7 @@ class PriceType : UserType<Price> {
     override fun nullSafeGet(
         resultSet: ResultSet?,
         position: Int,
-        session: SharedSessionContractImplementor?,
-        owner: Any?
+        options: WrapperOptions?
     ): Price {
         val priceString = resultSet?.getString(position)
         return when {
@@ -119,7 +118,7 @@ class PriceType : UserType<Price> {
         st: PreparedStatement?,
         value: Price?,
         index: Int,
-        session: SharedSessionContractImplementor?
+        options: WrapperOptions?
     ) {
         when {
             value == null -> st?.setNull(index, Types.VARCHAR)
