@@ -1,98 +1,33 @@
 package dev.zooty.artcharts.services
 
-import com.mxgraph.layout.mxCircleLayout
-import com.mxgraph.layout.mxFastOrganicLayout
-import com.mxgraph.layout.mxGraphLayout
-import com.mxgraph.layout.mxOrganicLayout
-import com.mxgraph.util.mxCellRenderer
+import dev.zooty.artcharts.persistence.ArtRepository
 import org.jfree.chart.ChartFactory
-import org.jfree.chart.JFreeChart
-import org.jfree.chart.plot.PlotOrientation
+import org.jfree.data.general.DefaultPieDataset
 import org.jfree.data.general.PieDataset
 import org.jfree.graphics2d.svg.SVGGraphics2D
-import org.jgrapht.Graph
-import org.jgrapht.ext.JGraphXAdapter
 import org.springframework.stereotype.Service
 import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Font
 import java.awt.RenderingHints
 import java.awt.geom.Rectangle2D
-import java.io.StringWriter
-import javax.xml.transform.TransformerFactory
-import javax.xml.transform.dom.DOMSource
-import javax.xml.transform.stream.StreamResult
 import kotlin.math.max
 import kotlin.math.min
 
 @Service
-class ChartService(
-    private val datasetFactoryService: DatasetFactoryService
+class SpeciesDistributionService(
+    private val svgService: SvgConverterService,
+    private val artRepository: ArtRepository,
 ) {
-    private val defaultWidth: Int = 1800
-    private val defaultHeight: Int = 900
 
-    fun artistDistribution(width: Int?, height: Int?): String {
-        val chart = ChartFactory.createBarChart(
-            "Artist commission amounts",
-            "artists",
-            "purchases",
-            datasetFactoryService.createArtistDistributionDataset(),
-            PlotOrientation.VERTICAL,
-            true,
-            true,
-            true
-        )
-        return exportToSvg(width ?: defaultWidth, height ?: defaultHeight, chart)
-    }
-
-    fun currencyDistribution(width: Int?, height: Int?, filterList: List<String>): String {
-        val chart = ChartFactory.createStackedBarChart(
-            "Spending yearly distribution",
-            "year",
-            "amount (USD)",
-            datasetFactoryService.createCurrencyDistributionDataset(filterList),
-            PlotOrientation.VERTICAL,
-            true,
-            true,
-            false
-        )
-        return exportToSvg(width ?: defaultWidth, height ?: defaultHeight, chart)
-    }
-
-    fun spendOverTime(width: Int?, height: Int?): String {
-        val chart = ChartFactory.createLineChart(
-            "Spending",
-            "year",
-            "spending (USD)",
-            datasetFactoryService.createYearlySpendDataset(),
-            PlotOrientation.VERTICAL,
-            false,
-            true,
-            false
-        )
-        return exportToSvg(width ?: defaultWidth, height ?: defaultHeight, chart)
-    }
-
-    fun nsfwRatio(width: Int?, height: Int?): String {
-        val chart = ChartFactory.createPieChart(
-            null,
-            datasetFactoryService.createNsfwRatioDataset(),
-            true,
-            true,
-            false
-        )
-        return exportToSvg(width ?: defaultWidth, height ?: defaultHeight, chart)
-    }
-
-    fun speciesDistribution(width: Int?, height: Int?, type: ChartType): String {
-        val dataset = datasetFactoryService.createSpeciesDistributionDataset()
+    fun speciesDistribution(width: Int, height: Int, type: ChartType): String {
+        val dataset = createSpeciesDistributionDataset()
 
         return when (type) {
-            ChartType.TREEMAP -> renderTreemapSvg(width ?: defaultWidth, height ?: defaultHeight, dataset)
-            ChartType.PIE -> exportToSvg(
-                width ?: defaultWidth,
-                height ?: defaultHeight,
+            ChartType.TREEMAP -> renderTreemapSvg(width, height, dataset)
+            ChartType.PIE -> svgService.exportToSvg(
+                width,
+                height,
                 ChartFactory.createPieChart(
                     "Distribution of Species",
                     dataset,
@@ -102,6 +37,15 @@ class ChartService(
                 )
             )
         }
+    }
+
+    private fun createSpeciesDistributionDataset(): PieDataset {
+        val dataset = DefaultPieDataset()
+        artRepository.findAll()
+            .groupingBy { it.species }
+            .eachCount()
+            .forEach { (species, count) -> dataset.setValue("$species($count)", count) }
+        return dataset
     }
 
     private fun renderTreemapSvg(width: Int, height: Int, dataset: PieDataset): String {
@@ -198,7 +142,7 @@ class ChartService(
         val isHorizontal = width >= height
 
         val (rowWidth, rowHeight) = calculateRowDimensions(width, height, rowValue, totalValue, isHorizontal)
-        placeItemsInRow(optimalRow, x, y, rowWidth, rowHeight, rowValue, isHorizontal, result)
+        placeItemsInRow(optimalRow, Pair(x, y), rowWidth, rowHeight, rowValue, isHorizontal, result)
 
         val remainingItems = items.subList(optimalRow.size, items.size)
         if (isHorizontal) {
@@ -251,16 +195,15 @@ class ChartService(
 
     private fun placeItemsInRow(
         row: List<TreemapItem>,
-        x: Double,
-        y: Double,
+        pos: Pair<Double, Double>,
         rowWidth: Double,
         rowHeight: Double,
         rowValue: Double,
         isHorizontal: Boolean,
         result: MutableList<TreemapRect>
     ) {
-        var currentX = x
-        var currentY = y
+        var currentX = pos.first
+        var currentY = pos.second
         for (item in row) {
             val itemWidth = if (isHorizontal) rowWidth else (rowWidth * (item.value / rowValue))
             val itemHeight = if (isHorizontal) (rowHeight * (item.value / rowValue)) else rowHeight
@@ -277,37 +220,5 @@ class ChartService(
         val side = min(width, height)
 
         return max((side * side * maxArea) / (area * area), (area * area) / (side * side * minArea))
-    }
-
-    fun characterGraph(graphLayout: GraphLayout, isSelfIncluded: Boolean): String {
-        val graph = datasetFactoryService.createCharacterGraph(isSelfIncluded)
-        return exportGraphToSvg(graph, graphLayout)
-    }
-
-    private fun exportGraphToSvg(graph: Graph<String, VisibleWeightedEdge>, graphLayout: GraphLayout): String {
-        return when (graphLayout) {
-            GraphLayout.CIRCLE -> mxSvgExport(mxCircleLayout(JGraphXAdapter(graph)))
-            GraphLayout.ORGANIC -> mxSvgExport(mxOrganicLayout(JGraphXAdapter(graph)))
-            GraphLayout.FAST_ORGANIC -> mxSvgExport(mxFastOrganicLayout(JGraphXAdapter(graph)))
-            GraphLayout.LIST -> renderGraphAsListSvg(graph)
-        }
-    }
-
-    private fun renderGraphAsListSvg(graph: Graph<String, VisibleWeightedEdge>): String {
-        TODO("Not yet implemented")
-    }
-
-    private fun mxSvgExport(layout: mxGraphLayout): String {
-        layout.execute(layout.graph.getDefaultParent())
-        val document = mxCellRenderer.createSvgDocument(layout.graph, null, 2.0, Color.WHITE, null)
-        val writer = StringWriter()
-        TransformerFactory.newInstance().newTransformer().transform(DOMSource(document), StreamResult(writer))
-        return writer.toString()
-    }
-
-    private fun exportToSvg(width: Int, height: Int, chart: JFreeChart): String {
-        val svgGraphics2D = SVGGraphics2D(width, height)
-        chart.draw(svgGraphics2D, Rectangle2D.Double(0.0, 0.0, width.toDouble(), height.toDouble()))
-        return svgGraphics2D.svgElement
     }
 }

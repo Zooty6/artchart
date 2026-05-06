@@ -8,6 +8,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.JoinTable
 import jakarta.persistence.ManyToMany
 import lombok.NoArgsConstructor
+import lombok.ToString
 
 @Entity
 @NoArgsConstructor
@@ -15,7 +16,8 @@ import lombok.NoArgsConstructor
 class Tag (
     @Id val name: String,
     val category: String,
-    
+
+    @ToString.Exclude
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
