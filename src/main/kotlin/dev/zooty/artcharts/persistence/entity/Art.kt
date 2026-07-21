@@ -9,10 +9,12 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.JoinTable
 import jakarta.persistence.ManyToMany
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
 import lombok.NoArgsConstructor
 import org.hibernate.annotations.Type
 
 @Entity
+@Table(name = "art")
 @NoArgsConstructor
 @Suppress("unused", "JpaDataSourceORMInspection")
 class Art(

@@ -7,11 +7,13 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.JoinTable
 import jakarta.persistence.ManyToMany
+import jakarta.persistence.Table
 import lombok.NoArgsConstructor
 import lombok.ToString
 
 @Entity
 @NoArgsConstructor
+@Table(name = "tag")
 @Suppress("unused", "JpaDataSourceORMInspection")
 class Tag (
     @Id val name: String,
