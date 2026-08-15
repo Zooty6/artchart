@@ -1,0 +1,21 @@
+<section id="art-browser" th:fragment="artBrowser" xmlns:th="http://www.thymeleaf.org">
+    <div class="year-navigation" aria-label="Years">
+        <a th:each="year : ${years}"
+           th:href="@{/site/arts(year=${year},hideNsfw=${hideNsfw})}"
+           th:text="${year}"
+           th:classappend="${year == selectedYear} ? ' selected' : ''"
+           th:hx-get="@{/site/arts/list(year=${year},hideNsfw=${hideNsfw})}"
+           hx-target="#art-browser" hx-swap="outerHTML">2024</a>
+    </div>
+    <div class="list-heading">
+        <h2 th:if="${selectedYear != null}" th:text="'Arts delivered in ' + ${selectedYear}">Arts</h2>
+        <label class="filter-control">
+            <input type="checkbox" name="hideNsfw" value="true"
+                   th:checked="${hideNsfw}"
+                   th:hx-get="@{/site/arts/list(year=${selectedYear})}"
+                   hx-trigger="change" hx-target="#art-browser" hx-swap="outerHTML">
+            Hide NSFW
+        </label>
+    </div>
+    <section id="art-list" th:replace="~{site/fragments/art-list :: artList}"></section>
+</section>

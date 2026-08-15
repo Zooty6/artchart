@@ -25,3 +25,7 @@ After starting the application, the following entry points are available:
 - Charts: `http://localhost:8080/chart/**`
 
 The web UI is rendered with Thymeleaf and uses HTMX for incremental page updates.
+
+Artwork media is served from the directory configured by `ARTCHART_MEDIA_ROOT`. The expected file layout is
+`<ARTCHART_MEDIA_ROOT>/<SFW|NSFW>/<year>/<fileName>`, where the first directory is selected from `Art.isNsfw`. Missing
+files are displayed with a placeholder image.

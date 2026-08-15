@@ -1,0 +1,11 @@
+<section id="chart-browser" th:fragment="chartBrowser" xmlns:th="http://www.thymeleaf.org">
+    <nav class="chart-navigation" aria-label="Charts">
+        <a th:each="item : ${chartOptions}"
+           th:href="@{/site/charts(chart=${item})}"
+           th:text="${item}"
+           th:classappend="${item == chart} ? ' selected' : ''"
+           th:hx-get="@{/site/charts/view(chart=${item})}"
+           hx-target="#chart-browser" hx-swap="outerHTML">Chart</a>
+    </nav>
+    <section id="chart-view" th:replace="~{site/fragments/chart :: chartView}"></section>
+</section>

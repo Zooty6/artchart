@@ -26,4 +26,13 @@ class ArtService(val artRepository: ArtRepository, val tagRepository: TagReposit
     private fun createTag(tagDto: TagDto): Tag {
         return tagRepository.save(tagDto.toEntity())
     }
+
+    @Transactional
+    fun removeTag(id: Long, tagName: String) {
+        val art = artRepository.findById(id)
+            .orElseThrow { ResourceNotFoundException("Art with id $id not found") }
+        val tag = tagRepository.findById(tagName)
+            .orElseThrow { ResourceNotFoundException("Tag $tagName not found") }
+        art.tags.remove(tag)
+    }
 }
