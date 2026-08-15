@@ -80,7 +80,7 @@ class SiteController(
     @GetMapping("/site/arts")
     fun arts(
         @RequestParam(required = false) year: Int?,
-        @RequestParam(required = false, defaultValue = "false") hideNsfw: Boolean,
+        @RequestParam(required = false, defaultValue = "true") hideNsfw: Boolean,
         model: Model,
     ): String {
         val years = siteQueryService.years()
