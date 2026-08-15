@@ -1,14 +1,4 @@
 <section id="chart-view" th:fragment="chartView" xmlns:th="http://www.thymeleaf.org">
-    <h2 th:text="${chart}">Chart</h2>
-    <img class="chart-image" th:if="${chart == 'artistDistribution'}" src="/chart/artistDistribution"
-         alt="Artist distribution">
-    <img class="chart-image" th:if="${chart == 'currencyDistribution'}" src="/chart/currencyDistribution"
-         alt="Currency distribution">
-    <img class="chart-image" th:if="${chart == 'spendOverTime'}" src="/chart/spendOverTime" alt="Spending over time">
-    <img class="chart-image" th:if="${chart == 'nsfwRatio'}" src="/chart/nsfwRatio" alt="NSFW ratio">
-    <img class="chart-image" th:if="${chart == 'speciesDistribution'}" src="/chart/speciesDistribution"
-         alt="Species distribution">
-    <img class="chart-image" th:if="${chart == 'characterGraph'}" src="/chart/characterGraph" alt="Character graph">
-    <p th:if="${chart != 'artistDistribution' and chart != 'currencyDistribution' and chart != 'spendOverTime' and chart != 'nsfwRatio' and chart != 'speciesDistribution' and chart != 'characterGraph'}">
-        Unknown chart.</p>
+    <h2 th:text="${chartModel.chart}">Chart</h2>
+    <img class="chart-image" th:src="${chartModel.chartUrl}" th:alt="${chartModel.chart}">
 </section>

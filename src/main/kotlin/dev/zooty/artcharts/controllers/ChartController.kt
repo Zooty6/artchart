@@ -64,9 +64,16 @@ class ChartController(
 
     @GetMapping("/chart/characterGraph", produces = ["image/svg+xml"])
     fun characterGraph(
+        @RequestParam("width") width: Int?,
+        @RequestParam("height") height: Int?,
         @RequestParam("layout") graphLayout: GraphLayout?,
         @RequestParam("selfIncluded") isSelfIncluded: Boolean?
     ): String {
-        return characterGraphService.characterGraph(graphLayout ?: GraphLayout.ORGANIC, isSelfIncluded ?: false)
+        return characterGraphService.characterGraph(
+            width ?: defaultWidth,
+            height ?: defaultHeight,
+            graphLayout ?: GraphLayout.ORGANIC,
+            isSelfIncluded ?: false
+        )
     }
 }

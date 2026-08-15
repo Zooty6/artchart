@@ -15,9 +15,12 @@ class CharacterGraphService(
     private val artRepository: ArtRepository,
 ) {
 
-    fun characterGraph(graphLayout: GraphLayout, isSelfIncluded: Boolean): String {
+    fun characterGraph(graphLayout: GraphLayout, isSelfIncluded: Boolean): String =
+        characterGraph(DEFAULT_WIDTH, DEFAULT_HEIGHT, graphLayout, isSelfIncluded)
+
+    fun characterGraph(width: Int, height: Int, graphLayout: GraphLayout, isSelfIncluded: Boolean): String {
         val graph = createCharacterGraph(isSelfIncluded)
-        return exportGraphToSvg(graph, graphLayout)
+        return exportGraphToSvg(graph, width, height, graphLayout)
     }
 
     private fun createCharacterGraph(isSelfIncluded: Boolean): Graph<String, VisibleWeightedEdge> {
@@ -49,16 +52,26 @@ class CharacterGraphService(
             }.toList()
     }
 
-    private fun renderGraphAsListSvg(graph: Graph<String, VisibleWeightedEdge>): String {
+    private fun renderGraphAsListSvg(graph: Graph<String, VisibleWeightedEdge>, width: Int, height: Int): String {
         TODO("Not yet implemented")
     }
 
-    private fun exportGraphToSvg(graph: Graph<String, VisibleWeightedEdge>, graphLayout: GraphLayout): String {
+    private fun exportGraphToSvg(
+        graph: Graph<String, VisibleWeightedEdge>,
+        width: Int,
+        height: Int,
+        graphLayout: GraphLayout,
+    ): String {
         return when (graphLayout) {
             GraphLayout.CIRCLE -> svgService.mxSvgExport(mxCircleLayout(JGraphXAdapter(graph)))
             GraphLayout.ORGANIC -> svgService.mxSvgExport(mxOrganicLayout(JGraphXAdapter(graph)))
             GraphLayout.FAST_ORGANIC -> svgService.mxSvgExport(mxFastOrganicLayout(JGraphXAdapter(graph)))
-            GraphLayout.LIST -> renderGraphAsListSvg(graph)
+            GraphLayout.LIST -> renderGraphAsListSvg(graph, width, height)
         }
+    }
+
+    companion object {
+        private const val DEFAULT_WIDTH = 1800
+        private const val DEFAULT_HEIGHT = 900
     }
 }
