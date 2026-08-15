@@ -234,6 +234,21 @@ button {
     cursor: pointer;
 }
 
+.button {
+    display: inline-block;
+    margin-top: .75rem;
+    padding: .4rem .7rem;
+    color: #222;
+    background: #e8eef5;
+    border: 1px solid #aaa;
+    border-radius: .2rem;
+    text-decoration: none;
+}
+
+.button:hover {
+    background: #d8e3ef;
+}
+
 .error {
     color: #a11;
     min-height: 1em;
