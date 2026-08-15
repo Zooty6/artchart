@@ -16,5 +16,12 @@ To be able to run the project, some environment variables are needed to be provi
 
 ## Use
 
-To use the running application visit `localhost:8080` to an OpenAPI definition page and call a desired endpoint.  
-A web ui is provided on `localhost:8080\site` to manipulate the dataset. (TODO: Not implemented yet).
+After starting the application, the following entry points are available:
+
+- Web UI: `http://localhost:8080/site`
+- Swagger UI: `http://localhost:8080/swagger`
+- OpenAPI definition: `http://localhost:8080/apidocs`
+- REST API: `http://localhost:8080/api/**`
+- Charts: `http://localhost:8080/chart/**`
+
+The web UI is rendered with Thymeleaf and uses HTMX for incremental page updates.
