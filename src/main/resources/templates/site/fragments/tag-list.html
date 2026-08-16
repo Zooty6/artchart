@@ -1,0 +1,17 @@
+<section id="tag-list" th:fragment="tagList" xmlns:th="http://www.thymeleaf.org">
+    <h2>Tags</h2>
+    <ul class="tag-list">
+        <li th:each="tag : ${art.tags}">
+            <span th:text="${tag.name + ' (' + tag.category + ')'}">tag</span>
+            <button type="button"
+                    th:hx-post="@{/site/arts/{id}/tags/{tagName}/delete(id=${art.id}, tagName=${tag.name})}"
+                    hx-target="#tag-list" hx-swap="outerHTML">Remove
+            </button>
+        </li>
+    </ul>
+    <form th:hx-post="@{/site/arts/{id}/tags(id=${art.id})}" hx-target="#tag-list" hx-swap="outerHTML">
+        <label>Name <input type="text" name="name" required></label>
+        <label>Category <input type="text" name="category" required></label>
+        <button type="submit">Add tag</button>
+    </form>
+</section>

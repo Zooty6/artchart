@@ -1,0 +1,65 @@
+<section id="chart-browser" th:fragment="chartBrowser" xmlns:th="http://www.thymeleaf.org">
+    <nav class="chart-navigation" aria-label="Charts">
+        <a th:each="item : ${chartModel.chartOptions}"
+           th:href="@{/site/charts(chart=${item})}"
+           th:text="${item}"
+           th:classappend="${item == chartModel.chart} ? ' selected' : ''"
+           th:hx-get="@{/site/charts/view(chart=${item})}"
+           hx-target="#chart-browser" hx-swap="outerHTML">Chart</a>
+    </nav>
+    <form class="chart-parameters"
+          th:hx-get="@{/site/charts/view}"
+          hx-target="#chart-browser"
+          hx-swap="outerHTML"
+          hx-push-url="true">
+        <input type="hidden" name="chart" th:value="${chartModel.chart}">
+
+        <div class="chart-parameter-row">
+            <label>Width
+                <input type="number" name="width" min="1" max="5000" required th:value="${chartModel.width}">
+            </label>
+            <label>Height
+                <input type="number" name="height" min="1" max="5000" required th:value="${chartModel.height}">
+            </label>
+        </div>
+
+        <fieldset th:if="${chartModel.chart == 'currencyDistribution'}">
+            <legend>Hide currencies</legend>
+            <label class="inline-option" th:each="currency : ${chartModel.currencyOptions}">
+                <input type="checkbox" name="filterList" th:value="${currency.name}"
+                       th:checked="${chartModel.filterList.contains(currency.name)}">
+                <span th:text="${currency.name}">USD</span>
+            </label>
+        </fieldset>
+
+        <label th:if="${chartModel.chart == 'speciesDistribution'}">Type
+            <select name="type">
+                <option th:each="type : ${chartModel.chartTypes}"
+                        th:value="${type.name()}"
+                        th:text="${type.name()}"
+                        th:selected="${type == chartModel.selectedType}">PIE
+                </option>
+            </select>
+        </label>
+
+        <label th:if="${chartModel.chart == 'characterGraph'}">Layout
+            <select name="layout">
+                <option th:each="layout : ${chartModel.graphLayouts}"
+                        th:value="${layout.name()}"
+                        th:text="${layout.name()}"
+                        th:selected="${layout == chartModel.selectedLayout}">ORGANIC
+                </option>
+            </select>
+        </label>
+        <label class="inline-option" th:if="${chartModel.chart == 'characterGraph'}">
+            <input type="checkbox" name="selfIncluded" value="true" th:checked="${chartModel.selfIncluded}">
+            Include self
+        </label>
+
+        <button type="submit">Show</button>
+        <a class="button" th:href="${chartModel.chartUrl}" target="_blank" rel="noopener noreferrer">
+            Show in new tab
+        </a>
+    </form>
+    <section id="chart-view" th:replace="~{site/fragments/chart :: chartView}"></section>
+</section>

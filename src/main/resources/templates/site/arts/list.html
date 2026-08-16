@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Arts - ArtCharts</title>
+    <link rel="stylesheet" href="/site/site.css">
+    <script src="/webjars/htmx.org/2.0.0/dist/htmx.min.js" defer></script>
+</head>
+<body>
+<header th:replace="~{site/fragments/navigation :: navigation}"></header>
+<main>
+    <h1>Arts</h1>
+    <section id="art-browser" th:replace="~{site/fragments/art-browser :: artBrowser}"></section>
+</main>
+</body>
+</html>

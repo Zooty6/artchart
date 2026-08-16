@@ -1,0 +1,17 @@
+<section id="art-list" th:fragment="artList" xmlns:th="http://www.thymeleaf.org">
+    <p th:if="${#lists.isEmpty(arts)}">No arts found for this year.</p>
+    <div class="art-grid">
+        <article class="art-card" th:each="art : ${arts}">
+            <a th:href="@{/site/arts/{id}(id=${art.id})}">
+                <img th:src="@{/site/media/{id}(id=${art.id})}" th:alt="${art.fileName}">
+            </a>
+            <div class="art-card-content">
+                <h3><a th:href="@{/site/arts/{id}(id=${art.id})}" th:text="${art.fileName}">file.png</a></h3>
+                <p th:text="${art.artist.name}">Artist</p>
+                <p th:text="${art.type + ' / ' + art.species}">type / species</p>
+                <p th:text="${art.deliveredDate}">2024-01-01</p>
+                <span th:if="${art.isNsfw}" class="badge">NSFW</span>
+            </div>
+        </article>
+    </div>
+</section>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${art.fileName + ' - ArtCharts'}">Art - ArtCharts</title>
+    <link rel="stylesheet" href="/site/site.css">
+    <script src="/webjars/htmx.org/2.0.0/dist/htmx.min.js" defer></script>
+</head>
+<body>
+<header th:replace="~{site/fragments/navigation :: navigation}"></header>
+<main>
+    <p><a href="/site/arts">&larr; Back to arts</a></p>
+    <div class="detail-layout">
+        <div class="media-viewer">
+            <video th:if="${#strings.toLowerCase(art.fileName).endsWith('.mp4') or #strings.toLowerCase(art.fileName).endsWith('.webm')}"
+                   th:src="@{/site/media/{id}(id=${art.id})}" controls></video>
+            <img th:unless="${#strings.toLowerCase(art.fileName).endsWith('.mp4') or #strings.toLowerCase(art.fileName).endsWith('.webm')}"
+                 th:src="@{/site/media/{id}(id=${art.id})}" th:alt="${art.fileName}">
+        </div>
+        <section>
+            <h1 th:text="${art.fileName}">Art</h1>
+            <dl class="details">
+                <dt>Artist</dt>
+                <dd th:text="${art.artist.name}">Artist</dd>
+                <dt>Type</dt>
+                <dd th:text="${art.type}">Type</dd>
+                <dt>Species</dt>
+                <dd th:text="${art.species}">Species</dd>
+                <dt>Quality</dt>
+                <dd th:text="${art.quality ?: '-'}">-</dd>
+                <dt>Delivered</dt>
+                <dd th:text="${art.deliveredDate}">-</dd>
+                <dt>Price</dt>
+                <dd th:text="${art.price.currency + ' ' + art.price.amount}">-</dd>
+                <dt>Link</dt>
+                <dd>
+                    <a th:if="${art.link != null and !art.link.isBlank()}" th:href="${art.link}" th:text="${art.link}">Link</a>
+                    <span th:unless="${art.link != null and !art.link.isBlank()}">-</span>
+                </dd>
+            </dl>
+        </section>
+    </div>
+    <section id="tag-list" th:replace="~{site/fragments/tag-list :: tagList}"></section>
+</main>
+</body>
+</html>

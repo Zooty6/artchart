@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>New artist - ArtCharts</title>
+    <link rel="stylesheet" href="/site/site.css">
+    <script src="/webjars/htmx.org/2.0.0/dist/htmx.min.js" defer></script>
+</head>
+<body>
+<header th:replace="~{site/fragments/navigation :: navigation}"></header>
+<main>
+    <h1>New artist</h1>
+    <form th:action="@{/site/artists}" th:object="${artist}" method="post" class="form-grid">
+        <label>Name * <input th:field="*{name}" required><small class="error" th:errors="*{name}"></small></label>
+        <label>FurAffinity <input th:field="*{furaffinity}"></label>
+        <label>Twitter <input th:field="*{twitter}"></label>
+        <label>Discord <input th:field="*{discord}"></label>
+        <label>DeviantArt <input th:field="*{deviantart}"></label>
+        <label>PayPal email <input type="email" th:field="*{paypalEmail}"></label>
+        <label>Site <input th:field="*{site}"></label>
+        <label>Boosty <input th:field="*{boosty}"></label>
+        <label>Telegram <input th:field="*{telegram}"></label>
+        <label>Facebook <input th:field="*{facebook}"></label>
+        <label>VGen <input th:field="*{vgen}"></label>
+        <label class="full-width">Note <textarea th:field="*{note}"></textarea></label>
+        <button type="submit">Save artist</button>
+    </form>
+</main>
+</body>
+</html>

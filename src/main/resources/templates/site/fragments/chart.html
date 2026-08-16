@@ -1,0 +1,4 @@
+<section id="chart-view" th:fragment="chartView" xmlns:th="http://www.thymeleaf.org">
+    <h2 th:text="${chartModel.chart}">Chart</h2>
+    <img class="chart-image" th:src="${chartModel.chartUrl}" th:alt="${chartModel.chart}">
+</section>
