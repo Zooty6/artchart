@@ -21,11 +21,12 @@ data class CreateArtRequest(
     val note: String? = null,
     @field:NotBlank val artistName: String = "",
     val isNsfw: Boolean = false,
-    val link: String = "",
+    val link: String? = null,
 ) {
     fun toEntity(artist: Artist) = Art(
-        0L, otherCharacters, type.trim(), quality, species.trim(), orderedDate, payedDate,
-        deliveredDate.trim(), fileName.trim(), Price(currency ?: Currency.UNKNOWN, amount),
-        note, artist, isNsfw, link.trim()
+        0L, otherCharacters.nullIfBlank(), type.trim(), quality.nullIfBlank(), species.trim(),
+        orderedDate.nullIfBlank(), payedDate.nullIfBlank(), deliveredDate.trim(), fileName.trim(),
+        Price(currency ?: Currency.UNKNOWN, amount), note.nullIfBlank(), artist, isNsfw,
+        link.nullIfBlank()
     )
 }

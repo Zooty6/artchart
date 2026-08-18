@@ -18,7 +18,9 @@ data class CreateArtistRequest(
     val vgen: String? = null,
 ) {
     fun toEntity() = Artist(
-        0L, name.trim(), furaffinity, twitter, discord, deviantart, note,
-        paypalEmail, site, boosty, telegram, facebook, vgen
+        0L, name.trim(), furaffinity.nullIfBlank(), twitter.nullIfBlank(),
+        discord.nullIfBlank(), deviantart.nullIfBlank(), note.nullIfBlank(),
+        paypalEmail.nullIfBlank(), site.nullIfBlank(), boosty.nullIfBlank(),
+        telegram.nullIfBlank(), facebook.nullIfBlank(), vgen.nullIfBlank()
     )
 }

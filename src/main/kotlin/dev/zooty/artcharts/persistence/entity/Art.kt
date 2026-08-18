@@ -35,7 +35,7 @@ class Art(
     @JoinColumn(name = "artistId")
     val artist: Artist,
     val isNsfw: Boolean,
-    val link: String,
+    val link: String?,
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "art_tag",

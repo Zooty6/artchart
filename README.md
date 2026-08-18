@@ -11,7 +11,8 @@ To build the project run `mvn install`.
 ## Run
 
 To run the project, run `mvn spring-boot:run`.  
-To be able to run the project, some environment variables are needed to be provided. Those variables are listed in
+To be able to run the project, a sqlite database and some environment variables are needed to be provided. Those
+variables are listed in
 `.env.example`.
 
 ## Use
