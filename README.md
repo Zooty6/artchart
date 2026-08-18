@@ -10,10 +10,14 @@ To build the project run `mvn install`.
 
 ## Run
 
-To run the project, run `mvn spring-boot:run`.  
-To be able to run the project, a sqlite database and some environment variables are needed to be provided. Those
-variables are listed in
-`.env.example`.
+To run the project, first create a `.env` file in the project root based on `.env.example`, then use the platform-specific
+script:
+
+- PowerShell: `./run.ps1`
+- Bash: `./run.sh`
+
+The script loads the variables from `.env` and runs `mvn spring-boot:run` through the Maven wrapper. Additional Maven
+arguments can be passed to either script, for example `./run.sh -Dspring-boot.run.profiles=dev`.
 
 ## Use
 
