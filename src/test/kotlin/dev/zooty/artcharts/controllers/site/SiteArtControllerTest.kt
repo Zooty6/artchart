@@ -3,6 +3,7 @@ package dev.zooty.artcharts.controllers.site
 import dev.zooty.artcharts.TestFixtures
 import dev.zooty.artcharts.dto.CreateArtRequest
 import dev.zooty.artcharts.persistence.entity.Currency
+import dev.zooty.artcharts.persistence.ArtRepository
 import dev.zooty.artcharts.services.api.ArtCreationService
 import dev.zooty.artcharts.services.api.ArtService
 import dev.zooty.artcharts.services.site.SiteQueryService
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito.verifyNoInteractions
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.verify
+import org.springframework.data.domain.PageRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
@@ -29,6 +31,9 @@ class SiteArtControllerTest {
     lateinit var siteQueryService: SiteQueryService
 
     @MockitoBean
+    lateinit var artRepository: ArtRepository
+
+    @MockitoBean
     lateinit var artCreationService: ArtCreationService
 
     @MockitoBean
@@ -41,6 +46,17 @@ class SiteArtControllerTest {
             .andExpect(view().name("site/arts/form"))
             .andExpect(content().string(org.hamcrest.Matchers.containsString("Artist name")))
             .andExpect(content().string(org.hamcrest.Matchers.containsString("USD")))
+    }
+
+    @Test
+    fun `field suggestions render value fragment`() {
+        `when`(artRepository.findSpecies("cat", PageRequest.of(0, 20)))
+            .thenReturn(listOf("cat"))
+
+        mockMvc.perform(get("/site/arts/suggestions/species").param("species", "cat"))
+            .andExpect(status().isOk)
+            .andExpect(view().name("site/fragments/value-suggestions"))
+            .andExpect(content().string(org.hamcrest.Matchers.containsString("value=\"cat\"")))
     }
 
     @Test

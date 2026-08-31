@@ -19,10 +19,26 @@
             <datalist id="artist-suggestions"></datalist>
             <small class="error" th:errors="*{artistName}"></small>
         </label>
-        <label>Type * <input th:field="*{type}" required><small class="error" th:errors="*{type}"></small></label>
-        <label>Species * <input th:field="*{species}" required><small class="error"
-                                                                      th:errors="*{species}"></small></label>
-        <label>Quality <input th:field="*{quality}"></label>
+        <label>Type *
+            <input th:field="*{type}" list="type-suggestions" autocomplete="off" required
+                   hx-get="/site/arts/suggestions/type" hx-trigger="input changed delay:250ms"
+                   hx-target="#type-suggestions" hx-swap="innerHTML">
+            <datalist id="type-suggestions"></datalist>
+            <small class="error" th:errors="*{type}"></small>
+        </label>
+        <label>Species *
+            <input th:field="*{species}" list="species-suggestions" autocomplete="off" required
+                   hx-get="/site/arts/suggestions/species" hx-trigger="input changed delay:250ms"
+                   hx-target="#species-suggestions" hx-swap="innerHTML">
+            <datalist id="species-suggestions"></datalist>
+            <small class="error" th:errors="*{species}"></small>
+        </label>
+        <label>Quality
+            <input th:field="*{quality}" list="quality-suggestions" autocomplete="off"
+                   hx-get="/site/arts/suggestions/quality" hx-trigger="input changed delay:250ms"
+                   hx-target="#quality-suggestions" hx-swap="innerHTML">
+            <datalist id="quality-suggestions"></datalist>
+        </label>
         <label>File name * <input th:field="*{fileName}" required><small class="error" th:errors="*{fileName}"></small></label>
         <label>Delivered date * <input type="date" th:field="*{deliveredDate}" required><small class="error"
                                                                                                th:errors="*{deliveredDate}"></small></label>

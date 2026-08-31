@@ -3,6 +3,7 @@ package dev.zooty.artcharts.controllers.site
 import dev.zooty.artcharts.dto.CreateArtRequest
 import dev.zooty.artcharts.dto.TagDto
 import dev.zooty.artcharts.exceptions.ResourceNotFoundException
+import dev.zooty.artcharts.persistence.ArtRepository
 import dev.zooty.artcharts.persistence.entity.Currency
 import dev.zooty.artcharts.services.api.ArtCreationService
 import dev.zooty.artcharts.services.api.ArtService
@@ -10,6 +11,7 @@ import dev.zooty.artcharts.services.site.SiteQueryService
 import jakarta.validation.Valid
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
+import org.springframework.data.domain.PageRequest
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam
 @RequestMapping("/site/arts")
 class SiteArtController(
     private val siteQueryService: SiteQueryService,
+    private val artRepository: ArtRepository,
     private val artCreationService: ArtCreationService,
     private val artService: ArtService,
 ) {
@@ -60,6 +63,25 @@ class SiteArtController(
         model.addAttribute("hideNsfw", hideNsfw)
         model.addAttribute("arts", siteQueryService.artsForYear(year, hideNsfw))
         return VIEW_ART_BROWSER
+    }
+
+    @GetMapping("/suggestions/{field}")
+    fun fieldSuggestions(
+        @PathVariable field: String,
+        @RequestParam(required = false) type: String?,
+        @RequestParam(required = false) species: String?,
+        @RequestParam(required = false) quality: String?,
+        model: Model,
+    ): String {
+        val limit = PageRequest.of(0, 20)
+        val values = when (field) {
+            "type" -> artRepository.findTypes(type.orEmpty(), limit)
+            "species" -> artRepository.findSpecies(species.orEmpty(), limit)
+            "quality" -> artRepository.findQualities(quality.orEmpty(), limit)
+            else -> emptyList()
+        }
+        model.addAttribute("values", values)
+        return "site/fragments/value-suggestions"
     }
 
     @GetMapping("/{id}")
