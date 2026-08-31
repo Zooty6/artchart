@@ -6,4 +6,5 @@ import java.util.*
 
 interface TagRepository : JpaRepository<Tag, String> {
     fun findByName(name: String): Optional<Tag>
+    fun findTop20ByNameContainingIgnoreCaseOrderByNameAsc(name: String): List<Tag>
 }

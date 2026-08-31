@@ -10,8 +10,14 @@
         </li>
     </ul>
     <form th:hx-post="@{/site/arts/{id}/tags(id=${art.id})}" hx-target="#tag-list" hx-swap="outerHTML">
-        <label>Name <input type="text" name="name" required></label>
-        <label>Category <input type="text" name="category" required></label>
+        <label>Name
+            <input type="text" name="name" list="tag-suggestions" autocomplete="off" required
+                   hx-get="/site/tags/search" hx-trigger="input changed delay:250ms"
+                   hx-target="#tag-suggestions" hx-swap="innerHTML"
+                   onchange="const option = Array.from(document.getElementById('tag-suggestions').options).find(option => option.value === this.value); document.getElementById('tag-category').value = option?.dataset.category ?? ''">
+            <datalist id="tag-suggestions"></datalist>
+        </label>
+        <label>Category <input id="tag-category" type="text" name="category" required></label>
         <button type="submit">Add tag</button>
     </form>
 </section>
