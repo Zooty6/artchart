@@ -1,0 +1,10 @@
+.git
+.idea
+.run
+target
+build
+.env
+*.iml
+README.md
+Dockerfile
+docker-compose.yml
