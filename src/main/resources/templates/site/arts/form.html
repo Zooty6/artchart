@@ -39,11 +39,11 @@
                    hx-target="#quality-suggestions" hx-swap="innerHTML">
             <datalist id="quality-suggestions"></datalist>
         </label>
+        <label>Ordered date <input type="date" th:field="*{orderedDate}"></label>
+        <label>Paid date <input type="date" th:field="*{payedDate}"></label>
         <label>File name * <input th:field="*{fileName}" required><small class="error" th:errors="*{fileName}"></small></label>
         <label>Delivered date * <input type="date" th:field="*{deliveredDate}" required><small class="error"
                                                                                                th:errors="*{deliveredDate}"></small></label>
-        <label>Ordered date <input type="date" th:field="*{orderedDate}"></label>
-        <label>Paid date <input type="date" th:field="*{payedDate}"></label>
         <label>Currency
             <select th:field="*{currency}">
                 <option th:each="currency : ${currencies}" th:value="${currency}" th:text="${currency}">USD</option>
