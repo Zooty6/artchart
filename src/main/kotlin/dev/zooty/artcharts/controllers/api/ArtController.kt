@@ -63,10 +63,4 @@ class ArtController(
         artService.removeTag(id, tagName)
         return ResponseEntity.noContent().build()
     }
-
-    @ExceptionHandler(ResourceNotFoundException::class)
-    @ResponseStatus(code = org.springframework.http.HttpStatus.NOT_FOUND)
-    fun notFoundHandler() {
-        // do nothing, just return 404
-    }
 }

@@ -10,11 +10,10 @@ import org.springframework.transaction.annotation.Transactional
 class ArtSearchService(private val artRepository: ArtRepository) {
 
     @Transactional(readOnly = true)
-    fun searchArts(searchParams: String): List<Art> =
-        searchParams
-            .split(" ")
-            .map(ArtFilter::createFilter)
-            .fold(artRepository.findAllBy()) { arts, filter ->
-                arts.filter(filter::filter)
-            }.toList()
+    fun searchArts(searchParams: String): List<Art> = searchParams
+        .split(" ")
+        .map(ArtFilter::createFilter)
+        .fold(artRepository.findAllBy()) { arts, filter ->
+            arts.filter(filter::filter)
+        }.toList()
 }
