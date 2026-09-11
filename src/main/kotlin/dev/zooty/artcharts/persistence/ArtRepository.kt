@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
+import org.yaml.snakeyaml.events.StreamEndEvent
+import java.util.stream.Stream
 
 @Repository
 interface ArtRepository : JpaRepository<Art, Long> {
@@ -20,4 +22,6 @@ interface ArtRepository : JpaRepository<Art, Long> {
 
     @Query("SELECT DISTINCT a.quality FROM Art a WHERE a.quality IS NOT NULL AND LOWER(a.quality) LIKE LOWER(CONCAT('%', :query, '%')) ORDER BY a.quality")
     fun findQualities(@Param("query") query: String, pageable: Pageable): List<String>
+    
+    fun findAllBy(): Stream<Art>
 }

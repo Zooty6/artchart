@@ -5,6 +5,7 @@ import dev.zooty.artcharts.dto.TagDto
 import dev.zooty.artcharts.exceptions.ResourceNotFoundException
 import dev.zooty.artcharts.persistence.ArtRepository
 import dev.zooty.artcharts.persistence.entity.Art
+import dev.zooty.artcharts.services.api.ArtSearchService
 import dev.zooty.artcharts.services.api.ArtCreationService
 import dev.zooty.artcharts.services.api.ArtService
 import jakarta.validation.Valid
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
@@ -28,6 +30,7 @@ class ArtController(
     val artRepository: ArtRepository,
     val artService: ArtService,
     val artCreationService: ArtCreationService,
+    val artSearchService: ArtSearchService
 ) {
     @GetMapping("/api/art", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getArts(): List<Art> {
@@ -39,9 +42,11 @@ class ArtController(
         ResponseEntity.status(org.springframework.http.HttpStatus.CREATED).body(artCreationService.create(request))
 
     @GetMapping("/api/art/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getArts(@PathVariable id: Long): Art {
-        return artRepository.getReferenceById(id)
-    }
+    fun getArt(@PathVariable id: Long): Art = artRepository.getReferenceById(id)
+
+    @GetMapping("/api/art/search", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getFilteredArts(@RequestParam searchParams: String): List<Art> = 
+        artSearchService.searchArts(searchParams)
 
     @ApiResponses(
         ApiResponse(responseCode = "204", description = "Tag added successfully"),
