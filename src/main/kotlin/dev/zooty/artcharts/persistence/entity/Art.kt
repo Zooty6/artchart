@@ -16,31 +16,31 @@ import org.hibernate.annotations.Type
 @Entity
 @Table(name = "art")
 @NoArgsConstructor
-@Suppress("unused", "JpaDataSourceORMInspection")
+@Suppress("unused")
 class Art(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
-    val otherCharacters: String?,
-    val type: String,
-    val quality: String?,
-    val species: String,
-    val orderedDate: String?,
-    val payedDate: String?,
-    val deliveredDate: String,
-    val fileName: String,
+    var id: Long,
+    var otherCharacters: String?,
+    var type: String,
+    var quality: String?,
+    var species: String,
+    var orderedDate: String?,
+    var payedDate: String?,
+    var deliveredDate: String,
+    var fileName: String,
     @Type(value = PriceType::class)
-    val price: Price,
-    val note: String?,
+    var price: Price,
+    var note: String?,
     @ManyToOne
     @JoinColumn(name = "artistId")
-    val artist: Artist,
-    val isNsfw: Boolean,
-    val link: String?,
+    var artist: Artist,
+    var isNsfw: Boolean,
+    var link: String?,
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "art_tag",
         joinColumns = [JoinColumn(name = "artId")],
         inverseJoinColumns = [JoinColumn(name = "tagName")]
     )
-    val tags: MutableSet<Tag> = mutableSetOf(),
+    var tags: MutableSet<Tag> = mutableSetOf(),
 )

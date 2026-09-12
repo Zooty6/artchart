@@ -11,7 +11,9 @@ class ArtSearchService(private val artRepository: ArtRepository) {
 
     @Transactional(readOnly = true)
     fun searchArts(searchParams: String): List<Art> = searchParams
-        .split(" ")
+        .trim()
+        .split(Regex("\\s+"))
+        .filter(String::isNotBlank)
         .map(ArtFilter::createFilter)
         .fold(artRepository.findAllBy()) { arts, filter ->
             arts.filter(filter::filter)

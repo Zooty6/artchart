@@ -14,10 +14,10 @@ import lombok.ToString
 @Entity
 @NoArgsConstructor
 @Table(name = "tag")
-@Suppress("unused", "JpaDataSourceORMInspection")
+@Suppress("unused")
 class Tag (
-    @Id val name: String,
-    val category: String,
+    @Id var name: String,
+    var category: String,
 
     @ToString.Exclude
     @JsonIgnore
@@ -27,5 +27,5 @@ class Tag (
         joinColumns = [JoinColumn(name = "tagName")],
         inverseJoinColumns = [JoinColumn(name = "artId")]
     )
-    val arts : MutableSet<Art> = mutableSetOf()
+    var arts : MutableSet<Art> = mutableSetOf()
 )

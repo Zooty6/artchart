@@ -10,20 +10,20 @@ import lombok.NoArgsConstructor
 @Entity
 @NoArgsConstructor
 @Table(name = "artists")
-@Suppress("unused", "JpaDataSourceORMInspection")
+@Suppress("unused")
 class Artist(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
-    val name: String,
-    val furaffinity: String?,
-    val twitter: String?,
-    val discord: String?,
-    val deviantart: String?,
-    val note: String?,
-    val paypalEmail: String?,
-    val site: String?,
-    val boosty: String?,
-    val telegram: String?,
-    val facebook: String?,
-    val vgen: String?
+    var id: Long,
+    var name: String,
+    var furaffinity: String?,
+    var twitter: String?,
+    var discord: String?,
+    var deviantart: String?,
+    var note: String?,
+    var paypalEmail: String?,
+    var site: String?,
+    var boosty: String?,
+    var telegram: String?,
+    var facebook: String?,
+    var vgen: String?
 )
