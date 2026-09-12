@@ -10,6 +10,10 @@ import org.springframework.test.web.client.match.MockRestRequestMatchers.method
 import org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo
 import org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess
 import org.springframework.web.client.RestClient
+import java.time.Clock
+import java.time.Duration
+import java.time.Instant
+import java.time.ZoneOffset
 
 class CurrencyApiClientTest {
 
@@ -35,5 +39,65 @@ class CurrencyApiClientTest {
         assertEquals(1.12, client.getConvertRate("EUR", "USD"))
 
         server.verify()
+    }
+
+    @Test
+    fun `expired cache entry triggers a new request`() {
+        val client = CurrencyApiClient("test-key")
+        val restClientBuilder = RestClient.builder().baseUrl("https://currencyapi.com")
+        val server = MockRestServiceServer.bindTo(restClientBuilder).build()
+        ReflectionTestUtils.setField(client, "client", restClientBuilder.build())
+        ReflectionTestUtils.setField(client, "cacheTtl", Duration.ofHours(3))
+
+        val beforeExpiry = Instant.parse("2026-01-01T00:00:00Z")
+        ReflectionTestUtils.setField(client, "clock", Clock.fixed(beforeExpiry, ZoneOffset.UTC))
+        expectResponse(server, 1.12)
+        expectResponse(server, 1.13)
+        assertEquals(1.12, client.getConvertRate("EUR", "USD"))
+
+        ReflectionTestUtils.setField(
+            client,
+            "clock",
+            Clock.fixed(beforeExpiry.plus(Duration.ofHours(3)), ZoneOffset.UTC),
+        )
+        assertEquals(1.13, client.getConvertRate("EUR", "USD"))
+
+        server.verify()
+    }
+
+    @Test
+    fun `cleanup removes expired cache entries`() {
+        val client = CurrencyApiClient("test-key")
+        val restClientBuilder = RestClient.builder().baseUrl("https://currencyapi.com")
+        val server = MockRestServiceServer.bindTo(restClientBuilder).build()
+        ReflectionTestUtils.setField(client, "client", restClientBuilder.build())
+        val createdAt = Instant.parse("2026-01-01T00:00:00Z")
+        ReflectionTestUtils.setField(client, "clock", Clock.fixed(createdAt, ZoneOffset.UTC))
+
+        expectResponse(server, 1.12)
+        expectResponse(server, 1.13)
+        client.getConvertRate("EUR", "USD")
+
+        ReflectionTestUtils.setField(
+            client,
+            "clock",
+            Clock.fixed(createdAt.plus(Duration.ofHours(4)), ZoneOffset.UTC),
+        )
+        client.removeExpiredEntries()
+
+        assertEquals(1.13, client.getConvertRate("EUR", "USD"))
+        server.verify()
+    }
+
+    private fun expectResponse(server: MockRestServiceServer, rate: Double) {
+        server.expect(
+            requestTo("https://currencyapi.com/api/v3/latest?base_currency=EUR&currencies=USD")
+        ).andExpect(method(HttpMethod.GET))
+            .andRespond(
+                withSuccess(
+                    """{"data":{"USD":{"value":$rate}}}""",
+                    MediaType.APPLICATION_JSON,
+                )
+            )
     }
 }
