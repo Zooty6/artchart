@@ -5,7 +5,7 @@ import dev.zooty.artcharts.persistence.entity.Art
 sealed interface ArtFilter {
     fun filter(art: Art): Boolean
 
-    companion object Factory {
+    companion object {
         fun createFilter(filterString: String): ArtFilter {
             val split = filterString.split(":")
             require(split.size == 2) { "Invalid filter string: $filterString" }

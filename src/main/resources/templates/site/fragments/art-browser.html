@@ -1,21 +1,27 @@
 <section id="art-browser" th:fragment="artBrowser" xmlns:th="http://www.thymeleaf.org">
     <div class="year-navigation" aria-label="Years">
-        <a th:each="year : ${years}"
-           th:href="@{/site/arts(year=${year},hideNsfw=${hideNsfw})}"
-           th:text="${year}"
-           th:classappend="${year == selectedYear} ? ' selected' : ''"
-           th:hx-get="@{/site/arts/list(year=${year},hideNsfw=${hideNsfw})}"
-           hx-target="#art-browser" hx-swap="outerHTML">2024</a>
+        <div th:replace="~{site/fragments/art-navigation-content :: content}"></div>
+        <label id="search-mode-toggle" class="filter-control mode-toggle">
+            <input type="checkbox" value="GENERAL"
+                   th:checked="${generalSearch}"
+                   th:hx-get="@{/site/arts/list(year=${selectedYear},searchMode=${otherSearchMode},hideNsfw=${hideNsfw})}"
+                   hx-trigger="change" hx-target="#year-navigation-content" hx-swap="outerHTML">
+            General search
+        </label>
     </div>
     <div class="list-heading">
-        <h2 th:if="${selectedYear != null}" th:text="'Arts delivered in ' + ${selectedYear}">Arts</h2>
+        <h2 th:if="${!generalSearch && selectedYear != null}" th:text="'Arts delivered in ' + ${selectedYear}">Arts</h2>
+        <h2 th:if="${generalSearch}">Search results</h2>
         <label class="filter-control">
             <input type="checkbox" name="hideNsfw" value="true"
                    th:checked="${hideNsfw}"
-                   th:hx-get="@{/site/arts/list(year=${selectedYear})}"
-                   hx-trigger="change" hx-target="#art-browser" hx-swap="outerHTML">
+                   th:hx-get="@{/site/arts/list(year=${selectedYear},searchMode=${searchMode},searchParams=${searchParams})}"
+                   hx-trigger="change" hx-target="#art-list" hx-select="#art-list" hx-swap="outerHTML">
             Hide NSFW
         </label>
     </div>
+    <div id="search-error" class="error"
+         th:classappend="${searchError == null} ? ' hidden' : ''"
+         th:text="${searchError}"></div>
     <section id="art-list" th:replace="~{site/fragments/art-list :: artList}"></section>
 </section>

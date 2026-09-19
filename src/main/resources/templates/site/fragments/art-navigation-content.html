@@ -1,0 +1,37 @@
+<div id="year-navigation-content" th:fragment="content" xmlns:th="http://www.thymeleaf.org">
+    <div th:if="${!generalSearch}">
+        <a th:each="year : ${years}"
+           th:href="@{/site/arts(year=${year},hideNsfw=${hideNsfw})}"
+           th:text="${year}"
+           th:classappend="${year == selectedYear} ? ' selected' : ''"
+           th:hx-get="@{/site/arts/list(year=${year},hideNsfw=${hideNsfw},searchMode=YEAR)}"
+           hx-target="#art-browser" hx-swap="outerHTML">2024</a>
+    </div>
+    <form th:if="${generalSearch}" class="search-control"
+          th:hx-get="@{/site/arts/list(hideNsfw=${hideNsfw})}"
+          hx-target="#art-browser" hx-swap="outerHTML">
+        <label for="art-search">Filter</label>
+        <input id="art-search" type="search" name="searchParams"
+               th:value="${searchParams}">
+        <span class="search-hint" aria-label="Search syntax help">
+            ?
+            <span class="search-hint-content" role="tooltip">
+                <strong>Search syntax</strong>
+                <span>Separate multiple conditions with spaces; all conditions must match.</span>
+                <span>Text conditions are case-insensitive and support partial matches.</span>
+                <span><code>tag:value</code> — tag name</span>
+                <span><code>artist:value</code> — artist name</span>
+                <span><code>otherCharacters:value</code> — other characters</span>
+                <span><code>type:value</code> — art type</span>
+                <span><code>quality:value</code> — quality</span>
+                <span><code>nsfw:true|false</code> — NSFW flag</span>
+                <span><code>deliveredDate:value</code> — delivery date</span>
+                <span><code>paidDate:value</code> — payment date</span>
+                <span><code>orderedDate:value</code> — order date</span>
+                <span>Dates accept <code>YYYY</code> or <code>YYYY-MM-DD</code>. Date conditions support <code>=</code>, <code>&gt;</code>, <code>&gt;=</code>, <code>&lt;</code> and <code>&lt;=</code>.</span>
+            </span>
+        </span>
+        <input type="hidden" name="searchMode" value="GENERAL">
+        <button type="submit">Search</button>
+    </form>
+</div>

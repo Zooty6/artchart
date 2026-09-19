@@ -1,5 +1,6 @@
 <section id="art-list" th:fragment="artList" xmlns:th="http://www.thymeleaf.org">
-    <p th:if="${#lists.isEmpty(arts)}">No arts found for this year.</p>
+    <div th:fragment="artListContent">
+    <p th:if="${#lists.isEmpty(arts)}" th:text="${generalSearch ? 'No arts found.' : 'No arts found for this year.'}">No arts found.</p>
     <div class="art-grid">
         <article class="art-card" th:each="art : ${arts}">
             <a th:href="@{/site/arts/{id}(id=${art.id})}">
@@ -13,5 +14,6 @@
                 <span th:if="${art.isNsfw}" class="badge">NSFW</span>
             </div>
         </article>
+    </div>
     </div>
 </section>

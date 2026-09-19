@@ -1,0 +1,11 @@
+<div th:replace="~{site/fragments/art-navigation-content :: content}" xmlns:th="http://www.thymeleaf.org"></div>
+<label id="search-mode-toggle" class="filter-control mode-toggle" hx-swap-oob="outerHTML" xmlns:th="http://www.thymeleaf.org">
+    <input type="checkbox" value="GENERAL"
+           th:checked="${generalSearch}"
+           th:hx-get="@{/site/arts/list(year=${selectedYear},searchMode=${otherSearchMode},hideNsfw=${hideNsfw})}"
+           hx-trigger="change" hx-target="#year-navigation-content" hx-swap="outerHTML">
+    General search
+</label>
+<section id="art-list" hx-swap-oob="outerHTML" xmlns:th="http://www.thymeleaf.org">
+    <div th:replace="~{site/fragments/art-list :: artListContent}"></div>
+</section>

@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 
 @Controller
 @RequestMapping("/site/arts")
@@ -31,6 +33,8 @@ class SiteArtController(
     companion object {
         private const val VIEW_ARTS_LIST = "site/arts/list"
         private const val VIEW_ART_BROWSER = "site/fragments/art-browser"
+        private const val VIEW_ART_MODE_UPDATE = "site/fragments/art-mode-update"
+        private const val VIEW_SEARCH_ERROR = "site/fragments/search-error"
         private const val VIEW_ART_DETAIL = "site/arts/detail"
         private const val VIEW_TAG_LIST = "site/fragments/tag-list"
         private const val VIEW_ART_FORM = "site/arts/form"
@@ -40,29 +44,66 @@ class SiteArtController(
     @GetMapping
     fun arts(
         @RequestParam(required = false) year: Int?,
+        @RequestParam(required = false, defaultValue = "YEAR") searchMode: SearchMode,
+        @RequestParam(required = false) searchParams: String?,
         @RequestParam(required = false, defaultValue = "true") hideNsfw: Boolean,
         model: Model,
+        request: HttpServletRequest,
+        response: HttpServletResponse,
     ): String {
-        val years = siteQueryService.years()
-        val selectedYear = year ?: years.firstOrNull()
-        model.addAttribute("years", years)
-        model.addAttribute("selectedYear", selectedYear)
-        model.addAttribute("hideNsfw", hideNsfw)
-        model.addAttribute("arts", siteQueryService.artsForYear(selectedYear, hideNsfw))
+        try {
+            addSearchModelAttributes(year, searchMode, searchParams, hideNsfw, model)
+        } catch (exception: IllegalArgumentException) {
+            model.addAttribute("searchError", exception.message ?: "Invalid search filter")
+            model.addAttribute("arts", emptyList<Any>())
+            if (request.getHeader("HX-Request") == "true") {
+                response.setHeader("HX-Retarget", "#search-error")
+                response.setHeader("HX-Reswap", "outerHTML")
+                return VIEW_SEARCH_ERROR
+            }
+        }
         return VIEW_ARTS_LIST
     }
 
     @GetMapping("/list")
     fun artList(
-        @RequestParam year: Int,
+        @RequestParam(required = false) year: Int?,
+        @RequestParam(required = false, defaultValue = "YEAR") searchMode: SearchMode,
+        @RequestParam(required = false) searchParams: String?,
         @RequestParam(required = false, defaultValue = "false") hideNsfw: Boolean,
         model: Model,
+        request: HttpServletRequest,
+        response: HttpServletResponse,
     ): String {
-        model.addAttribute("years", siteQueryService.years())
-        model.addAttribute("selectedYear", year)
-        model.addAttribute("hideNsfw", hideNsfw)
-        model.addAttribute("arts", siteQueryService.artsForYear(year, hideNsfw))
+        try {
+           addSearchModelAttributes(year, searchMode, searchParams, hideNsfw, model) 
+        } catch (exception: IllegalArgumentException) {
+            model.addAttribute("searchError", exception.message ?: "Invalid search filter")
+            response.setHeader("HX-Retarget", "#search-error")
+            response.setHeader("HX-Reswap", "outerHTML")
+            return VIEW_SEARCH_ERROR
+        }
+        if (request.getHeader("HX-Target") == "year-navigation-content") {
+            return VIEW_ART_MODE_UPDATE
+        }
         return VIEW_ART_BROWSER
+    }
+    
+    private fun addSearchModelAttributes(year: Int?, searchMode: SearchMode, searchParams: String?, hideNsfw: Boolean, model: Model) {
+        val years = if (searchMode == SearchMode.GENERAL) emptyList() else siteQueryService.years()
+        val selectedYear = year ?: years.firstOrNull()
+        model.addAttribute("years", years)
+        model.addAttribute("selectedYear", selectedYear)
+        model.addAttribute("hideNsfw", hideNsfw)
+        model.addAttribute("searchMode", searchMode)
+        model.addAttribute("generalSearch", searchMode == SearchMode.GENERAL)
+        model.addAttribute("otherSearchMode", searchMode.toggled())
+        model.addAttribute("searchParams", searchParams.orEmpty())
+        model.addAttribute(
+            "arts",
+            if (searchMode == SearchMode.GENERAL) siteQueryService.artsForSearch(searchParams.orEmpty(), hideNsfw)
+            else siteQueryService.artsForYear(selectedYear, hideNsfw),
+        )
     }
 
     @GetMapping("/suggestions/{field}")

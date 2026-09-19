@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.view
 
@@ -103,5 +104,62 @@ class SiteArtControllerTest {
             .andExpect(view().name("redirect:/site/arts/42"))
 
         verify(artCreationService).create(request)
+    }
+
+    @Test
+    fun `search mode renders filtered arts without year navigation`() {
+        val art = TestFixtures.art(id = 42L)
+        `when`(siteQueryService.years()).thenReturn(listOf(2024, 2023))
+        `when`(siteQueryService.artsForSearch("artist:fox", true)).thenReturn(listOf(art))
+
+        mockMvc.perform(
+            get("/site/arts")
+                .param("searchMode", "GENERAL")
+                .param("searchParams", "artist:fox")
+        )
+            .andExpect(status().isOk)
+            .andExpect(view().name("site/arts/list"))
+            .andExpect(content().string(org.hamcrest.Matchers.containsString("Search results")))
+            .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("href=\"/site/arts(year=2024"))))
+            .andExpect(content().string(org.hamcrest.Matchers.containsString("value=\"artist:fox\"")))
+
+        verify(siteQueryService).artsForSearch("artist:fox", true)
+    }
+
+    @Test
+    fun `mode toggle response replaces navigation content and updates the list out of band`() {
+        `when`(siteQueryService.years()).thenReturn(listOf(2024))
+        `when`(siteQueryService.artsForSearch("", true)).thenReturn(emptyList())
+
+        mockMvc.perform(
+            get("/site/arts/list")
+                .param("searchMode", "GENERAL")
+                .header("HX-Target", "year-navigation-content")
+        )
+            .andExpect(status().isOk)
+            .andExpect(view().name("site/fragments/art-mode-update"))
+            .andExpect(content().string(org.hamcrest.Matchers.containsString("id=\"year-navigation-content\"")))
+            .andExpect(content().string(org.hamcrest.Matchers.containsString("id=\"search-mode-toggle\"")))
+            .andExpect(content().string(org.hamcrest.Matchers.containsString("hx-swap-oob=\"outerHTML\"")))
+            .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Year view"))))
+    }
+
+    @Test
+    fun `invalid search targets the persistent error element`() {
+        `when`(siteQueryService.years()).thenReturn(emptyList())
+        `when`(siteQueryService.artsForSearch("wrongsearch", true))
+            .thenThrow(IllegalArgumentException("Invalid filter string: wrongsearch"))
+
+        mockMvc.perform(
+            get("/site/arts/list")
+                .param("searchMode", "GENERAL")
+                .param("searchParams", "wrongsearch")
+                .param("hideNsfw", "true")
+                .header("HX-Target", "art-browser")
+        )
+            .andExpect(status().isOk)
+            .andExpect(view().name("site/fragments/search-error"))
+            .andExpect(content().string(org.hamcrest.Matchers.containsString("Invalid filter string: wrongsearch")))
+            .andExpect(header().string("HX-Retarget", "#search-error"))
     }
 }
