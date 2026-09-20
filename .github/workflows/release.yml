@@ -1,0 +1,87 @@
+name: Create release
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create GitHub release and prepare next version
+    # The version bump commit is intentionally ignored to avoid a release loop.
+    if: ${{ !contains(github.event.head_commit.message, '[skip release]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - name: Read current project version
+        id: current_version
+        shell: bash
+        run: |
+          chmod +x mvnw
+          version=$(./mvnw -q help:evaluate \
+            -Dexpression=project.version \
+            -DforceStdout)
+
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Unsupported release version: $version"
+            exit 1
+          fi
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "Current version: $version"
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.current_version.outputs.version }}
+        run: |
+          tag="v$VERSION"
+
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "Release $tag already exists; continuing with the version bump."
+          else
+            gh release create "$tag" \
+              --target "$GITHUB_SHA" \
+              --title "$tag" \
+              --generate-notes
+          fi
+
+      - name: Bump patch version in pom.xml
+        id: next_version
+        env:
+          VERSION: ${{ steps.current_version.outputs.version }}
+        shell: bash
+        run: |
+          IFS=. read -r major minor patch <<< "$VERSION"
+          next_version="$major.$minor.$((patch + 1))"
+
+          ./mvnw -q versions:set \
+            -DnewVersion="$next_version" \
+            -DgenerateBackupPoms=false
+
+          echo "version=$next_version" >> "$GITHUB_OUTPUT"
+          echo "Next development version: $next_version"
+
+      - name: Commit next version
+        env:
+          VERSION: ${{ steps.next_version.outputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pom.xml
+          git commit -m "chore: prepare version $VERSION [skip release]"
+          git push origin HEAD:master
