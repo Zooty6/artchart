@@ -17,7 +17,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -48,6 +50,8 @@ class SiteArtControllerTest {
             .andExpect(view().name("site/arts/form"))
             .andExpect(content().string(org.hamcrest.Matchers.containsString("Artist name")))
             .andExpect(content().string(org.hamcrest.Matchers.containsString("USD")))
+            .andExpect(content().string(org.hamcrest.Matchers.containsString("enctype=\"multipart/form-data\"")))
+            .andExpect(content().string(org.hamcrest.Matchers.containsString("name=\"file\"")))
     }
 
     @Test
@@ -105,6 +109,38 @@ class SiteArtControllerTest {
             .andExpect(view().name("redirect:/site/arts/42"))
 
         verify(artCreationService).create(request, Optional.empty())
+    }
+
+    @Test
+    fun `valid new art form forwards uploaded file`() {
+        val createdArt = TestFixtures.art(id = 42L)
+        val request = CreateArtRequest(
+            type = "commission",
+            species = "cat",
+            deliveredDate = "2024-01-01",
+            fileName = "art.png",
+            currency = Currency.USD,
+            amount = 10.0,
+            artistName = "Artist",
+        )
+        val file = MockMultipartFile("file", "art.png", "image/png", "image".toByteArray())
+        `when`(artCreationService.create(request, Optional.of(file))).thenReturn(createdArt)
+
+        mockMvc.perform(
+            multipart("/site/arts")
+                .file(file)
+                .param("type", "commission")
+                .param("species", "cat")
+                .param("deliveredDate", "2024-01-01")
+                .param("fileName", "art.png")
+                .param("currency", "USD")
+                .param("amount", "10.0")
+                .param("artistName", "Artist")
+        )
+            .andExpect(status().is3xxRedirection)
+            .andExpect(view().name("redirect:/site/arts/42"))
+
+        verify(artCreationService).create(request, Optional.of(file))
     }
 
     @Test

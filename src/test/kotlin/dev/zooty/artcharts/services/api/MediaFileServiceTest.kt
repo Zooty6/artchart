@@ -7,12 +7,14 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.mock.web.MockMultipartFile
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.Optional
+import kotlin.test.assertFailsWith
 
 @ExtendWith(MockitoExtension::class)
 class MediaFileServiceTest {
@@ -69,5 +71,40 @@ class MediaFileServiceTest {
         val result = MediaFileService(artRepository, mediaRoot.toString()).resolveForArt(1L)
 
         assertEquals("image/svg+xml", result.mediaType.toString())
+    }
+
+    @Test
+    fun `saves uploaded SFW file below its delivery year`() {
+        val upload = MockMultipartFile("file", "art.png", "image/png", "image".toByteArray())
+
+        MediaFileService(artRepository, mediaRoot.toString())
+            .saveFile(upload, "art.png", "2024-01-03", false)
+
+        val saved = mediaRoot.resolve("SFW/2024/art.png")
+        assertTrue(Files.isRegularFile(saved))
+        assertEquals("image", Files.readString(saved))
+    }
+
+    @Test
+    fun `saves uploaded NSFW file in the NSFW directory and strips path components`() {
+        val upload = MockMultipartFile("file", "art.png", "image/png", "image".toByteArray())
+
+        MediaFileService(artRepository, mediaRoot.toString())
+            .saveFile(upload, "nested/art.png", "2024-01-03", true)
+
+        val saved = mediaRoot.resolve("NSFW/2024/art.png")
+        assertTrue(Files.isRegularFile(saved))
+        assertEquals("image", Files.readString(saved))
+        assertTrue(!Files.exists(mediaRoot.resolve("nested/art.png")))
+    }
+
+    @Test
+    fun `rejects uploaded file with a blank file name`() {
+        val upload = MockMultipartFile("file", "art.png", "image/png", "image".toByteArray())
+
+        assertFailsWith<IllegalArgumentException> {
+            MediaFileService(artRepository, mediaRoot.toString())
+                .saveFile(upload, "", "2024-01-03", false)
+        }
     }
 }
