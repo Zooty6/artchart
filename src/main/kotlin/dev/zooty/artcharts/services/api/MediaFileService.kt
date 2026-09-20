@@ -18,7 +18,7 @@ data class MediaFile(val resource: Resource, val mediaType: MediaType)
 @Service
 class MediaFileService(
     private val artRepository: ArtRepository,
-    @Value("\${artcharts.media-root:.}") mediaRoot: String,
+    @Value($$"${artcharts.media-root:.}") mediaRoot: String
 ) {
     private val root: Path = Paths.get(mediaRoot).toAbsolutePath().normalize()
 

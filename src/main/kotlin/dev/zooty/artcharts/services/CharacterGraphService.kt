@@ -7,13 +7,16 @@ import dev.zooty.artcharts.persistence.ArtRepository
 import org.jgrapht.Graph
 import org.jgrapht.ext.JGraphXAdapter
 import org.jgrapht.graph.SimpleWeightedGraph
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
 class CharacterGraphService(
     private val svgService: SvgConverterService,
-    private val artRepository: ArtRepository,
+    private val artRepository: ArtRepository
 ) {
+    @Value($$"${artcharts.self.name}")
+    private lateinit var selfName: String
 
     fun characterGraph(graphLayout: GraphLayout, isSelfIncluded: Boolean): String =
         characterGraph(DEFAULT_WIDTH, DEFAULT_HEIGHT, graphLayout, isSelfIncluded)
@@ -42,7 +45,7 @@ class CharacterGraphService(
     }
 
     private fun createConnections(characters: List<String>, selfIncluded: Boolean): List<Pair<String, String>> {
-        val charactersWithZooty = (if (selfIncluded) characters + "Zooty" else characters).sorted()
+        val charactersWithZooty = (if (selfIncluded) characters + selfName else characters).sorted()
         return charactersWithZooty
             .indices
             .flatMap { i ->
