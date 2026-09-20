@@ -4,8 +4,8 @@ import dev.zooty.artcharts.exceptions.ResourceNotFoundException
 import dev.zooty.artcharts.persistence.ArtRepository
 import dev.zooty.artcharts.persistence.entity.Art
 import dev.zooty.artcharts.services.api.ArtSearchService
-import org.springframework.stereotype.Service
 import org.springframework.cache.annotation.Cacheable
+import org.springframework.stereotype.Service
 import java.time.LocalDate
 
 @Service
@@ -36,6 +36,6 @@ class SiteQueryService(
     fun art(id: Long): Art = artRepository.findById(id)
         .orElseThrow { ResourceNotFoundException("Art with id $id not found") }
 
-    fun yearOf(date: String): Int? = runCatching { LocalDate.parse(date).year }
+    private fun yearOf(date: String): Int? = runCatching { LocalDate.parse(date).year }
         .getOrElse { date.take(4).toIntOrNull() }
 }

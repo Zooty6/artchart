@@ -1,4 +1,4 @@
-package dev.zooty.artcharts.services.site
+package dev.zooty.artcharts.services.api
 
 import dev.zooty.artcharts.TestFixtures
 import dev.zooty.artcharts.persistence.ArtRepository

@@ -202,7 +202,7 @@ a {
     max-width: 800px;
 }
 
-.form-grid label {
+.form-grid label, .form-grid .form-field {
     display: grid;
     gap: .25rem;
 }
@@ -310,6 +310,39 @@ button {
 .error {
     color: #a11;
     min-height: 1em;
+}
+
+.file-name-control {
+    position: relative;
+    display: block;
+}
+
+.file-name-control input[type="text"] {
+    padding-right: 2.5rem;
+}
+
+.file-upload-input {
+    position: absolute;
+    width: 1px !important;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+}
+
+.file-upload-button {
+    position: absolute;
+    top: 50%;
+    right: .45rem;
+    display: block !important;
+    padding: .1rem;
+    cursor: pointer;
+    transform: translateY(-50%);
+}
+
+.file-upload-button:focus-visible {
+    outline: 2px solid #174a7c;
+    outline-offset: 2px;
 }
 
 .hidden {

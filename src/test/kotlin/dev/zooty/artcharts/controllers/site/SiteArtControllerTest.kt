@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.view
+import java.util.Optional
 
 @WebMvcTest(SiteArtController::class)
 class SiteArtControllerTest {
@@ -87,7 +88,7 @@ class SiteArtControllerTest {
             amount = 10.0,
             artistName = "Artist",
         )
-        `when`(artCreationService.create(request))
+        `when`(artCreationService.create(request, Optional.empty()))
             .thenReturn(createdArt)
 
         mockMvc.perform(
@@ -103,7 +104,7 @@ class SiteArtControllerTest {
             .andExpect(status().is3xxRedirection)
             .andExpect(view().name("redirect:/site/arts/42"))
 
-        verify(artCreationService).create(request)
+        verify(artCreationService).create(request, Optional.empty())
     }
 
     @Test

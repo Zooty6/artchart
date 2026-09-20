@@ -11,7 +11,7 @@
 <header th:replace="~{site/fragments/navigation :: navigation}"></header>
 <main>
     <h1>New art</h1>
-    <form th:action="@{/site/arts}" th:object="${art}" method="post" class="form-grid">
+    <form th:action="@{/site/arts}" th:object="${art}" method="post" enctype="multipart/form-data" class="form-grid">
         <label>Artist name *
             <input th:field="*{artistName}" list="artist-suggestions" autocomplete="off"
                    hx-get="/site/artists/search" hx-trigger="input changed delay:250ms"
@@ -41,7 +41,15 @@
         </label>
         <label>Ordered date <input type="date" th:field="*{orderedDate}"></label>
         <label>Paid date <input type="date" th:field="*{payedDate}"></label>
-        <label>File name * <input th:field="*{fileName}" required><small class="error" th:errors="*{fileName}"></small></label>
+        <div class="form-field">File name *
+            <span class="file-name-control">
+                <input id="fileName" th:field="*{fileName}" required>
+                <label for="artFile" class="file-upload-button" title="Choose art file" aria-label="Choose art file">📎</label>
+                <input id="artFile" name="file" type="file" class="file-upload-input"
+                       aria-label="Choose art file">
+            </span>
+            <small class="error" th:errors="*{fileName}"></small>
+        </div>
         <label>Delivered date * <input type="date" th:field="*{deliveredDate}" required><small class="error"
                                                                                                th:errors="*{deliveredDate}"></small></label>
         <label>Currency
@@ -56,6 +64,13 @@
         <label class="full-width">Note <textarea th:field="*{note}"></textarea></label>
         <button type="submit">Save art</button>
     </form>
+<script>
+    document.getElementById('artFile').addEventListener('change', function () {
+        if (this.files.length > 0) {
+            document.getElementById('fileName').value = this.files[0].name;
+        }
+    });
+</script>
 </main>
 </body>
 </html>
