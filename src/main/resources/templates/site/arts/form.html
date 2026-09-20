@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/site/site.css">
     <script src="/webjars/htmx.org/2.0.0/dist/htmx.min.js" defer></script>
 </head>
-<body>
+<body class="art-form-page">
 <header th:replace="~{site/fragments/navigation :: navigation}"></header>
 <main>
     <h1>New art</h1>
@@ -41,7 +41,8 @@
         </label>
         <label>Ordered date <input type="date" th:field="*{orderedDate}"></label>
         <label>Paid date <input type="date" th:field="*{payedDate}"></label>
-        <div class="form-field">File name *
+        <div class="form-field">
+            <label for="fileName">File name *</label>
             <span class="file-name-control">
                 <input id="fileName" th:field="*{fileName}" required>
                 <label for="artFile" class="file-upload-button" title="Choose art file" aria-label="Choose art file">📎</label>
@@ -65,9 +66,45 @@
         <button type="submit">Save art</button>
     </form>
 <script>
-    document.getElementById('artFile').addEventListener('change', function () {
+    const artFile = document.getElementById('artFile');
+    const fileName = document.getElementById('fileName');
+    const page = document.body;
+    let dragDepth = 0;
+
+    artFile.addEventListener('change', function () {
         if (this.files.length > 0) {
-            document.getElementById('fileName').value = this.files[0].name;
+            fileName.value = this.files[0].name;
+        }
+    });
+
+    page.addEventListener('dragenter', function (event) {
+        event.preventDefault();
+        dragDepth++;
+        page.classList.add('drag-over');
+    });
+
+    page.addEventListener('dragover', function (event) {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'copy';
+    });
+
+    page.addEventListener('dragleave', function (event) {
+        event.preventDefault();
+        dragDepth--;
+        if (dragDepth <= 0) {
+            dragDepth = 0;
+            page.classList.remove('drag-over');
+        }
+    });
+
+    page.addEventListener('drop', function (event) {
+        event.preventDefault();
+        dragDepth = 0;
+        page.classList.remove('drag-over');
+
+        if (event.dataTransfer.files.length > 0) {
+            artFile.files = event.dataTransfer.files;
+            artFile.dispatchEvent(new Event('change', { bubbles: true }));
         }
     });
 </script>

@@ -345,6 +345,22 @@ button {
     outline-offset: 2px;
 }
 
+.art-form-page.drag-over::after {
+    position: fixed;
+    z-index: 10;
+    inset: .75rem;
+    display: grid;
+    place-items: center;
+    border: 3px dashed #174a7c;
+    border-radius: .5rem;
+    background: rgb(232 238 245 / 85%);
+    color: #174a7c;
+    content: 'Drop file here';
+    font-size: 1.25rem;
+    font-weight: 600;
+    pointer-events: none;
+}
+
 .hidden {
     display: none;
 }
