@@ -1,8 +1,8 @@
 package dev.zooty.artcharts.controllers.site
 
 import dev.zooty.artcharts.exceptions.ResourceNotFoundException
-import dev.zooty.artcharts.services.site.MediaFile
-import dev.zooty.artcharts.services.site.MediaFileService
+import dev.zooty.artcharts.services.api.MediaFile
+import dev.zooty.artcharts.services.api.MediaFileService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.MediaType

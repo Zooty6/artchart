@@ -1,12 +1,16 @@
 name: Publish Docker image
 
 on:
+  push:
+    branches:
+      - master
   release:
     types: [published]
 
 jobs:
   push_to_registry:
     name: Push Docker image to Docker Hub
+    if: ${{ github.event_name == 'release' || !contains(github.event.head_commit.message, '[skip release]') }}
     env:
       REGISTRY: ghcr.io
       IMAGE_NAME: ${{ github.repository }}

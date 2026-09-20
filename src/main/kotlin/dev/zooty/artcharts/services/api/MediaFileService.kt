@@ -1,4 +1,4 @@
-package dev.zooty.artcharts.services.site
+package dev.zooty.artcharts.services.api
 
 import dev.zooty.artcharts.exceptions.ResourceNotFoundException
 import dev.zooty.artcharts.persistence.ArtRepository
@@ -8,6 +8,7 @@ import org.springframework.core.io.FileSystemResource
 import org.springframework.core.io.Resource
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
+import org.springframework.web.multipart.MultipartFile
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -32,6 +33,19 @@ class MediaFileService(
             FileSystemResource(safeCandidate),
             contentType(safeCandidate)
         )
+    }
+
+    fun saveFile(file: MultipartFile, fileName: String, date: String, isNsfw: Boolean) {
+        val visibilityDirectory = if (isNsfw) "NSFW" else "SFW"
+        val year = date.take(4)
+        val safeFileName = Paths.get(fileName).fileName?.toString()
+            ?.takeIf { it.isNotBlank() }
+            ?: throw IllegalArgumentException("File name must not be blank")
+        val pathToSave = root.resolve(visibilityDirectory).resolve(year).resolve(safeFileName).normalize()
+
+        require(pathToSave.startsWith(root)) { "File path must be inside the media root" }
+        Files.createDirectories(pathToSave.parent)
+        file.transferTo(pathToSave)
     }
 
     private fun placeholder() = MediaFile(

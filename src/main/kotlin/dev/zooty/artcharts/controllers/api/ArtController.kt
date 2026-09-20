@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import java.util.Optional
 
 @Slf4j
 @RestController
@@ -39,13 +40,14 @@ class ArtController(
 
     @PostMapping("/api/art", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun createArt(@Valid @RequestBody request: CreateArtRequest): ResponseEntity<Art> =
-        ResponseEntity.status(org.springframework.http.HttpStatus.CREATED).body(artCreationService.create(request))
+        ResponseEntity.status(org.springframework.http.HttpStatus.CREATED)
+            .body(artCreationService.create(request, Optional.empty()))
 
     @GetMapping("/api/art/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getArt(@PathVariable id: Long): Art = artRepository.getReferenceById(id)
 
     @GetMapping("/api/art/search", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getFilteredArts(@RequestParam searchParams: String): List<Art> = 
+    fun getFilteredArts(@RequestParam searchParams: String): List<Art> =
         artSearchService.searchArts(searchParams)
 
     @ApiResponses(
@@ -53,7 +55,10 @@ class ArtController(
         ApiResponse(responseCode = "404", description = "Art or tag not found")
     )
     @PostMapping("/api/art/{id}/tag", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun addTag(@PathVariable id: Long, @RequestBody tag: TagDto): ResponseEntity<Void> { // NOSONAR(kotlin:S6508) swagger needs Void to show no response
+    fun addTag(
+        @PathVariable id: Long,
+        @RequestBody tag: TagDto
+    ): ResponseEntity<Void> { // NOSONAR(kotlin:S6508) swagger needs Void to show no response
         artService.addTag(id, tag)
         return ResponseEntity.noContent().build()
     }

@@ -1,6 +1,6 @@
 package dev.zooty.artcharts.controllers.site
 
-import dev.zooty.artcharts.services.site.MediaFileService
+import dev.zooty.artcharts.services.api.MediaFileService
 import org.springframework.core.io.Resource
 import org.springframework.http.ContentDisposition
 import org.springframework.http.HttpHeaders

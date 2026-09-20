@@ -8,10 +8,12 @@ import dev.zooty.artcharts.persistence.entity.Currency
 import dev.zooty.artcharts.services.api.ArtCreationService
 import dev.zooty.artcharts.services.api.ArtService
 import dev.zooty.artcharts.services.site.SiteQueryService
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
-import org.springframework.data.domain.PageRequest
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
@@ -19,8 +21,8 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
+import org.springframework.web.multipart.MultipartFile
+import java.util.*
 
 @Controller
 @RequestMapping("/site/arts")
@@ -76,7 +78,7 @@ class SiteArtController(
         response: HttpServletResponse,
     ): String {
         try {
-           addSearchModelAttributes(year, searchMode, searchParams, hideNsfw, model) 
+            addSearchModelAttributes(year, searchMode, searchParams, hideNsfw, model)
         } catch (exception: IllegalArgumentException) {
             model.addAttribute("searchError", exception.message ?: "Invalid search filter")
             response.setHeader("HX-Retarget", "#search-error")
@@ -88,8 +90,14 @@ class SiteArtController(
         }
         return VIEW_ART_BROWSER
     }
-    
-    private fun addSearchModelAttributes(year: Int?, searchMode: SearchMode, searchParams: String?, hideNsfw: Boolean, model: Model) {
+
+    private fun addSearchModelAttributes(
+        year: Int?,
+        searchMode: SearchMode,
+        searchParams: String?,
+        hideNsfw: Boolean,
+        model: Model
+    ) {
         val years = if (searchMode == SearchMode.GENERAL) emptyList() else siteQueryService.years()
         val selectedYear = year ?: years.firstOrNull()
         model.addAttribute("years", years)
@@ -162,13 +170,14 @@ class SiteArtController(
         @Valid @ModelAttribute("art") art: CreateArtRequest,
         bindingResult: BindingResult,
         model: Model,
+        @RequestParam("file", required = false) file: MultipartFile?,
     ): String {
         if (bindingResult.hasErrors()) {
             model.addAttribute("currencies", Currency.entries)
             return VIEW_ART_FORM
         }
         return try {
-            REDIRECT_ART + artCreationService.create(art).id
+            REDIRECT_ART + artCreationService.create(art, Optional.ofNullable(file)).id
         } catch (_: ResourceNotFoundException) {
             bindingResult.rejectValue("artistName", "artist.notFound", "No artist with this name exists")
             model.addAttribute("currencies", Currency.entries)
