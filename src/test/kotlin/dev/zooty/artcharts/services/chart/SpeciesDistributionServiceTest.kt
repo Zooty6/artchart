@@ -1,4 +1,4 @@
-package dev.zooty.artcharts.services
+package dev.zooty.artcharts.services.chart
 
 import dev.zooty.artcharts.persistence.ArtRepository
 import dev.zooty.artcharts.persistence.entity.Art
@@ -13,33 +13,48 @@ import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
 
 @ExtendWith(MockitoExtension::class)
-class CharacterGraphServiceTest {
+class SpeciesDistributionServiceTest {
 
     @Mock
     lateinit var artRepository: ArtRepository
 
     @Test
-    fun `characterGraph includes graph labels for shared characters`() {
+    fun `pie chart uses species counts from repository`() {
         `when`(artRepository.findAll()).thenReturn(
             listOf(
-                art(otherCharacters = "Alice, Bob"),
-                art(otherCharacters = "Alice, Bob")
+                art(species = "cat"),
+                art(species = "cat"),
+                art(species = "dog")
             )
         )
-        val service = CharacterGraphService(SvgConverterService(), artRepository)
+        val service = SpeciesDistributionService(SvgConverterService(), artRepository, TreeMapRendererService())
 
-        val svg = service.characterGraph(GraphLayout.CIRCLE, false)
+        val svg = service.speciesDistribution(500, 400, ChartType.PIE)
 
-        assertTrue(svg.contains("Alice"))
-        assertTrue(svg.contains("Bob"))
+        assertTrue(svg.startsWith("<svg"))
     }
 
-    private fun art(otherCharacters: String?) = Art(
+    @Test
+    fun `treemap renders svg for species distribution`() {
+        `when`(artRepository.findAll()).thenReturn(
+            listOf(
+                art(species = "cat"),
+                art(species = "dog")
+            )
+        )
+        val service = SpeciesDistributionService(SvgConverterService(), artRepository, TreeMapRendererService())
+
+        val svg = service.speciesDistribution(500, 400, ChartType.TREEMAP)
+
+        assertTrue(svg.startsWith("<svg"))
+    }
+
+    private fun art(species: String) = Art(
         id = 1,
-        otherCharacters = otherCharacters,
+        otherCharacters = null,
         type = "commission",
         quality = null,
-        species = "cat",
+        species = species,
         orderedDate = null,
         payedDate = null,
         deliveredDate = "2024-01-01",

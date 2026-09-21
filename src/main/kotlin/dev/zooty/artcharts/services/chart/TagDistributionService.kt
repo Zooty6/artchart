@@ -1,6 +1,7 @@
-package dev.zooty.artcharts.services
+package dev.zooty.artcharts.services.chart
 
 import dev.zooty.artcharts.persistence.ArtRepository
+import dev.zooty.artcharts.services.chart.TreeMapRendererService
 import jakarta.transaction.Transactional
 import org.jfree.chart.ChartFactory
 import org.jfree.data.general.DefaultPieDataset

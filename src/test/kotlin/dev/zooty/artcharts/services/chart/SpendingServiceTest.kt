@@ -1,4 +1,4 @@
-package dev.zooty.artcharts.services
+package dev.zooty.artcharts.services.chart
 
 import dev.zooty.artcharts.clients.CurrencyApiClient
 import dev.zooty.artcharts.persistence.ArtRepository
@@ -6,6 +6,7 @@ import dev.zooty.artcharts.persistence.entity.Art
 import dev.zooty.artcharts.persistence.entity.Artist
 import dev.zooty.artcharts.persistence.entity.Currency
 import dev.zooty.artcharts.persistence.entity.Price
+import dev.zooty.artcharts.services.CurrencyService
 import org.jfree.data.category.CategoryDataset
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

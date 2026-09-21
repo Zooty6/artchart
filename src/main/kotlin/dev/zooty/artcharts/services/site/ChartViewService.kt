@@ -2,8 +2,8 @@ package dev.zooty.artcharts.services.site
 
 import dev.zooty.artcharts.dto.ChartViewModel
 import dev.zooty.artcharts.persistence.entity.Currency
-import dev.zooty.artcharts.services.ChartType
-import dev.zooty.artcharts.services.GraphLayout
+import dev.zooty.artcharts.services.chart.ChartType
+import dev.zooty.artcharts.services.chart.GraphLayout
 import org.springframework.stereotype.Service
 import org.springframework.web.util.UriComponentsBuilder
 

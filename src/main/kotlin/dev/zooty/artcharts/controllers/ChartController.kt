@@ -1,13 +1,13 @@
 package dev.zooty.artcharts.controllers
 
-import dev.zooty.artcharts.services.ArtistDistributionService
-import dev.zooty.artcharts.services.CharacterGraphService
-import dev.zooty.artcharts.services.ChartType
-import dev.zooty.artcharts.services.GraphLayout
-import dev.zooty.artcharts.services.NsfwService
-import dev.zooty.artcharts.services.SpeciesDistributionService
-import dev.zooty.artcharts.services.SpendingService
-import dev.zooty.artcharts.services.TagDistributionService
+import dev.zooty.artcharts.services.chart.ArtistDistributionService
+import dev.zooty.artcharts.services.chart.CharacterGraphService
+import dev.zooty.artcharts.services.chart.ChartType
+import dev.zooty.artcharts.services.chart.GraphLayout
+import dev.zooty.artcharts.services.chart.NsfwService
+import dev.zooty.artcharts.services.chart.SpeciesDistributionService
+import dev.zooty.artcharts.services.chart.SpendingService
+import dev.zooty.artcharts.services.chart.TagDistributionService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController

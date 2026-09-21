@@ -1,4 +1,4 @@
-package dev.zooty.artcharts.services
+package dev.zooty.artcharts.services.chart
 
 import org.jfree.data.general.PieDataset
 import org.jfree.graphics2d.svg.SVGGraphics2D

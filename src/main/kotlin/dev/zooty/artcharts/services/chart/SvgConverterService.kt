@@ -1,4 +1,4 @@
-package dev.zooty.artcharts.services
+package dev.zooty.artcharts.services.chart
 
 import com.mxgraph.layout.mxGraphLayout
 import com.mxgraph.util.mxCellRenderer

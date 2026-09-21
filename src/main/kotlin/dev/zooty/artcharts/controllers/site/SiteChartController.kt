@@ -1,7 +1,7 @@
 package dev.zooty.artcharts.controllers.site
 
-import dev.zooty.artcharts.services.ChartType
-import dev.zooty.artcharts.services.GraphLayout
+import dev.zooty.artcharts.services.chart.ChartType
+import dev.zooty.artcharts.services.chart.GraphLayout
 import dev.zooty.artcharts.services.site.ChartViewService
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model

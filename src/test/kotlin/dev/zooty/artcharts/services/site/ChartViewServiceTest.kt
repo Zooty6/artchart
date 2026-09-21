@@ -1,7 +1,7 @@
 package dev.zooty.artcharts.services.site
 
-import dev.zooty.artcharts.services.ChartType
-import dev.zooty.artcharts.services.GraphLayout
+import dev.zooty.artcharts.services.chart.ChartType
+import dev.zooty.artcharts.services.chart.GraphLayout
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

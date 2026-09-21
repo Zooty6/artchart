@@ -1,5 +1,6 @@
-package dev.zooty.artcharts.services
+package dev.zooty.artcharts.services.chart
 
+import dev.zooty.artcharts.services.chart.SvgConverterService
 import org.jfree.chart.ChartFactory
 import org.jfree.chart.plot.PlotOrientation
 import org.jfree.data.category.DefaultCategoryDataset

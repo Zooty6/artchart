@@ -1,4 +1,4 @@
-package dev.zooty.artcharts.services
+package dev.zooty.artcharts.services.chart
 
 enum class GraphLayout {
     CIRCLE,
