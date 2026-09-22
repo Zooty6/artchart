@@ -25,13 +25,14 @@ class SiteChartController(private val chartViewService: ChartViewService) {
         @RequestParam(required = false) height: Int?,
         @RequestParam("filterList", required = false) filterList: List<String>?,
         @RequestParam(required = false) type: ChartType?,
+        @RequestParam(required = false) category: String?,
         @RequestParam(required = false) layout: GraphLayout?,
         @RequestParam(required = false) selfIncluded: Boolean?,
         model: Model,
     ): String {
         model.addAttribute(
             "chartModel",
-            chartViewService.createModel(chart, width, height, filterList, type, layout, selfIncluded)
+            chartViewService.createModel(chart, width, height, filterList, type, category, layout, selfIncluded)
         )
         return VIEW_CHART_INDEX
     }
@@ -43,13 +44,14 @@ class SiteChartController(private val chartViewService: ChartViewService) {
         @RequestParam(required = false) height: Int?,
         @RequestParam("filterList", required = false) filterList: List<String>?,
         @RequestParam(required = false) type: ChartType?,
+        @RequestParam(required = false) category: String?,
         @RequestParam(required = false) layout: GraphLayout?,
         @RequestParam(required = false) selfIncluded: Boolean?,
         model: Model,
     ): String {
         model.addAttribute(
             "chartModel",
-            chartViewService.createModel(chart, width, height, filterList, type, layout, selfIncluded)
+            chartViewService.createModel(chart, width, height, filterList, type, category, layout, selfIncluded)
         )
         return VIEW_CHART_BROWSER
     }

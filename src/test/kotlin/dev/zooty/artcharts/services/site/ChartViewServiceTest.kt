@@ -11,7 +11,7 @@ class ChartViewServiceTest {
 
     @Test
     fun `uses defaults for missing values`() {
-        val model = service.createModel("artistDistribution", null, null, null, null, null, null)
+        val model = service.createModel("artistDistribution", null, null, null, null, null, null, null)
 
         assertEquals(1800, model.width)
         assertEquals(900, model.height)
@@ -20,7 +20,7 @@ class ChartViewServiceTest {
 
     @Test
     fun `normalizes invalid dimensions`() {
-        val model = service.createModel("artistDistribution", 0, 5001, null, null, null, null)
+        val model = service.createModel("artistDistribution", 0, 5001, null, null, null, null, null)
 
         assertEquals(1800, model.width)
         assertEquals(900, model.height)
@@ -28,7 +28,7 @@ class ChartViewServiceTest {
 
     @Test
     fun `builds species chart URL with type`() {
-        val model = service.createModel("speciesDistribution", 800, 600, null, ChartType.TREEMAP, null, null)
+        val model = service.createModel("speciesDistribution", 800, 600, null, ChartType.TREEMAP, null, null, null)
 
         assertEquals("/chart/speciesDistribution?width=800&height=600&type=TREEMAP", model.chartUrl)
         assertEquals(ChartType.TREEMAP, model.selectedType)
@@ -37,7 +37,7 @@ class ChartViewServiceTest {
     @Test
     fun `builds currency chart URL with repeated filters and ignores unknown values`() {
         val model = service.createModel(
-            "currencyDistribution", 800, 600, listOf("USD", "EUR", "UNKNOWN"), null, null, null
+            "currencyDistribution", 800, 600, listOf("USD", "EUR", "UNKNOWN"), null, null, null, null
         )
 
         assertTrue(model.chartUrl.contains("filterList=USD"))
@@ -49,12 +49,23 @@ class ChartViewServiceTest {
     @Test
     fun `builds character graph URL with layout and self flag`() {
         val model = service.createModel(
-            "characterGraph", 700, 500, null, null, GraphLayout.CIRCLE, true
+            "characterGraph", 700, 500, null, null, null, GraphLayout.CIRCLE, true
         )
 
         assertEquals(
             "/chart/characterGraph?width=700&height=500&layout=CIRCLE&selfIncluded=true",
             model.chartUrl,
         )
+    }
+
+    @Test
+    fun `builds tag chart URL with type and category`() {
+        val model = service.createModel("tagDistribution", 800, 600, null, ChartType.TREEMAP, "style", null, null)
+
+        assertEquals(
+            "/chart/tagDistribution?width=800&height=600&type=TREEMAP&category=style",
+            model.chartUrl,
+        )
+        assertEquals("style", model.categoryFilter)
     }
 }

@@ -19,6 +19,7 @@ class ChartViewService {
         private const val CHART_SPEND_OVER_TIME = "spendOverTime"
         private const val CHART_NSFW_RATIO = "nsfwRatio"
         private const val CHART_SPECIES_DISTRIBUTION = "speciesDistribution"
+        private const val CHART_TAG_DISTRIBUTION = "tagDistribution"
         private const val CHART_CHARACTER_GRAPH = "characterGraph"
     }
 
@@ -28,6 +29,7 @@ class ChartViewService {
         CHART_SPEND_OVER_TIME,
         CHART_NSFW_RATIO,
         CHART_SPECIES_DISTRIBUTION,
+        CHART_TAG_DISTRIBUTION,
         CHART_CHARACTER_GRAPH,
     )
 
@@ -37,6 +39,7 @@ class ChartViewService {
         height: Int?,
         filterList: List<String>?,
         type: ChartType?,
+        categoryFilter: String?,
         layout: GraphLayout?,
         selfIncluded: Boolean?,
     ): ChartViewModel {
@@ -46,6 +49,7 @@ class ChartViewService {
         val currencyOptions = Currency.entries.filter { it != Currency.Gift && it != Currency.UNKNOWN }
         val selectedFilters = filterList.orEmpty().filter { value -> currencyOptions.any { it.name == value } }
         val selectedType = type ?: ChartType.PIE
+        val selectedCategoryFilter = categoryFilter?.takeIf { it.isNotBlank() }?.trim()
         val selectedLayout = layout ?: GraphLayout.ORGANIC
         val selectedSelfIncluded = selfIncluded ?: false
 
@@ -57,6 +61,7 @@ class ChartViewService {
             filterList = selectedFilters,
             chartTypes = ChartType.entries,
             selectedType = selectedType,
+            categoryFilter = selectedCategoryFilter,
             graphLayouts = GraphLayout.entries,
             selectedLayout = selectedLayout,
             selfIncluded = selectedSelfIncluded,
@@ -67,6 +72,7 @@ class ChartViewService {
                 selectedHeight,
                 selectedFilters,
                 selectedType,
+                selectedCategoryFilter,
                 selectedLayout,
                 selectedSelfIncluded,
             ),
@@ -82,6 +88,7 @@ class ChartViewService {
         height: Int,
         filterList: List<String>,
         type: ChartType,
+        categoryFilter: String?,
         layout: GraphLayout,
         selfIncluded: Boolean,
     ): String {
@@ -90,6 +97,7 @@ class ChartViewService {
             CHART_SPEND_OVER_TIME -> "/chart/$CHART_SPEND_OVER_TIME"
             CHART_NSFW_RATIO -> "/chart/$CHART_NSFW_RATIO"
             CHART_SPECIES_DISTRIBUTION -> "/chart/$CHART_SPECIES_DISTRIBUTION"
+            CHART_TAG_DISTRIBUTION -> "/chart/$CHART_TAG_DISTRIBUTION"
             CHART_CHARACTER_GRAPH -> "/chart/$CHART_CHARACTER_GRAPH"
             else -> "/chart/$CHART_ARTIST_DISTRIBUTION"
         }
@@ -100,6 +108,9 @@ class ChartViewService {
         when (chart) {
             CHART_CURRENCY_DISTRIBUTION -> filterList.forEach { builder.queryParam("filterList", it) }
             CHART_SPECIES_DISTRIBUTION -> builder.queryParam("type", type.name)
+            CHART_TAG_DISTRIBUTION -> builder
+                .queryParam("type", type.name)
+                .apply { categoryFilter?.let { queryParam("category", it) } }
             CHART_CHARACTER_GRAPH -> builder
                 .queryParam("layout", layout.name)
                 .queryParam("selfIncluded", selfIncluded)
