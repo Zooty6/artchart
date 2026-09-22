@@ -1,8 +1,5 @@
-package dev.zooty.artcharts.services
+package dev.zooty.artcharts.services.chart
 
-import dev.zooty.artcharts.persistence.ArtRepository
-import org.jfree.chart.ChartFactory
-import org.jfree.data.general.DefaultPieDataset
 import org.jfree.data.general.PieDataset
 import org.jfree.graphics2d.svg.SVGGraphics2D
 import org.springframework.stereotype.Service
@@ -15,40 +12,9 @@ import kotlin.math.max
 import kotlin.math.min
 
 @Service
-class SpeciesDistributionService(
-    private val svgService: SvgConverterService,
-    private val artRepository: ArtRepository,
-) {
-
-    fun speciesDistribution(width: Int, height: Int, type: ChartType): String {
-        val dataset = createSpeciesDistributionDataset()
-
-        return when (type) {
-            ChartType.TREEMAP -> renderTreemapSvg(width, height, dataset)
-            ChartType.PIE -> svgService.exportToSvg(
-                width,
-                height,
-                ChartFactory.createPieChart(
-                    "Distribution of Species",
-                    dataset,
-                    true,
-                    true,
-                    false
-                )
-            )
-        }
-    }
-
-    private fun createSpeciesDistributionDataset(): PieDataset {
-        val dataset = DefaultPieDataset()
-        artRepository.findAll()
-            .groupingBy { it.species }
-            .eachCount()
-            .forEach { (species, count) -> dataset.setValue("$species($count)", count) }
-        return dataset
-    }
-
-    private fun renderTreemapSvg(width: Int, height: Int, dataset: PieDataset): String {
+class TreeMapRendererService {
+    
+    fun renderTreemapSvg(width: Int, height: Int, dataset: PieDataset): String {
         val svgGraphics2D = SVGGraphics2D(width, height)
         svgGraphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
         svgGraphics2D.color = Color.WHITE
@@ -83,7 +49,7 @@ class SpeciesDistributionService(
             }
         }
 
-        return svgGraphics2D.svgElement
+        return svgGraphics2D.svgElement 
     }
 
     private fun addMetricLabel(svgGraphics2D: SVGGraphics2D, rect: TreemapRect) {

@@ -1,6 +1,7 @@
-package dev.zooty.artcharts.services
+package dev.zooty.artcharts.services.chart
 
 import dev.zooty.artcharts.persistence.ArtRepository
+import dev.zooty.artcharts.services.chart.SvgConverterService
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

@@ -2,14 +2,14 @@ package dev.zooty.artcharts.controllers.site
 
 import dev.zooty.artcharts.dto.ChartViewModel
 import dev.zooty.artcharts.persistence.entity.Currency
-import dev.zooty.artcharts.services.ChartType
-import dev.zooty.artcharts.services.GraphLayout
+import dev.zooty.artcharts.services.chart.ChartType
+import dev.zooty.artcharts.services.chart.GraphLayout
 import dev.zooty.artcharts.services.site.ChartViewService
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
@@ -26,7 +26,7 @@ class SiteChartControllerTest {
 
     @Test
     fun `charts page renders chart view`() {
-        `when`(chartViewService.createModel("artistDistribution", null, null, null, null, null, null))
+        `when`(chartViewService.createModel("artistDistribution", null, null, null, null, null, null, null))
             .thenReturn(chartModel())
 
         mockMvc.perform(get("/site/charts"))
@@ -38,7 +38,7 @@ class SiteChartControllerTest {
 
     @Test
     fun `chart fragment forwards parameters and renders fragment view`() {
-        `when`(chartViewService.createModel("speciesDistribution", 800, 600, null, ChartType.TREEMAP, null, null))
+        `when`(chartViewService.createModel("speciesDistribution", 800, 600, null, ChartType.TREEMAP, null, null, null))
             .thenReturn(chartModel(chart = "speciesDistribution", chartUrl = "/chart/speciesDistribution?type=TREEMAP"))
 
         mockMvc.perform(
@@ -58,12 +58,13 @@ class SiteChartControllerTest {
         chartUrl: String = "/chart/artistDistribution?width=1800&height=900",
     ) = ChartViewModel(
         chart = chart,
-        chartOptions = listOf("artistDistribution", "speciesDistribution"),
+        chartOptions = listOf("artistDistribution", "speciesDistribution", "tagDistribution"),
         width = 1800,
         height = 900,
         filterList = emptyList(),
         chartTypes = ChartType.entries,
         selectedType = ChartType.PIE,
+        categoryFilter = null,
         graphLayouts = GraphLayout.entries,
         selectedLayout = GraphLayout.ORGANIC,
         selfIncluded = false,

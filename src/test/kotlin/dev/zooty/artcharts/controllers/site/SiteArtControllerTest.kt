@@ -164,9 +164,8 @@ class SiteArtControllerTest {
     }
 
     @Test
-    fun `mode toggle response replaces navigation content and updates the list out of band`() {
+    fun `mode toggle response replaces navigation without loading the art list`() {
         `when`(siteQueryService.years()).thenReturn(listOf(2024))
-        `when`(siteQueryService.artsForSearch("", true)).thenReturn(emptyList())
 
         mockMvc.perform(
             get("/site/arts/list")
@@ -178,7 +177,10 @@ class SiteArtControllerTest {
             .andExpect(content().string(org.hamcrest.Matchers.containsString("id=\"year-navigation-content\"")))
             .andExpect(content().string(org.hamcrest.Matchers.containsString("id=\"search-mode-toggle\"")))
             .andExpect(content().string(org.hamcrest.Matchers.containsString("hx-swap-oob=\"outerHTML\"")))
+            .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("id=\"art-list\""))))
             .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Year view"))))
+
+        verifyNoInteractions(siteQueryService)
     }
 
     @Test

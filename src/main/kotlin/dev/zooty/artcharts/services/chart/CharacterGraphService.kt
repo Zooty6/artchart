@@ -1,4 +1,4 @@
-package dev.zooty.artcharts.services
+package dev.zooty.artcharts.services.chart
 
 import com.mxgraph.layout.mxCircleLayout
 import com.mxgraph.layout.mxFastOrganicLayout

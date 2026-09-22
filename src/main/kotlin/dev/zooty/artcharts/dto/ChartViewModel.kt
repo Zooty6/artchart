@@ -1,8 +1,8 @@
 package dev.zooty.artcharts.dto
 
 import dev.zooty.artcharts.persistence.entity.Currency
-import dev.zooty.artcharts.services.ChartType
-import dev.zooty.artcharts.services.GraphLayout
+import dev.zooty.artcharts.services.chart.ChartType
+import dev.zooty.artcharts.services.chart.GraphLayout
 
 data class ChartViewModel(
     val chart: String,
@@ -12,6 +12,7 @@ data class ChartViewModel(
     val filterList: List<String>,
     val chartTypes: List<ChartType>,
     val selectedType: ChartType,
+    val categoryFilter: String?,
     val graphLayouts: List<GraphLayout>,
     val selectedLayout: GraphLayout,
     val selfIncluded: Boolean,

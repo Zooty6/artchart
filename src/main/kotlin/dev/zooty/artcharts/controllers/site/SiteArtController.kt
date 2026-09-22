@@ -77,6 +77,11 @@ class SiteArtController(
         request: HttpServletRequest,
         response: HttpServletResponse,
     ): String {
+        if (request.getHeader("HX-Target") == "year-navigation-content") {
+            addNavigationModelAttributes(year, searchMode, searchParams, hideNsfw, model)
+            return VIEW_ART_MODE_UPDATE
+        }
+
         try {
             addSearchModelAttributes(year, searchMode, searchParams, hideNsfw, model)
         } catch (exception: IllegalArgumentException) {
@@ -84,9 +89,6 @@ class SiteArtController(
             response.setHeader("HX-Retarget", "#search-error")
             response.setHeader("HX-Reswap", "outerHTML")
             return VIEW_SEARCH_ERROR
-        }
-        if (request.getHeader("HX-Target") == "year-navigation-content") {
-            return VIEW_ART_MODE_UPDATE
         }
         return VIEW_ART_BROWSER
     }
@@ -98,6 +100,21 @@ class SiteArtController(
         hideNsfw: Boolean,
         model: Model
     ) {
+        val selectedYear = addNavigationModelAttributes(year, searchMode, searchParams, hideNsfw, model)
+        model.addAttribute(
+            "arts",
+            if (searchMode == SearchMode.GENERAL) siteQueryService.artsForSearch(searchParams.orEmpty(), hideNsfw)
+            else siteQueryService.artsForYear(selectedYear, hideNsfw),
+        )
+    }
+
+    private fun addNavigationModelAttributes(
+        year: Int?,
+        searchMode: SearchMode,
+        searchParams: String?,
+        hideNsfw: Boolean,
+        model: Model
+    ): Int? {
         val years = if (searchMode == SearchMode.GENERAL) emptyList() else siteQueryService.years()
         val selectedYear = year ?: years.firstOrNull()
         model.addAttribute("years", years)
@@ -107,11 +124,7 @@ class SiteArtController(
         model.addAttribute("generalSearch", searchMode == SearchMode.GENERAL)
         model.addAttribute("otherSearchMode", searchMode.toggled())
         model.addAttribute("searchParams", searchParams.orEmpty())
-        model.addAttribute(
-            "arts",
-            if (searchMode == SearchMode.GENERAL) siteQueryService.artsForSearch(searchParams.orEmpty(), hideNsfw)
-            else siteQueryService.artsForYear(selectedYear, hideNsfw),
-        )
+        return selectedYear
     }
 
     @GetMapping("/suggestions/{field}")

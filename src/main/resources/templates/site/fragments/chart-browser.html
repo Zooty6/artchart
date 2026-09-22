@@ -42,6 +42,22 @@
             </select>
         </label>
 
+        <div class="chart-parameter-row" th:if="${chartModel.chart == 'tagDistribution'}">
+            <label>Type
+                <select name="type">
+                    <option th:each="type : ${chartModel.chartTypes}"
+                            th:value="${type.name()}"
+                            th:text="${type.name()}"
+                            th:selected="${type == chartModel.selectedType}">PIE
+                    </option>
+                </select>
+            </label>
+            <label>Category
+                <input type="text" name="category" th:value="${chartModel.categoryFilter}"
+                       placeholder="All categories">
+            </label>
+        </div>
+
         <label th:if="${chartModel.chart == 'characterGraph'}">Layout
             <select name="layout">
                 <option th:each="layout : ${chartModel.graphLayouts}"

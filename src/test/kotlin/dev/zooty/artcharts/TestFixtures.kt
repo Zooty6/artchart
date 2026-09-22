@@ -4,6 +4,7 @@ import dev.zooty.artcharts.persistence.entity.Art
 import dev.zooty.artcharts.persistence.entity.Artist
 import dev.zooty.artcharts.persistence.entity.Currency
 import dev.zooty.artcharts.persistence.entity.Price
+import dev.zooty.artcharts.persistence.entity.Tag
 
 object TestFixtures {
     fun artist(name: String = "Artist") = Artist(
@@ -16,6 +17,7 @@ object TestFixtures {
         isNsfw: Boolean = false,
         fileName: String = "art.png",
         artist: Artist = artist(),
+        tags: MutableSet<Tag> = mutableSetOf(),
     ) = Art(
         id = id,
         otherCharacters = null,
@@ -31,5 +33,6 @@ object TestFixtures {
         artist = artist,
         isNsfw = isNsfw,
         link = "https://example.com",
+        tags = tags,
     )
 }

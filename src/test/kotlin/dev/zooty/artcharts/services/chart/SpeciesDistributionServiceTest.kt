@@ -1,4 +1,4 @@
-package dev.zooty.artcharts.services
+package dev.zooty.artcharts.services.chart
 
 import dev.zooty.artcharts.persistence.ArtRepository
 import dev.zooty.artcharts.persistence.entity.Art
@@ -27,7 +27,7 @@ class SpeciesDistributionServiceTest {
                 art(species = "dog")
             )
         )
-        val service = SpeciesDistributionService(SvgConverterService(), artRepository)
+        val service = SpeciesDistributionService(SvgConverterService(), artRepository, TreeMapRendererService())
 
         val svg = service.speciesDistribution(500, 400, ChartType.PIE)
 
@@ -42,7 +42,7 @@ class SpeciesDistributionServiceTest {
                 art(species = "dog")
             )
         )
-        val service = SpeciesDistributionService(SvgConverterService(), artRepository)
+        val service = SpeciesDistributionService(SvgConverterService(), artRepository, TreeMapRendererService())
 
         val svg = service.speciesDistribution(500, 400, ChartType.TREEMAP)
 
