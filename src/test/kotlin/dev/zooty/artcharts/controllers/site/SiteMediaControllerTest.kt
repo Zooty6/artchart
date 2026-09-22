@@ -3,17 +3,17 @@ package dev.zooty.artcharts.controllers.site
 import dev.zooty.artcharts.exceptions.ResourceNotFoundException
 import dev.zooty.artcharts.services.api.MediaFile
 import dev.zooty.artcharts.services.api.MediaFileService
+import org.junit.jupiter.api.Test
+import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.MediaType
 import org.springframework.test.context.bean.override.mockito.MockitoBean
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.junit.jupiter.api.Test
-import org.mockito.Mockito.`when`
 
 @WebMvcTest(SiteMediaController::class)
 class SiteMediaControllerTest {
@@ -33,6 +33,7 @@ class SiteMediaControllerTest {
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "image/png"))
             .andExpect(header().string("Content-Disposition", "inline"))
+            .andExpect(header().string("Cache-Control", "public, max-age=31536000, immutable"))
     }
 
     @Test

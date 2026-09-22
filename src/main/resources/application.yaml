@@ -28,5 +28,6 @@ artcharts:
     apiKey: ${ARTCHART_CURRENCYAPI_APIKEY}
     cache-ttl: PT3H
   media-root: ${ARTCHART_MEDIA_ROOT:.}
+  media-cache-max-age-seconds: ${ARTCHART_MEDIA_CACHE_MAX_AGE_SECONDS:31536000}
   self:
     name: ${ARTCHART_SELF_NAME:Zooty}
