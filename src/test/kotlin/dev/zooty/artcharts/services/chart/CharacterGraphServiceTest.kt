@@ -11,6 +11,8 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 
 @ExtendWith(MockitoExtension::class)
 class CharacterGraphServiceTest {
@@ -18,8 +20,9 @@ class CharacterGraphServiceTest {
     @Mock
     lateinit var artRepository: ArtRepository
 
-    @Test
-    fun `characterGraph includes graph labels for shared characters`() {
+    @ParameterizedTest
+    @EnumSource(GraphLayout::class)
+    fun `characterGraph renders every graph layout`(graphLayout: GraphLayout) {
         `when`(artRepository.findAll()).thenReturn(
             listOf(
                 art(otherCharacters = "Alice, Bob"),
@@ -28,10 +31,25 @@ class CharacterGraphServiceTest {
         )
         val service = CharacterGraphService(SvgConverterService(), artRepository)
 
-        val svg = service.characterGraph(GraphLayout.CIRCLE, false)
+        val svg = service.characterGraph(800, 400, graphLayout, false)
 
+        assertTrue(svg.contains("<svg"))
         assertTrue(svg.contains("Alice"))
         assertTrue(svg.contains("Bob"))
+    }
+
+    @Test
+    fun `LIST layout renders weighted connections with aligned columns`() {
+        `when`(artRepository.findAll()).thenReturn(
+            List(10) { art(otherCharacters = "Al, Bob") } +
+                List(2) { art(otherCharacters = "LongName, C") }
+        )
+        val service = CharacterGraphService(SvgConverterService(), artRepository)
+
+        val svg = service.characterGraph(800, 400, GraphLayout.LIST, false)
+
+        assertTrue(svg.contains("Al---10---Bob"))
+        assertTrue(svg.contains("C----2----LongName"))
     }
 
     private fun art(otherCharacters: String?) = Art(

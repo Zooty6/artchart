@@ -4,11 +4,15 @@ import com.mxgraph.layout.mxCircleLayout
 import com.mxgraph.layout.mxFastOrganicLayout
 import com.mxgraph.layout.mxOrganicLayout
 import dev.zooty.artcharts.persistence.ArtRepository
+import org.jfree.graphics2d.svg.SVGGraphics2D
 import org.jgrapht.Graph
 import org.jgrapht.ext.JGraphXAdapter
 import org.jgrapht.graph.SimpleWeightedGraph
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import java.awt.Color
+import java.awt.Font
+import java.awt.RenderingHints
 
 @Service
 class CharacterGraphService(
@@ -56,8 +60,58 @@ class CharacterGraphService(
     }
 
     private fun renderGraphAsListSvg(graph: Graph<String, VisibleWeightedEdge>, width: Int, height: Int): String {
-        TODO("Not yet implemented")
+        val svgGraphics2D = SVGGraphics2D(width, height)
+        svgGraphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+        svgGraphics2D.color = Color.WHITE
+        svgGraphics2D.fillRect(0, 0, width, height)
+
+        val connections = graphConnections(graph)
+        if (connections.isEmpty()) return svgGraphics2D.svgElement
+
+        val padding = 10
+        val lineHeight = ((height - 2 * padding).toDouble() / connections.size)
+            .coerceAtMost(24.0)
+            .coerceAtLeast(1.0)
+        val fontSize = (lineHeight * 0.7).toInt().coerceAtLeast(1)
+        svgGraphics2D.color = Color.BLACK
+        svgGraphics2D.font = Font("Monospaced", Font.PLAIN, fontSize)
+
+        formatConnections(connections).forEachIndexed { index, label ->
+            val baseline = padding + (index + 1) * lineHeight
+            svgGraphics2D.drawString(label, padding, baseline.toInt())
+        }
+
+        return svgGraphics2D.svgElement
     }
+
+    private fun graphConnections(graph: Graph<String, VisibleWeightedEdge>): List<GraphConnection> =
+        graph.edgeSet()
+            .map { edge ->
+                GraphConnection(
+                    source = graph.getEdgeSource(edge),
+                    target = graph.getEdgeTarget(edge),
+                    weight = edge.toString(),
+                )
+            }
+            .sortedWith(compareBy({ it.source }, { it.target }))
+
+    private fun formatConnections(connections: List<GraphConnection>): List<String> {
+        val sourceColumnWidth = connections.maxOf { it.source.length } + MIN_DASHES
+        val weightColumnWidth = connections.maxOf { it.weight.length }
+        val rightCharacterColumn = sourceColumnWidth + weightColumnWidth + MIN_DASHES
+
+        return connections.map { connection ->
+            val dashesBeforeWeight = "-".repeat(sourceColumnWidth - connection.source.length)
+            val dashesAfterWeight = "-".repeat(rightCharacterColumn - sourceColumnWidth - connection.weight.length)
+            connection.source + dashesBeforeWeight + connection.weight + dashesAfterWeight + connection.target
+        }
+    }
+
+    private data class GraphConnection(
+        val source: String,
+        val target: String,
+        val weight: String,
+    )
 
     private fun exportGraphToSvg(
         graph: Graph<String, VisibleWeightedEdge>,
@@ -76,5 +130,6 @@ class CharacterGraphService(
     companion object {
         private const val DEFAULT_WIDTH = 1800
         private const val DEFAULT_HEIGHT = 900
+        private const val MIN_DASHES = 3
     }
 }
