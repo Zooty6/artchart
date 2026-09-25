@@ -1,6 +1,7 @@
 package dev.zooty.artcharts.services.api
 
 import dev.zooty.artcharts.dto.TagDto
+import dev.zooty.artcharts.dto.UpdateArtRequest
 import dev.zooty.artcharts.exceptions.ResourceNotFoundException
 import dev.zooty.artcharts.persistence.ArtRepository
 import dev.zooty.artcharts.persistence.TagRepository
@@ -10,6 +11,7 @@ import dev.zooty.artcharts.persistence.entity.Currency
 import dev.zooty.artcharts.persistence.entity.Price
 import dev.zooty.artcharts.persistence.entity.Tag
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -64,6 +66,40 @@ class ArtServiceTest {
         assertThrows(ResourceNotFoundException::class.java) {
             service.addTag(99L, TagDto("tag", "cat"))
         }
+    }
+
+    @Test
+    fun `update changes editable art fields and preserves artist`() {
+        val art = art()
+        val originalArtist = art.artist
+        val request = UpdateArtRequest(
+            type = "  illustration ",
+            otherCharacters = "  ",
+            quality = " high ",
+            species = " fox ",
+            orderedDate = "2025-02-01",
+            payedDate = "2025-02-02",
+            deliveredDate = " 2025-02-03 ",
+            currency = Currency.EUR,
+            amount = 25.5,
+            link = "  https://updated.example ",
+        )
+        `when`(artRepository.findById(1L)).thenReturn(Optional.of(art))
+        val service = ArtService(artRepository, tagRepository)
+
+        service.update(1L, request)
+
+        assertEquals("illustration", art.type)
+        assertEquals(null, art.otherCharacters)
+        assertEquals("high", art.quality)
+        assertEquals("fox", art.species)
+        assertEquals("2025-02-01", art.orderedDate)
+        assertEquals("2025-02-02", art.payedDate)
+        assertEquals("2025-02-03", art.deliveredDate)
+        assertEquals(Currency.EUR, art.price.currency)
+        assertEquals(25.5, art.price.amount)
+        assertEquals("https://updated.example", art.link)
+        assertSame(originalArtist, art.artist)
     }
 
     private fun art() = Art(
