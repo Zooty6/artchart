@@ -40,7 +40,7 @@ class SiteArtController(
         private const val VIEW_SEARCH_ERROR = "site/fragments/search-error"
         private const val VIEW_ART_DETAIL = "site/arts/detail"
         private const val VIEW_TAG_LIST = "site/fragments/tag-list"
-        private const val VIEW_ART_FORM = "site/arts/form"
+        private const val VIEW_ART_FORM = "site/arts/new"
         private const val REDIRECT_ART = "redirect:/site/arts/"
     }
 
