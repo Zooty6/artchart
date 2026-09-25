@@ -24,6 +24,21 @@ class CreateRequestTest {
     }
 
     @Test
+    fun `artist update request applies trimmed values and nulls blanks`() {
+        val artist = TestFixtures.artist()
+
+        UpdateArtistRequest(
+            name = " Updated Artist ",
+            twitter = " ",
+            site = " artist.example ",
+        ).applyTo(artist)
+
+        assertEquals("Updated Artist", artist.name)
+        assertNull(artist.twitter)
+        assertEquals("artist.example", artist.site)
+    }
+
+    @Test
     fun `blank optional art fields are converted to null`() {
         val art = CreateArtRequest(
             type = "commission",

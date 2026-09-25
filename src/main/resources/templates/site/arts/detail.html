@@ -20,34 +20,52 @@
         </div>
         <section>
             <h1 th:text="${art.fileName}">Art</h1>
+            <form id="art-details-form" th:action="@{/site/arts/{id}(id=${art.id})}" th:object="${artUpdate}" method="post">
             <dl class="details">
                 <dt>Artist</dt>
                 <dd th:text="${art.artist.name}">Artist</dd>
-                <dt>Type</dt>
-                <dd th:text="${art.type}">Type</dd>
-                <dt>Quality</dt>
-                <dd th:text="${art.quality ?: '-'}">-</dd>
-                <dt>Species</dt>
-                <dd th:text="${art.species}">Species</dd>
-                <dt>Ordered</dt>
-                <dd th:text="${art.orderedDate ?: '-'}">-</dd>
-                <dt>Paid</dt>
-                <dd th:text="${art.payedDate ?: '-'}">-</dd>
-                <dt>Delivered</dt>
-                <dd th:text="${art.deliveredDate}">-</dd>
+                <dt><label for="art-type">Type</label></dt>
+                <dd><span class="detail-value" th:text="${art.type}">Type</span><input id="art-type" class="detail-edit" th:field="*{type}" disabled required></dd>
+                <dt><label for="art-quality">Quality</label></dt>
+                <dd><span class="detail-value" th:text="${art.quality ?: '-'}">-</span><input id="art-quality" class="detail-edit" th:field="*{quality}" disabled></dd>
+                <dt><label for="art-species">Species</label></dt>
+                <dd><span class="detail-value" th:text="${art.species}">Species</span><input id="art-species" class="detail-edit" th:field="*{species}" disabled required></dd>
+                <dt><label for="art-ordered-date">Ordered</label></dt>
+                <dd><span class="detail-value" th:text="${art.orderedDate ?: '-'}">-</span><input id="art-ordered-date" class="detail-edit" type="date" th:field="*{orderedDate}" disabled></dd>
+                <dt><label for="art-payed-date">Paid</label></dt>
+                <dd><span class="detail-value" th:text="${art.payedDate ?: '-'}">-</span><input id="art-payed-date" class="detail-edit" type="date" th:field="*{payedDate}" disabled></dd>
+                <dt><label for="art-delivered-date">Delivered</label></dt>
+                <dd><span class="detail-value" th:text="${art.deliveredDate}">-</span><input id="art-delivered-date" class="detail-edit" type="date" th:field="*{deliveredDate}" disabled required></dd>
                 <dt>Price</dt>
-                <dd th:text="${art.price.currency + ' ' + art.price.amount}">-</dd>
-                <dt>Link</dt>
+                <dd><span class="detail-value" th:text="${art.price.currency + ' ' + art.price.amount}">-</span><span class="price-edit"><label class="visually-hidden" for="art-currency">Currency</label><select id="art-currency" class="detail-edit" th:field="*{currency}" disabled><option th:each="currency : ${currencies}" th:value="${currency}" th:text="${currency}"></option></select><label class="visually-hidden" for="art-amount">Amount</label><input id="art-amount" class="detail-edit" type="number" step="0.01" th:field="*{amount}" disabled></span></dd>
+                <dt><label for="art-link">Link</label></dt>
                 <dd>
-                    <a th:if="${art.link != null and !art.link.isBlank()}" th:href="${art.link}" th:text="${art.link}">Link</a>
-                    <span th:unless="${art.link != null and !art.link.isBlank()}">-</span>
+                    <span class="detail-value"><a th:if="${art.link != null and !art.link.isBlank()}" th:href="${art.link}" th:text="${art.link}">Link</a><span th:unless="${art.link != null and !art.link.isBlank()}">-</span></span>
+                    <input id="art-link" class="detail-edit" type="url" th:field="*{link}" disabled>
                 </dd>
-                <dt>Other characters</dt>
-                <dd th:text="${art.otherCharacters ?: '-'}">-</dd>
+                <dt><label for="art-other-characters">Other characters</label></dt>
+                <dd><span class="detail-value" th:text="${art.otherCharacters ?: '-'}">-</span><input id="art-other-characters" class="detail-edit" th:field="*{otherCharacters}" disabled></dd>
             </dl>
+                <p class="error" th:if="${#fields.hasErrors('*')}" th:errors="*{all}"></p>
+                <button id="edit-art-button" type="button">Edit</button>
+            </form>
         </section>
     </div>
     <section id="tag-list" th:replace="~{site/fragments/tag-list :: tagList}"></section>
 </main>
+<script>
+    const form = document.getElementById('art-details-form');
+    const button = document.getElementById('edit-art-button');
+    const editable = form.querySelectorAll('input.detail-edit, select.detail-edit');
+    button.addEventListener('click', function () {
+        if (form.classList.toggle('editing')) {
+            editable.forEach(field => field.disabled = false);
+            form.querySelectorAll('.detail-value').forEach(value => value.hidden = true);
+            button.textContent = 'Ok';
+        } else {
+            form.submit();
+        }
+    });
+</script>
 </body>
 </html>

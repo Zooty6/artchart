@@ -2,6 +2,7 @@ package dev.zooty.artcharts.controllers.site
 
 import dev.zooty.artcharts.dto.CreateArtRequest
 import dev.zooty.artcharts.dto.TagDto
+import dev.zooty.artcharts.dto.UpdateArtRequest
 import dev.zooty.artcharts.exceptions.ResourceNotFoundException
 import dev.zooty.artcharts.persistence.ArtRepository
 import dev.zooty.artcharts.persistence.entity.Currency
@@ -39,7 +40,7 @@ class SiteArtController(
         private const val VIEW_SEARCH_ERROR = "site/fragments/search-error"
         private const val VIEW_ART_DETAIL = "site/arts/detail"
         private const val VIEW_TAG_LIST = "site/fragments/tag-list"
-        private const val VIEW_ART_FORM = "site/arts/form"
+        private const val VIEW_ART_FORM = "site/arts/new"
         private const val REDIRECT_ART = "redirect:/site/arts/"
     }
 
@@ -148,8 +149,27 @@ class SiteArtController(
 
     @GetMapping("/{id}")
     fun artDetail(@PathVariable id: Long, model: Model): String {
-        model.addAttribute("art", siteQueryService.art(id))
+        val art = siteQueryService.art(id)
+        model.addAttribute("art", art)
+        model.addAttribute("artUpdate", UpdateArtRequest.from(art))
+        model.addAttribute("currencies", Currency.entries)
         return VIEW_ART_DETAIL
+    }
+
+    @PostMapping("/{id}")
+    fun updateArt(
+        @PathVariable id: Long,
+        @Valid @ModelAttribute("artUpdate") update: UpdateArtRequest,
+        bindingResult: BindingResult,
+        model: Model,
+    ): String {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("art", siteQueryService.art(id))
+            model.addAttribute("currencies", Currency.entries)
+            return VIEW_ART_DETAIL
+        }
+        artService.update(id, update)
+        return REDIRECT_ART + id
     }
 
     @PostMapping("/{id}/tags")

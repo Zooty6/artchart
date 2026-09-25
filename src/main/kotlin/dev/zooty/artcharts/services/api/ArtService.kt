@@ -1,6 +1,7 @@
 package dev.zooty.artcharts.services.api
 
 import dev.zooty.artcharts.dto.TagDto
+import dev.zooty.artcharts.dto.UpdateArtRequest
 import dev.zooty.artcharts.exceptions.ResourceNotFoundException
 import dev.zooty.artcharts.persistence.ArtRepository
 import dev.zooty.artcharts.persistence.TagRepository
@@ -10,6 +11,13 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ArtService(val artRepository: ArtRepository, val tagRepository: TagRepository) {
+    @Transactional
+    fun update(id: Long, request: UpdateArtRequest) {
+        val art = artRepository.findById(id)
+            .orElseThrow { ResourceNotFoundException("Art with id $id not found") }
+        request.applyTo(art)
+    }
+
     @Transactional
     fun addTag(id: Long, tag: TagDto) {
         artRepository.findById(id)

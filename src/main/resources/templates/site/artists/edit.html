@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Edit artist - ArtCharts</title>
+    <link rel="stylesheet" href="/site/site.css">
+</head>
+<body>
+<header th:replace="~{site/fragments/navigation :: navigation}"></header>
+<main>
+    <h1>Edit artist</h1>
+    <label for="artist-search">Artist name</label>
+    <input id="artist-search" list="artist-suggestions" autocomplete="off"
+           placeholder="Start typing an artist name">
+    <datalist id="artist-suggestions"></datalist>
+    <p id="artist-search-status" class="error" aria-live="polite"></p>
+
+    <form id="artist-edit-form" action="/site/artists" method="post" class="form-grid hidden" th:object="${artist}">
+        <div th:replace="~{site/fragments/artist-fields :: fields}"></div>
+        <button type="submit">Save artist</button>
+    </form>
+</main>
+<script>
+    const search = document.getElementById('artist-search');
+    const suggestions = document.getElementById('artist-suggestions');
+    const status = document.getElementById('artist-search-status');
+    const form = document.getElementById('artist-edit-form');
+    let searchSequence = 0;
+    let searchTimer;
+
+    function setField(name, value) {
+        const field = form.elements.namedItem(name);
+        if (field) field.value = value ?? '';
+    }
+
+    async function searchArtists() {
+        const query = search.value.trim();
+        suggestions.replaceChildren();
+        if (!query) return;
+        const sequence = ++searchSequence;
+        try {
+            const response = await fetch('/api/artist/search?query=' + encodeURIComponent(query));
+            if (!response.ok) throw new Error('Search failed');
+            const artists = await response.json();
+            if (sequence !== searchSequence) return;
+            artists.forEach(artist => {
+                const option = document.createElement('option');
+                option.value = artist.name;
+                option.dataset.id = artist.id;
+                suggestions.appendChild(option);
+            });
+        } catch (error) {
+            status.textContent = 'Could not search artists.';
+        }
+    }
+
+    async function loadArtist() {
+        const option = [...suggestions.options].find(item => item.value === search.value);
+        if (!option) return;
+        status.textContent = '';
+        try {
+            const response = await fetch('/api/artist/' + option.dataset.id);
+            if (!response.ok) throw new Error('Artist not found');
+            const artist = await response.json();
+            setField('name', artist.name);
+            ['furaffinity', 'twitter', 'discord', 'deviantart', 'paypalEmail', 'site',
+                'boosty', 'telegram', 'facebook', 'vgen', 'note'].forEach(name => setField(name, artist[name]));
+            form.action = '/site/artists/' + artist.id;
+            form.classList.remove('hidden');
+        } catch (error) {
+            status.textContent = 'Could not load artist data.';
+        }
+    }
+
+    search.addEventListener('input', () => {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(searchArtists, 250);
+    });
+    search.addEventListener('change', loadArtist);
+</script>
+</body>
+</html>

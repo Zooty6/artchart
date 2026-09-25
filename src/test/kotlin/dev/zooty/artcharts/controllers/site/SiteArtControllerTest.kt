@@ -47,7 +47,7 @@ class SiteArtControllerTest {
     fun `new art page renders form and currency options`() {
         mockMvc.perform(get("/site/arts/new"))
             .andExpect(status().isOk)
-            .andExpect(view().name("site/arts/form"))
+            .andExpect(view().name("site/arts/new"))
             .andExpect(content().string(org.hamcrest.Matchers.containsString("Artist name")))
             .andExpect(content().string(org.hamcrest.Matchers.containsString("USD")))
             .andExpect(content().string(org.hamcrest.Matchers.containsString("enctype=\"multipart/form-data\"")))
@@ -76,7 +76,7 @@ class SiteArtControllerTest {
                 .param("artistName", "")
         )
             .andExpect(status().isOk)
-            .andExpect(view().name("site/arts/form"))
+            .andExpect(view().name("site/arts/new"))
         verifyNoInteractions(artCreationService)
     }
 
