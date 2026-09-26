@@ -44,6 +44,9 @@ jobs:
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "Current version: $version"
 
+      - name: Run tests and generate JaCoCo report
+        run: ./mvnw --batch-mode verify
+
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
