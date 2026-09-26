@@ -1,12 +1,25 @@
 # Artchart
 
-Artchart is a project for maintaining records of art pieces and generate several charts of their attributes for
-statistical purposes.  
+Artchart is a project for maintaining records of art pieces, making them browsable and to 
+generate several charts of their attributes for statistical purposes.  
 The project is a spring boot application written in kotlin.
+
+![img.png](doc/preview.png)
 
 ## Build
 
 To build the project run `mvn install`.
+
+## Run
+
+To run the project, first create a `.env` file in the project root based on `.env.example`, then use the platform-specific
+script:
+
+- PowerShell: `./run.ps1`
+- Bash: `./run.sh`
+
+The script loads the variables from `.env` and runs `mvn spring-boot:run` through the Maven wrapper. Additional Maven
+arguments can be passed to either script, for example `./run.sh -Dspring-boot.run.profiles=dev`.
 
 ## Docker
 
@@ -26,6 +39,7 @@ PowerShell:
 docker run --rm --name artcharts `
   -p 8080:8080 `
   --env-file .env `
+  -e ARTCHART_SELF_NAME=myName `
   -e ARTCHART_DATASOURCE_URL=jdbc:sqlite:/data/artcharts.db `
   -e ARTCHART_MEDIA_ROOT=/art `
   -v "${DB_FOLDER}\artcharts.db:/data/artcharts.db" `
@@ -39,6 +53,7 @@ Bash:
 docker run --rm --name artcharts \
   -p 8080:8080 \
   --env-file .env \
+  -e ARTCHART_SELF_NAME=myName \
   -e ARTCHART_DATASOURCE_URL=jdbc:sqlite:/data/artcharts.db \
   -e ARTCHART_MEDIA_ROOT=/art \
   -v "$(DB_FOLDER)/artcharts.db:/data/artcharts.db" \
@@ -52,17 +67,6 @@ database volume is intentionally mounted without `:ro`, because the application 
 
 The mounted artwork directory must follow the layout
 `<ARTS_FOLDER>/<SFW|NSFW>/<year>/<fileName>`.
-
-## Run
-
-To run the project, first create a `.env` file in the project root based on `.env.example`, then use the platform-specific
-script:
-
-- PowerShell: `./run.ps1`
-- Bash: `./run.sh`
-
-The script loads the variables from `.env` and runs `mvn spring-boot:run` through the Maven wrapper. Additional Maven
-arguments can be passed to either script, for example `./run.sh -Dspring-boot.run.profiles=dev`.
 
 ## Use
 
