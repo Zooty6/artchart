@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.5</version>
+        <version>4.1.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     
@@ -18,13 +18,23 @@
     
     <properties>
         <java.version>25</java.version>
-        <kotlin.version>2.2.0</kotlin.version>
+        <kotlin.version>2.3.21</kotlin.version>
+        <htmx.version>4.0.0</htmx.version>
+        <springdoc.version>3.1.1</springdoc.version>
+        <jfreechart.version>1.0.19</jfreechart.version>
+        <jfreesvg.version>3.4.4</jfreesvg.version>
+        <kotlin-logging.version>3.0.5</kotlin-logging.version>
+        <jgrapht.version>1.5.3</jgrapht.version>
+        <sqlite-jdbc.version>3.53.4.0</sqlite-jdbc.version>
+        <hsqldb.version>2.7.4</hsqldb.version>
+        <jacoco.version>0.8.15</jacoco.version>
     </properties>
     
     <dependencies>
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
+            <version>${sqlite-jdbc.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate.orm</groupId>
@@ -49,7 +59,7 @@
         <dependency>
             <groupId>org.webjars.npm</groupId>
             <artifactId>htmx.org</artifactId>
-            <version>2.0.0</version>
+            <version>${htmx.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
@@ -93,7 +103,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>3.0.2</version>
+            <version>${springdoc.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -110,14 +120,14 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>jfree</groupId>
+            <groupId>org.jfree</groupId>
             <artifactId>jfreechart</artifactId>
-            <version>1.0.13</version>
+            <version>${jfreechart.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jfree</groupId>
             <artifactId>jfreesvg</artifactId>
-            <version>3.4.3</version>
+            <version>${jfreesvg.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
@@ -126,7 +136,7 @@
         <dependency>
             <groupId>io.github.microutils</groupId>
             <artifactId>kotlin-logging-jvm</artifactId>
-            <version>2.0.11</version>
+            <version>${kotlin-logging.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -139,12 +149,12 @@
         <dependency>
             <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-core</artifactId>
-            <version>1.2.0</version>
+            <version>${jgrapht.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-ext</artifactId>
-            <version>1.2.0</version>
+            <version>${jgrapht.version}</version>
         </dependency>
     </dependencies>
 
@@ -216,7 +226,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.13</version>
+                <version>${jacoco.version}</version>
                 <executions>
                     <execution>
                         <id>jacoco-prepare-agent</id>

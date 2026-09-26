@@ -170,7 +170,7 @@ class SiteArtControllerTest {
         mockMvc.perform(
             get("/site/arts/list")
                 .param("searchMode", "GENERAL")
-                .header("HX-Target", "year-navigation-content")
+                .header("HX-Target", "div#year-navigation-content")
         )
             .andExpect(status().isOk)
             .andExpect(view().name("site/fragments/art-mode-update"))

@@ -1,6 +1,7 @@
 package dev.zooty.artcharts.controllers.api
 
 import dev.zooty.artcharts.dto.CreateArtistRequest
+import dev.zooty.artcharts.exceptions.ResourceNotFoundException
 import dev.zooty.artcharts.persistence.ArtistRepository
 import dev.zooty.artcharts.persistence.entity.Artist
 import dev.zooty.artcharts.services.api.ArtistService
@@ -32,7 +33,6 @@ class ArtistController(
         artistService.create(request)
 
     @GetMapping("/api/artist/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getArtist(@PathVariable id: Long): Artist {
-        return artistRepository.getReferenceById(id)
-    }
+    fun getArtist(@PathVariable id: Long): Artist = artistRepository.findById(id)
+        .orElseThrow { ResourceNotFoundException("Artist with id $id not found") }
 }
