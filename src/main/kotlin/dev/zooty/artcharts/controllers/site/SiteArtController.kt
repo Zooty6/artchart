@@ -78,7 +78,7 @@ class SiteArtController(
         request: HttpServletRequest,
         response: HttpServletResponse,
     ): String {
-        if (request.getHeader("HX-Target") == "year-navigation-content") {
+        if (request.hxTargetId() == "year-navigation-content") {
             addNavigationModelAttributes(year, searchMode, searchParams, hideNsfw, model)
             return VIEW_ART_MODE_UPDATE
         }
@@ -127,6 +127,9 @@ class SiteArtController(
         model.addAttribute("searchParams", searchParams.orEmpty())
         return selectedYear
     }
+
+    private fun HttpServletRequest.hxTargetId(): String? = getHeader("HX-Target")
+        ?.substringAfterLast('#')
 
     @GetMapping("/suggestions/{field}")
     fun fieldSuggestions(

@@ -2,6 +2,7 @@ package dev.zooty.artcharts.controllers.api
 
 import dev.zooty.artcharts.dto.CreateArtRequest
 import dev.zooty.artcharts.dto.TagDto
+import dev.zooty.artcharts.exceptions.ResourceNotFoundException
 import dev.zooty.artcharts.persistence.ArtRepository
 import dev.zooty.artcharts.persistence.entity.Art
 import dev.zooty.artcharts.services.api.ArtCreationService
@@ -41,7 +42,8 @@ class ArtController(
             .body(artCreationService.create(request, Optional.empty()))
 
     @GetMapping("/api/art/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getArt(@PathVariable id: Long): Art = artRepository.getReferenceById(id)
+    fun getArt(@PathVariable id: Long): Art = artRepository.findById(id)
+        .orElseThrow { ResourceNotFoundException("Art with id $id not found") }
 
     @GetMapping("/api/art/search", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getFilteredArts(@RequestParam searchParams: String): List<Art> =
