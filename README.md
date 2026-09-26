@@ -12,8 +12,9 @@ To build the project run `mvn install`.
 
 ## Run
 
-To run the project, first create a `.env` file in the project root based on `.env.example`, then use the platform-specific
-script:
+To run the project, first create a `.env` file in the project root based on `.env.example`. 
+The site uses [currencyapi.com](https://currencyapi.com), you will need an api key (free tier is enough).   
+Then use the platform-specific script:
 
 - PowerShell: `./run.ps1`
 - Bash: `./run.sh`
