@@ -69,6 +69,8 @@ database volume is intentionally mounted without `:ro`, because the application 
 The mounted artwork directory must follow the layout
 `<ARTS_FOLDER>/<SFW|NSFW>/<year>/<fileName>`.
 
+The latest docker image is available by `docker pull ghcr.io/zooty6/artchart:latest`.
+
 ## Use
 
 After starting the application, the following entry points are available:
@@ -82,5 +84,4 @@ After starting the application, the following entry points are available:
 The web UI is rendered with Thymeleaf and uses HTMX for incremental page updates.
 
 Artwork media is served from the directory configured by `ARTCHART_MEDIA_ROOT`. The expected file layout is
-`<ARTCHART_MEDIA_ROOT>/<SFW|NSFW>/<year>/<fileName>`, where the first directory is selected from `Art.isNsfw`. Missing
-files are displayed with a placeholder image.
+`<ARTCHART_MEDIA_ROOT>/<SFW|NSFW>/<year>/<fileName>`.
