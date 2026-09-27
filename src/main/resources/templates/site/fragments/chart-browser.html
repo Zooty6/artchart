@@ -73,15 +73,7 @@
         </label>
 
         <button type="submit">Show</button>
-        <button type="button" class="button" th:data-chart-url="${chartModel.chartUrl}"
-                onclick="const chartUrl = document.createElement('a'); 
-                chartUrl.href = this.dataset.chartUrl; 
-                const query = []; 
-                for (const [name, value] of new FormData(this.closest('form')).entries()) { 
-                    if (name !== 'chart' && typeof value === 'string' && value !== '') 
-                        query.push(window.encodeURIComponent(name) + '=' + window.encodeURIComponent(value)); 
-                } 
-                chartUrl.search = query.length ? '?' + query.join('&amp;') : ''; window.open(chartUrl.href, '_blank', 'noopener,noreferrer');">
+        <a class="button show-chart-in-new-tab" th:href="${chartModel.chartUrl}" target="_blank" rel="noopener noreferrer">
             Show in new tab
         </button>
     </form>
