@@ -65,6 +65,7 @@ class SiteChartControllerTest {
         chartTypes = ChartType.entries,
         selectedType = ChartType.PIE,
         categoryFilter = null,
+        categoryOptions = listOf("general", "style"),
         graphLayouts = GraphLayout.entries,
         selectedLayout = GraphLayout.ORGANIC,
         selfIncluded = false,

@@ -2,13 +2,14 @@ package dev.zooty.artcharts.services.site
 
 import dev.zooty.artcharts.dto.ChartViewModel
 import dev.zooty.artcharts.persistence.entity.Currency
+import dev.zooty.artcharts.services.api.TagService
 import dev.zooty.artcharts.services.chart.ChartType
 import dev.zooty.artcharts.services.chart.GraphLayout
 import org.springframework.stereotype.Service
 import org.springframework.web.util.UriComponentsBuilder
 
 @Service
-class ChartViewService {
+class ChartViewService(private val tagService: TagService) {
     companion object {
         private const val DEFAULT_CHART = "artistDistribution"
         private const val DEFAULT_WIDTH = 1800
@@ -62,6 +63,7 @@ class ChartViewService {
             chartTypes = ChartType.entries,
             selectedType = selectedType,
             categoryFilter = selectedCategoryFilter,
+            categoryOptions = tagService.findAllDistinctCategories(),
             graphLayouts = GraphLayout.entries,
             selectedLayout = selectedLayout,
             selfIncluded = selectedSelfIncluded,
