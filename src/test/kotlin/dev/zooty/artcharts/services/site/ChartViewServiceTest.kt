@@ -1,13 +1,21 @@
 package dev.zooty.artcharts.services.site
 
+import dev.zooty.artcharts.services.api.TagService
 import dev.zooty.artcharts.services.chart.ChartType
 import dev.zooty.artcharts.services.chart.GraphLayout
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 
 class ChartViewServiceTest {
-    private val service = ChartViewService()
+    private val tagService = mock(TagService::class.java)
+    private val service = ChartViewService(tagService)
+
+    init {
+        `when`(tagService.findAllDistinctCategories()).thenReturn(listOf("general", "style"))
+    }
 
     @Test
     fun `uses defaults for missing values`() {
@@ -67,5 +75,6 @@ class ChartViewServiceTest {
             model.chartUrl,
         )
         assertEquals("style", model.categoryFilter)
+        assertEquals(listOf("general", "style"), model.categoryOptions)
     }
 }

@@ -13,6 +13,7 @@ data class ChartViewModel(
     val chartTypes: List<ChartType>,
     val selectedType: ChartType,
     val categoryFilter: String?,
+    val categoryOptions: List<String>,
     val graphLayouts: List<GraphLayout>,
     val selectedLayout: GraphLayout,
     val selfIncluded: Boolean,

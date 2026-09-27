@@ -53,8 +53,13 @@
                 </select>
             </label>
             <label>Category
-                <input type="text" name="category" th:value="${chartModel.categoryFilter}"
-                       placeholder="All categories">
+                <select name="category">
+                    <option value="" th:selected="${chartModel.categoryFilter == null}">All categories</option>
+                    <option th:each="category : ${chartModel.categoryOptions}"
+                            th:value="${category}"
+                            th:text="${category}"
+                            th:selected="${category == chartModel.categoryFilter}">category</option>
+                </select>
             </label>
         </div>
 
