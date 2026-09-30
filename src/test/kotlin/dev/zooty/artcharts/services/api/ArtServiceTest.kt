@@ -18,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.verify
 import org.mockito.junit.jupiter.MockitoExtension
 import java.util.Optional
 
@@ -28,6 +29,28 @@ class ArtServiceTest {
     lateinit var artRepository: ArtRepository
     @Mock
     lateinit var tagRepository: TagRepository
+
+    @Test
+    fun `delete removes art and its tag associations`() {
+        val art = art().also { it.tags.add(Tag("cute", "style")) }
+        `when`(artRepository.findById(1L)).thenReturn(Optional.of(art))
+        val service = ArtService(artRepository, tagRepository)
+
+        service.delete(1L)
+
+        assertEquals(emptySet<Tag>(), art.tags)
+        verify(artRepository).delete(art)
+    }
+
+    @Test
+    fun `delete throws when art is missing`() {
+        `when`(artRepository.findById(99L)).thenReturn(Optional.empty())
+        val service = ArtService(artRepository, tagRepository)
+
+        assertThrows(ResourceNotFoundException::class.java) {
+            service.delete(99L)
+        }
+    }
 
     @Test
     fun `addTag attaches existing tag`() {

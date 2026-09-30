@@ -316,6 +316,28 @@ button {
     cursor: pointer;
 }
 
+.art-actions {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.art-actions form {
+    margin: 0;
+}
+
+#delete-art-button {
+    color: #a11;
+    background: transparent;
+    border: 1px solid #a11;
+    border-radius: .2rem;
+}
+
+#delete-art-button:hover {
+    color: #fff;
+    background: #a11;
+}
+
 .button {
     display: inline-block;
     margin-top: .75rem;

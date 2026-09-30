@@ -175,6 +175,12 @@ class SiteArtController(
         return REDIRECT_ART + id
     }
 
+    @PostMapping("/{id}/delete")
+    fun deleteArt(@PathVariable id: Long): String {
+        artService.delete(id)
+        return "redirect:/site/arts"
+    }
+
     @PostMapping("/{id}/tags")
     fun addTag(
         @PathVariable id: Long,

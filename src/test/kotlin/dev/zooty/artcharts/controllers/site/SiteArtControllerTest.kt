@@ -144,6 +144,15 @@ class SiteArtControllerTest {
     }
 
     @Test
+    fun `delete art redirects to art list`() {
+        mockMvc.perform(post("/site/arts/42/delete"))
+            .andExpect(status().is3xxRedirection)
+            .andExpect(view().name("redirect:/site/arts"))
+
+        verify(artService).delete(42L)
+    }
+
+    @Test
     fun `search mode renders filtered arts without year navigation`() {
         val art = TestFixtures.art(id = 42L)
         `when`(siteQueryService.years()).thenReturn(listOf(2024, 2023))
