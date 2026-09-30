@@ -47,8 +47,14 @@
                 <dd><span class="detail-value" th:text="${art.otherCharacters ?: '-'}">-</span><input id="art-other-characters" class="detail-edit" th:field="*{otherCharacters}" disabled></dd>
             </dl>
                 <p class="error" th:if="${#fields.hasErrors('*')}" th:errors="*{all}"></p>
-                <button id="edit-art-button" type="button">Edit</button>
             </form>
+            <div class="art-actions">
+                <button id="edit-art-button" type="button">Edit</button>
+                <form th:action="@{/site/arts/{id}/delete(id=${art.id})}" method="post"
+                      onsubmit="return confirm('Delete this art?');">
+                    <button id="delete-art-button" type="submit">Delete</button>
+                </form>
+            </div>
         </section>
     </div>
     <section id="tag-list" th:replace="~{site/fragments/tag-list :: tagList}"></section>

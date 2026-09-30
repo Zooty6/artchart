@@ -173,6 +173,19 @@ class ArtControllerIT {
             .jsonPath("$.tags[?(@.name == 'removable-tag')]").doesNotExist()
     }
 
+    @Test
+    fun `delete art endpoint removes persisted art`() {
+        restTestClient.delete()
+            .uri("/api/art/${foxArt.id}")
+            .exchange()
+            .expectStatus().isNoContent
+
+        restTestClient.get()
+            .uri("/api/art/${foxArt.id}")
+            .exchange()
+            .expectStatus().isNotFound
+    }
+
     private fun artist(name: String) = Artist(
         0L, name, null, null, null, null, null, null, null, null, null, null, null
     )
