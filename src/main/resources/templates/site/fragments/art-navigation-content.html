@@ -12,7 +12,7 @@
           hx-target="#art-browser" hx-swap="outerHTML">
         <label for="art-search">Filter</label>
         <input id="art-search" type="search" name="searchParams"
-               th:value="${searchParams}">
+               th:value="${searchParams}" hx-preserve>
         <span class="search-hint" aria-label="Search syntax help">
             ?
             <span class="search-hint-content" role="tooltip">

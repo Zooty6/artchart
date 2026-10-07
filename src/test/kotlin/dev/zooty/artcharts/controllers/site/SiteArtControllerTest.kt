@@ -168,6 +168,7 @@ class SiteArtControllerTest {
             .andExpect(content().string(org.hamcrest.Matchers.containsString("Search results")))
             .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("href=\"/site/arts(year=2024"))))
             .andExpect(content().string(org.hamcrest.Matchers.containsString("value=\"artist:fox\"")))
+            .andExpect(content().string(org.hamcrest.Matchers.containsString("hx-preserve")))
 
         verify(siteQueryService).artsForSearch("artist:fox", true)
     }
