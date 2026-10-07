@@ -21,7 +21,7 @@
         <kotlin.version>2.3.21</kotlin.version>
         <htmx.version>4.0.0</htmx.version>
         <springdoc.version>3.1.1</springdoc.version>
-        <jfreechart.version>1.0.19</jfreechart.version>
+        <jfreechart.version>1.5.6</jfreechart.version>
         <jfreesvg.version>3.4.4</jfreesvg.version>
         <kotlin-logging.version>3.0.5</kotlin-logging.version>
         <jgrapht.version>1.5.3</jgrapht.version>
