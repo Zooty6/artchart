@@ -7,12 +7,72 @@ on:
 
 permissions:
   contents: write
+  pull-requests: read
 
 jobs:
+  check-release:
+    name: Determine release type
+    runs-on: ubuntu-latest
+    outputs:
+      release_type: ${{ steps.check.outputs.release_type }}
+    steps:
+      - name: Check commit message and associated pull request titles
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          COMMIT_SHA: ${{ github.sha }}
+          REPOSITORY: ${{ github.repository }}
+        shell: bash
+        run: |
+          detect_release_type() {
+            local text="${1,,}"
+            local found=""
+            local marker type
+
+            for marker in "skip release" "minor release" "major release"; do
+              if [[ "$text" == *"$marker"* ]]; then
+                case "$marker" in
+                  "skip release") type=skip ;;
+                  "minor release") type=minor ;;
+                  "major release") type=major ;;
+                esac
+
+                if [[ -n "$found" && "$found" != "$type" ]]; then
+                  echo "Conflicting release directives found in the same text." >&2
+                  return 1
+                fi
+                found="$type"
+              fi
+            done
+
+            printf '%s' "$found"
+          }
+
+          commit_type=$(detect_release_type "$COMMIT_MESSAGE")
+          pull_request_titles=$(gh api \
+            -H "Accept: application/vnd.github+json" \
+            "/repos/$REPOSITORY/commits/$COMMIT_SHA/pulls" \
+            --jq '[.[].title] | join("\n")')
+          pull_request_type=$(detect_release_type "$pull_request_titles")
+
+          if [[ -n "$pull_request_type" ]]; then
+            release_type="$pull_request_type"
+            echo "Using release directive from associated pull request title: $release_type."
+          elif [[ -n "$commit_type" ]]; then
+            release_type="$commit_type"
+            echo "Using release directive from commit message: $release_type."
+          else
+            release_type=patch
+            echo "No release directive found; using the default patch release."
+          fi
+
+          echo "release_type=$release_type" >> "$GITHUB_OUTPUT"
+
   release:
     name: Create GitHub release and prepare next version
-    # The version bump commit is intentionally ignored to avoid a release loop.
-    if: ${{ !contains(github.event.head_commit.message, '[skip release]') }}
+    needs: check-release
+    if: ${{ needs.check-release.outputs.release_type != 'skip' }}
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repository
@@ -63,14 +123,30 @@ jobs:
               --generate-notes
           fi
 
-      - name: Bump patch version in pom.xml
+      - name: Bump version in pom.xml
         id: next_version
         env:
           VERSION: ${{ steps.current_version.outputs.version }}
+          RELEASE_TYPE: ${{ needs.check-release.outputs.release_type }}
         shell: bash
         run: |
           IFS=. read -r major minor patch <<< "$VERSION"
-          next_version="$major.$minor.$((patch + 1))"
+
+          case "$RELEASE_TYPE" in
+            major)
+              next_version="$((major + 1)).0.0"
+              ;;
+            minor)
+              next_version="$major.$((minor + 1)).0"
+              ;;
+            patch)
+              next_version="$major.$minor.$((patch + 1))"
+              ;;
+            *)
+              echo "Unsupported release type: $RELEASE_TYPE"
+              exit 1
+              ;;
+          esac
 
           ./mvnw -q versions:set \
             -DnewVersion="$next_version" \
