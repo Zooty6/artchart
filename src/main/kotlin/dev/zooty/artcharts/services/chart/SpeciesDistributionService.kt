@@ -18,17 +18,16 @@ class SpeciesDistributionService(
 
         return when (type) {
             ChartType.TREEMAP -> treeMapRendererService.renderTreemapSvg(width, height, dataset)
-            ChartType.PIE -> svgService.exportToSvg(
-                width,
-                height,
-                ChartFactory.createPieChart(
+            ChartType.PIE -> {
+                val chart = ChartFactory.createPieChart(
                     "Distribution of Species",
                     dataset,
                     true,
                     true,
                     false
                 )
-            )
+                svgService.exportToSvg(width, height, chart)
+            }
         }
     }
 

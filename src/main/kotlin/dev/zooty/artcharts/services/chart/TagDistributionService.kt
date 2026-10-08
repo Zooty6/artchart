@@ -20,17 +20,16 @@ class TagDistributionService(
         
         return when(chartType) {
             ChartType.TREEMAP -> treeMapRendererService.renderTreemapSvg(width, height, dataset)
-            ChartType.PIE -> svgConverterService.exportToSvg(
-                width,
-                height,
-                ChartFactory.createPieChart(
+            ChartType.PIE -> {
+                val chart = ChartFactory.createPieChart(
                     "Distribution of ${categoryFilter ?: ""} tags",
                     dataset,
                     true,
                     true,
                     false
                 )
-            )
+                svgConverterService.exportToSvg(width, height, chart)
+            }
         }
     }
 
