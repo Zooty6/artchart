@@ -32,8 +32,8 @@ class SpeciesDistributionService(
         }
     }
 
-    private fun createSpeciesDistributionDataset(): PieDataset {
-        val dataset = DefaultPieDataset()
+    private fun createSpeciesDistributionDataset(): PieDataset<String> {
+        val dataset = DefaultPieDataset<String>()
         artRepository.findAll()
             .groupingBy { it.species }
             .eachCount()

@@ -14,14 +14,14 @@ import kotlin.math.min
 @Service
 class TreeMapRendererService {
     
-    fun renderTreemapSvg(width: Int, height: Int, dataset: PieDataset): String {
+    fun renderTreemapSvg(width: Int, height: Int, dataset: PieDataset<String>): String {
         val svgGraphics2D = SVGGraphics2D(width, height)
         svgGraphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
         svgGraphics2D.color = Color.WHITE
         svgGraphics2D.fillRect(0, 0, width, height)
 
-        val items = (0 until dataset.itemCount).map { i ->
-            TreemapItem(dataset.getKey(i).toString(), dataset.getValue(i).toDouble())
+        val items = dataset.keys.map { key ->
+            TreemapItem(key, dataset.getValue(key).toDouble())
         }.sortedByDescending { it.value }
 
         val totalValue = items.sumOf { it.value }

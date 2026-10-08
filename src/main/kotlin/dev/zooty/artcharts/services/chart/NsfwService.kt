@@ -23,8 +23,8 @@ class NsfwService(
         return svgService.exportToSvg(width, height, chart)
     }
 
-    private fun createNsfwRatioDataset(): PieDataset {
-        val dataset = DefaultPieDataset()
+    private fun createNsfwRatioDataset(): PieDataset<String> {
+        val dataset = DefaultPieDataset<String>()
         artRepository.findAll()
             .groupingBy { it.isNsfw }
             .eachCount()
