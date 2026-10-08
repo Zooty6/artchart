@@ -35,8 +35,8 @@ class TagDistributionService(
     }
 
 
-    private fun createDataset(categoryFilter: String?): PieDataset {
-        val dataset = DefaultPieDataset()
+    private fun createDataset(categoryFilter: String?): PieDataset<String> {
+        val dataset = DefaultPieDataset<String>()
         artRepository.findAllBy()
             .flatMap { it.tags.stream() }
             .filter { tag -> categoryFilter?.equals(tag.category) ?: true }

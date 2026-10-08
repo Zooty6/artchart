@@ -51,18 +51,18 @@ class TagDistributionServiceTest {
         ).tagDistribution(500, 400, ChartType.TREEMAP, null)
 
         assertEquals("<svg></svg>", svg)
-        assertEquals(2, renderer.dataset.itemCount)
+        assertEquals(2, renderer.dataset.keys.size)
         assertEquals(2L, renderer.dataset.getValue("cute"))
         assertEquals(1L, renderer.dataset.getValue("blue"))
     }
 
     private class RecordingTreeMapRendererService : TreeMapRendererService() {
-        lateinit var dataset: org.jfree.data.general.PieDataset
+        lateinit var dataset: org.jfree.data.general.PieDataset<String>
 
         override fun renderTreemapSvg(
             width: Int,
             height: Int,
-            dataset: org.jfree.data.general.PieDataset
+            dataset: org.jfree.data.general.PieDataset<String>
         ): String {
             this.dataset = dataset
             return "<svg></svg>"
