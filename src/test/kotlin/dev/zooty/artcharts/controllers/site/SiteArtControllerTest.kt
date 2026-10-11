@@ -2,29 +2,28 @@ package dev.zooty.artcharts.controllers.site
 
 import dev.zooty.artcharts.TestFixtures
 import dev.zooty.artcharts.dto.CreateArtRequest
-import dev.zooty.artcharts.persistence.entity.Currency
 import dev.zooty.artcharts.persistence.ArtRepository
+import dev.zooty.artcharts.persistence.entity.Currency
 import dev.zooty.artcharts.services.api.ArtCreationService
 import dev.zooty.artcharts.services.api.ArtService
 import dev.zooty.artcharts.services.site.SiteQueryService
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito.verify
 import org.mockito.Mockito.verifyNoInteractions
 import org.mockito.Mockito.`when`
-import org.mockito.Mockito.verify
-import org.springframework.data.domain.PageRequest
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
+import org.springframework.data.domain.PageRequest
+import org.springframework.mock.web.MockMultipartFile
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.view
-import java.util.Optional
 
 @WebMvcTest(SiteArtController::class)
 class SiteArtControllerTest {
@@ -92,7 +91,7 @@ class SiteArtControllerTest {
             amount = 10.0,
             artistName = "Artist",
         )
-        `when`(artCreationService.create(request, Optional.empty()))
+        `when`(artCreationService.create(request, emptyList()))
             .thenReturn(createdArt)
 
         mockMvc.perform(
@@ -108,7 +107,7 @@ class SiteArtControllerTest {
             .andExpect(status().is3xxRedirection)
             .andExpect(view().name("redirect:/site/arts/42"))
 
-        verify(artCreationService).create(request, Optional.empty())
+        verify(artCreationService).create(request, emptyList())
     }
 
     @Test
@@ -124,7 +123,7 @@ class SiteArtControllerTest {
             artistName = "Artist",
         )
         val file = MockMultipartFile("file", "art.png", "image/png", "image".toByteArray())
-        `when`(artCreationService.create(request, Optional.of(file))).thenReturn(createdArt)
+        `when`(artCreationService.create(request, listOf(file))).thenReturn(createdArt)
 
         mockMvc.perform(
             multipart("/site/arts")
@@ -140,7 +139,7 @@ class SiteArtControllerTest {
             .andExpect(status().is3xxRedirection)
             .andExpect(view().name("redirect:/site/arts/42"))
 
-        verify(artCreationService).create(request, Optional.of(file))
+        verify(artCreationService).create(request, listOf(file))
     }
 
     @Test

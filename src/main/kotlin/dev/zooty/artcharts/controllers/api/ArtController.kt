@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import java.util.*
 
 @Slf4j
 @RestController
@@ -39,7 +38,7 @@ class ArtController(
     @PostMapping("/api/art", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun createArt(@Valid @RequestBody request: CreateArtRequest): ResponseEntity<Art> =
         ResponseEntity.status(org.springframework.http.HttpStatus.CREATED)
-            .body(artCreationService.create(request, Optional.empty()))
+            .body(artCreationService.create(request, emptyList()))
 
     @GetMapping("/api/art/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getArt(@PathVariable id: Long): Art = artRepository.findById(id)

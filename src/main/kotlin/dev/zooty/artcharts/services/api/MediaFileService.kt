@@ -40,17 +40,51 @@ class MediaFileService(
     }
 
     fun saveFile(file: MultipartFile, fileName: String, date: String, isNsfw: Boolean) {
+        saveFiles(listOf(file), fileName, date, isNsfw)
+    }
+
+    fun saveFiles(files: List<MultipartFile>, fileName: String, date: String, isNsfw: Boolean) {
+        require(files.isNotEmpty()) { "At least one file must be provided" }
+        val basePath = resolveBasePath(fileName, date, isNsfw)
+        require(basePath.startsWith(root)) { "File path must be inside the media root" }
+
+        if (files.size == 1) 
+            saveSingleFile(files.single(), basePath)
+        else 
+            saveMultipleFiles(files, basePath)
+    }
+
+    private fun resolveBasePath(fileName: String, date: String, isNsfw: Boolean): Path {
         val visibilityDirectory = if (isNsfw) "NSFW" else "SFW"
         val year = date.take(4)
-        val safeFileName = Paths.get(fileName).fileName?.toString()
-            ?.takeIf { it.isNotBlank() }
-            ?: throw IllegalArgumentException("File name must not be blank")
-        val pathToSave = root.resolve(visibilityDirectory).resolve(year).resolve(safeFileName).normalize()
-
-        require(pathToSave.startsWith(root)) { "File path must be inside the media root" }
-        Files.createDirectories(pathToSave.parent)
-        file.transferTo(pathToSave)
+        val safeName = safePathPart(fileName, "File name must not be blank")
+        return root.resolve(visibilityDirectory).resolve(year).resolve(safeName).normalize()
     }
+
+    private fun saveSingleFile(file: MultipartFile, basePath: Path) {
+        Files.createDirectories(basePath.parent)
+        file.transferTo(basePath)
+    }
+
+    private fun saveMultipleFiles(
+        files: List<MultipartFile>,
+        basePath: Path
+    ) {
+        Files.createDirectories(basePath)
+        files.forEach { file ->
+            val originalFileName = file.originalFilename
+                ?: throw IllegalArgumentException("Uploaded file must have a name")
+            val safeFileName = safePathPart(originalFileName, "Uploaded file name must not be blank")
+            val pathToSave = basePath.resolve(safeFileName).normalize()
+            require(pathToSave.parent == basePath) { "Uploaded file path must be inside the media folder" }
+            file.transferTo(pathToSave)
+        }
+    }
+
+    private fun safePathPart(value: String, errorMessage: String): String =
+        Paths.get(value).fileName?.toString()
+            ?.takeIf { it.isNotBlank() }
+            ?: throw IllegalArgumentException(errorMessage)
 
     private fun gatherSubMediaFiles(folderPath: Path): List<MediaFile> {
         return Files.walk(folderPath, 1).use { paths ->
