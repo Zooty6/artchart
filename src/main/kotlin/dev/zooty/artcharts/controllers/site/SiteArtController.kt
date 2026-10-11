@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.multipart.MultipartFile
-import java.util.*
 
 @Controller
 @RequestMapping("/site/arts")
@@ -212,14 +211,14 @@ class SiteArtController(
         @Valid @ModelAttribute("art") art: CreateArtRequest,
         bindingResult: BindingResult,
         model: Model,
-        @RequestParam("file", required = false) file: MultipartFile?,
+        @RequestParam("file", required = false) files: List<MultipartFile>?,
     ): String {
         if (bindingResult.hasErrors()) {
             model.addAttribute("currencies", Currency.entries)
             return VIEW_ART_FORM
         }
         return try {
-            REDIRECT_ART + artCreationService.create(art, Optional.ofNullable(file)).id
+            REDIRECT_ART + artCreationService.create(art, files.orEmpty()).id
         } catch (_: ResourceNotFoundException) {
             bindingResult.rejectValue("artistName", "artist.notFound", "No artist with this name exists")
             model.addAttribute("currencies", Currency.entries)

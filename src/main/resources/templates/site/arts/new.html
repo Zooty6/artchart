@@ -42,12 +42,12 @@
         <label>Ordered date <input type="date" th:field="*{orderedDate}"></label>
         <label>Paid date <input type="date" th:field="*{payedDate}"></label>
         <div class="form-field">
-            <label for="fileName">File name *</label>
+            <label for="fileName">File or folder name *</label>
             <span class="file-name-control">
                 <input id="fileName" th:field="*{fileName}" required>
                 <label for="artFile" class="file-upload-button" title="Choose art file" aria-label="Choose art file">📎</label>
-                <input id="artFile" name="file" type="file" class="file-upload-input"
-                       aria-label="Choose art file">
+                <input id="artFile" name="file" type="file" class="file-upload-input" multiple
+                       aria-label="Choose art file(s)">
             </span>
             <small class="error" th:errors="*{fileName}"></small>
         </div>
@@ -70,10 +70,15 @@
     const fileName = document.getElementById('fileName');
     const page = document.body;
     let dragDepth = 0;
+    let autoFileName = '';
 
     artFile.addEventListener('change', function () {
-        if (this.files.length > 0) {
+        if (this.files.length === 1) {
             fileName.value = this.files[0].name;
+            autoFileName = fileName.value;
+        } else if (this.files.length > 1) {
+            if (fileName.value === autoFileName) fileName.value = '';
+            autoFileName = '';
         }
     });
 

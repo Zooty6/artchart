@@ -130,6 +130,32 @@ class MediaFileServiceTest {
     }
 
     @Test
+    fun `saves multiple uploaded files in a named folder`() {
+        val first = MockMultipartFile("file", "01.png", "image/png", "first".toByteArray())
+        val second = MockMultipartFile("file", "02.jpg", "image/jpeg", "second".toByteArray())
+
+        MediaFileService(artRepository, mediaRoot.toString())
+            .saveFiles(listOf(first, second), "gallery", "2024-01-03", false)
+
+        val folder = mediaRoot.resolve("SFW/2024/gallery")
+        assertEquals("first", Files.readString(folder.resolve("01.png")))
+        assertEquals("second", Files.readString(folder.resolve("02.jpg")))
+    }
+
+    @Test
+    fun `strips path components from multiple uploaded file names`() {
+        val first = MockMultipartFile("file", "nested/01.png", "image/png", "first".toByteArray())
+        val second = MockMultipartFile("file", "nested/02.jpg", "image/jpeg", "second".toByteArray())
+
+        MediaFileService(artRepository, mediaRoot.toString())
+            .saveFiles(listOf(first, second), "gallery", "2024-01-03", false)
+
+        assertTrue(Files.isRegularFile(mediaRoot.resolve("SFW/2024/gallery/01.png")))
+        assertTrue(Files.isRegularFile(mediaRoot.resolve("SFW/2024/gallery/02.jpg")))
+        assertTrue(!Files.exists(mediaRoot.resolve("SFW/2024/gallery/nested")))
+    }
+
+    @Test
     fun `rejects uploaded file with a blank file name`() {
         val upload = MockMultipartFile("file", "art.png", "image/png", "image".toByteArray())
 
