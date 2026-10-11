@@ -12,11 +12,18 @@
 <main>
     <p><a href="/site/arts">&larr; Back to arts</a></p>
     <div class="detail-layout">
-        <div class="media-viewer">
+        <div id="media-viewer" class="media-viewer" th:data-manifest-url="@{/site/media/{id}/manifest(id=${art.id})}">
+            <div id="media-content">
             <video th:if="${#strings.toLowerCase(art.fileName).endsWith('.mp4') or #strings.toLowerCase(art.fileName).endsWith('.webm')}"
                    th:src="@{/site/media/{id}(id=${art.id})}" controls></video>
             <img th:unless="${#strings.toLowerCase(art.fileName).endsWith('.mp4') or #strings.toLowerCase(art.fileName).endsWith('.webm')}"
                  th:src="@{/site/media/{id}(id=${art.id})}" th:alt="${art.fileName}">
+            </div>
+            <div id="media-controls" class="media-controls" hidden>
+                <button id="media-previous" type="button">Previous</button>
+                <span id="media-position" aria-live="polite"></span>
+                <button id="media-next" type="button">Next</button>
+            </div>
         </div>
         <section>
             <h1 th:text="${art.fileName}">Art</h1>
@@ -46,7 +53,7 @@
                 <dt><label for="art-other-characters">Other characters</label></dt>
                 <dd><span class="detail-value" th:text="${art.otherCharacters ?: '-'}">-</span><input id="art-other-characters" class="detail-edit" th:field="*{otherCharacters}" disabled></dd>
             </dl>
-                <p class="error" th:if="${#fields.hasErrors('*')}" th:errors="*{all}"></p>
+                <p class="error" th:if="${#fields.hasErrors('*')}" th:errors="all"></p>
             </form>
             <div class="art-actions">
                 <button id="edit-art-button" type="button">Edit</button>
@@ -60,6 +67,55 @@
     <section id="tag-list" th:replace="~{site/fragments/tag-list :: tagList}"></section>
 </main>
 <script>
+    const mediaViewer = document.getElementById('media-viewer');
+    const mediaContent = document.getElementById('media-content');
+    const mediaControls = document.getElementById('media-controls');
+    const previousMediaButton = document.getElementById('media-previous');
+    const nextMediaButton = document.getElementById('media-next');
+    const mediaPosition = document.getElementById('media-position');
+
+    fetch(mediaViewer.dataset.manifestUrl)
+        .then(response => {
+            if (!response.ok) throw new Error('Unable to load media manifest');
+            return response.json();
+        })
+        .then(manifest => {
+            if (manifest.count <= 1) return;
+
+            let currentIndex = 0;
+            mediaControls.hidden = false;
+
+            function renderMedia() {
+                const item = manifest.items[currentIndex];
+                mediaContent.replaceChildren();
+                const media = document.createElement(item.kind === 'VIDEO' ? 'video' : 'img');
+                media.src = item.url;
+                media.alt = item.fileName;
+                if (item.kind === 'VIDEO') media.controls = true;
+                mediaContent.appendChild(media);
+                mediaPosition.textContent = item.index + ' / ' + manifest.count;
+                previousMediaButton.disabled = currentIndex === 0;
+                nextMediaButton.disabled = currentIndex === manifest.count - 1;
+            }
+
+            previousMediaButton.addEventListener('click', () => {
+                if (currentIndex > 0) {
+                    currentIndex -= 1;
+                    renderMedia();
+                }
+            });
+            nextMediaButton.addEventListener('click', () => {
+                if (currentIndex < manifest.count - 1) {
+                    currentIndex += 1;
+                    renderMedia();
+                }
+            });
+            renderMedia();
+        })
+        .catch(() => {
+            // The server-rendered first item remains usable if metadata loading fails.
+        });
+
     const form = document.getElementById('art-details-form');
     const button = document.getElementById('edit-art-button');
     const editable = form.querySelectorAll('input.detail-edit, select.detail-edit');

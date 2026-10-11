@@ -26,7 +26,7 @@ class SiteMediaControllerTest {
     @Test
     fun `media endpoint returns inline media`() {
         `when`(mediaFileService.resolveForArt(1L)).thenReturn(
-            MediaFile(ByteArrayResource("image".toByteArray()), MediaType.IMAGE_PNG)
+            listOf(MediaFile(ByteArrayResource("image".toByteArray()), MediaType.IMAGE_PNG, "image.png"))
         )
 
         mockMvc.perform(get("/site/media/1"))
@@ -34,6 +34,47 @@ class SiteMediaControllerTest {
             .andExpect(header().string("Content-Type", "image/png"))
             .andExpect(header().string("Content-Disposition", "inline"))
             .andExpect(header().string("Cache-Control", "public, max-age=31536000, immutable"))
+    }
+
+    @Test
+    fun `indexed media endpoint returns selected media`() {
+        `when`(mediaFileService.resolveForArt(1L)).thenReturn(
+            listOf(
+                MediaFile(ByteArrayResource("first".toByteArray()), MediaType.IMAGE_PNG, "01.png"),
+                MediaFile(ByteArrayResource("second".toByteArray()), MediaType.IMAGE_JPEG, "02.jpg"),
+            )
+        )
+
+        mockMvc.perform(get("/site/media/1/2"))
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "image/jpeg"))
+    }
+
+    @Test
+    fun `indexed media endpoint returns not found for invalid index`() {
+        `when`(mediaFileService.resolveForArt(1L)).thenReturn(
+            listOf(MediaFile(ByteArrayResource("image".toByteArray()), MediaType.IMAGE_PNG, "image.png"))
+        )
+
+        mockMvc.perform(get("/site/media/1/2"))
+            .andExpect(status().isNotFound)
+    }
+
+    @Test
+    fun `manifest endpoint returns indexed media metadata`() {
+        `when`(mediaFileService.resolveForArt(1L)).thenReturn(
+            listOf(
+                MediaFile(ByteArrayResource("image".toByteArray()), MediaType.IMAGE_PNG, "01.png"),
+                MediaFile(ByteArrayResource("video".toByteArray()), MediaType.valueOf("video/mp4"), "02.mp4"),
+            )
+        )
+
+        mockMvc.perform(get("/site/media/1/manifest"))
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/json"))
+            .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath("$.count").value(2))
+            .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath("$.items[0].url").value("/site/media/1/1"))
+            .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath("$.items[1].kind").value("VIDEO"))
     }
 
     @Test

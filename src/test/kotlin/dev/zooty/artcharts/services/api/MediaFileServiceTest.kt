@@ -5,15 +5,15 @@ import dev.zooty.artcharts.persistence.ArtRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
 import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.mock.web.MockMultipartFile
+import org.junit.jupiter.api.io.TempDir
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
+import org.springframework.mock.web.MockMultipartFile
 import java.nio.file.Files
 import java.nio.file.Path
-import java.util.Optional
+import java.util.*
 import kotlin.test.assertFailsWith
 
 @ExtendWith(MockitoExtension::class)
@@ -33,7 +33,7 @@ class MediaFileServiceTest {
 
         val result = MediaFileService(artRepository, mediaRoot.toString()).resolveForArt(1L)
 
-        assertEquals(file.toAbsolutePath(), result.resource.file.toPath().toAbsolutePath())
+        assertEquals(file.toAbsolutePath(), result.single().resource.file.toPath().toAbsolutePath())
     }
 
     @Test
@@ -47,7 +47,7 @@ class MediaFileServiceTest {
 
         val result = MediaFileService(artRepository, mediaRoot.toString()).resolveForArt(1L)
 
-        assertEquals(file.toAbsolutePath(), result.resource.file.toPath().toAbsolutePath())
+        assertEquals(file.toAbsolutePath(), result.single().resource.file.toPath().toAbsolutePath())
     }
 
     @Test
@@ -56,8 +56,8 @@ class MediaFileServiceTest {
 
         val result = MediaFileService(artRepository, mediaRoot.toString()).resolveForArt(1L)
 
-        assertTrue(result.resource.exists())
-        assertEquals("image/svg+xml", result.mediaType.toString())
+        assertTrue(result.single().resource.exists())
+        assertEquals("image/svg+xml", result.single().mediaType.toString())
     }
 
     @Test
@@ -70,7 +70,38 @@ class MediaFileServiceTest {
 
         val result = MediaFileService(artRepository, mediaRoot.toString()).resolveForArt(1L)
 
-        assertEquals("image/svg+xml", result.mediaType.toString())
+        assertEquals("image/svg+xml", result.single().mediaType.toString())
+    }
+
+    @Test
+    fun `resolves direct folder files in file name order`() {
+        val folder = mediaRoot.resolve("SFW/2024/gallery")
+        Files.createDirectories(folder)
+        Files.writeString(folder.resolve("02.png"), "second")
+        Files.writeString(folder.resolve("01.png"), "first")
+        Files.createDirectories(folder.resolve("nested"))
+        Files.writeString(folder.resolve("nested/03.png"), "ignored")
+        `when`(artRepository.findById(1L)).thenReturn(
+            Optional.of(TestFixtures.art(fileName = "gallery"))
+        )
+
+        val result = MediaFileService(artRepository, mediaRoot.toString()).resolveForArt(1L)
+
+        assertEquals(listOf("01.png", "02.png"), result.map { it.fileName })
+    }
+
+    @Test
+    fun `returns placeholder for an empty folder`() {
+        val folder = mediaRoot.resolve("SFW/2024/gallery")
+        Files.createDirectories(folder)
+        `when`(artRepository.findById(1L)).thenReturn(
+            Optional.of(TestFixtures.art(fileName = "gallery"))
+        )
+
+        val result = MediaFileService(artRepository, mediaRoot.toString()).resolveForArt(1L)
+
+        assertEquals(1, result.size)
+        assertEquals("placeholder.svg", result.single().fileName)
     }
 
     @Test
