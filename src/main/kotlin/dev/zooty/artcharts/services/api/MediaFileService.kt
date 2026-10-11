@@ -13,7 +13,11 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
-data class MediaFile(val resource: Resource, val mediaType: MediaType)
+data class MediaFile(
+    val resource: Resource,
+    val mediaType: MediaType,
+    val fileName: String,
+)
 
 @Service
 class MediaFileService(
@@ -22,17 +26,17 @@ class MediaFileService(
 ) {
     private val root: Path = Paths.get(mediaRoot).toAbsolutePath().normalize()
 
-    fun resolveForArt(id: Long): MediaFile {
+    fun resolveForArt(id: Long): List<MediaFile> {
         val art = artRepository.findById(id)
             .orElseThrow { ResourceNotFoundException("Art with id $id not found") }
         val visibilityDirectory = if (art.isNsfw) "NSFW" else "SFW"
         val year = art.deliveredDate.take(4)
         val candidate = root.resolve(visibilityDirectory).resolve(year).resolve(art.fileName).normalize()
-        val safeCandidate = if (candidate.startsWith(root) && Files.isRegularFile(candidate)) candidate else null
-        return if (safeCandidate == null) placeholder() else MediaFile(
-            FileSystemResource(safeCandidate),
-            contentType(safeCandidate)
-        )
+        return when {
+            isRegularFile(candidate) -> listOf(createMediaFile(candidate))
+            isFolder(candidate) -> gatherSubMediaFiles(candidate).ifEmpty { listOf(placeholder()) }
+            else -> listOf(placeholder())
+        }
     }
 
     fun saveFile(file: MultipartFile, fileName: String, date: String, isNsfw: Boolean) {
@@ -48,9 +52,35 @@ class MediaFileService(
         file.transferTo(pathToSave)
     }
 
-    private fun placeholder() = MediaFile(
+    private fun gatherSubMediaFiles(folderPath: Path): List<MediaFile> {
+        return Files.walk(folderPath, 1).use { paths ->
+            paths.filter { Files.isRegularFile(it) }
+                .sorted(compareBy { it.fileName.toString() })
+                .map { createMediaFile(it) }
+                .toList()
+        }
+    }
+
+    private fun isRegularFile(path: Path): Boolean {
+        return path.startsWith(root) && Files.isRegularFile(path)
+    }
+
+    private fun isFolder(path: Path): Boolean {
+        return path.startsWith(root) && Files.isDirectory(path)
+    }
+
+    private fun createMediaFile(path: Path): MediaFile {
+        return MediaFile(
+            FileSystemResource(path),
+            contentType(path),
+            path.fileName.toString(),
+        )
+    }
+
+    private fun placeholder(): MediaFile = MediaFile(
         ClassPathResource("static/site/placeholder.svg"),
-        MediaType("image", "svg+xml")
+        MediaType("image", "svg+xml"),
+        "placeholder.svg",
     )
 
     private fun contentType(path: Path): MediaType = runCatching {

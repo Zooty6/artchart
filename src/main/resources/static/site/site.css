@@ -168,6 +168,23 @@ a {
     max-height: 75vh;
 }
 
+#media-content {
+    display: grid;
+    place-items: center;
+}
+
+.media-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .75rem;
+    padding: .75rem;
+}
+
+.media-controls[hidden] {
+    display: none;
+}
+
 .details {
     display: grid;
     grid-template-columns: max-content 1fr;
