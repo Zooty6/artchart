@@ -203,7 +203,7 @@
                         <plugin>jpa</plugin>
                         <plugin>lombok</plugin>
                     </compilerPlugins>
-                    <jvmTarget>21</jvmTarget>
+                    <jvmTarget>${java.version}</jvmTarget>
                 </configuration>
                 <dependencies>
                     <dependency>

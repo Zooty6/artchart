@@ -51,6 +51,7 @@
             });
         } catch (error) {
             status.textContent = 'Could not search artists.';
+            console.error(error, error.stack);
         }
     }
 
@@ -69,6 +70,7 @@
             form.classList.remove('hidden');
         } catch (error) {
             status.textContent = 'Could not load artist data.';
+            console.error(error);
         }
     }
 
