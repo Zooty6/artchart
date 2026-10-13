@@ -44,7 +44,7 @@ docker run --rm --name artcharts `
   -e ARTCHART_DATASOURCE_URL=jdbc:sqlite:/data/artcharts.db `
   -e ARTCHART_MEDIA_ROOT=/art `
   -v "${DB_FOLDER}\artcharts.db:/data/artcharts.db" `
-  -v "${ARTS_FOLDER}:/art:ro" `
+  -v "${ARTS_FOLDER}:/art" `
   artcharts:local
 ```
 
@@ -58,7 +58,7 @@ docker run --rm --name artcharts \
   -e ARTCHART_DATASOURCE_URL=jdbc:sqlite:/data/artcharts.db \
   -e ARTCHART_MEDIA_ROOT=/art \
   -v "$(DB_FOLDER)/artcharts.db:/data/artcharts.db" \
-  -v "$(ARTS_FOLDER):/art:ro" \
+  -v "$(ARTS_FOLDER):/art" \
   artcharts:local
 ```
 
