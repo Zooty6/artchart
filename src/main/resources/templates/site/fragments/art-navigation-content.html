@@ -4,15 +4,15 @@
            th:href="@{/site/arts(year=${year},hideNsfw=${hideNsfw})}"
            th:text="${year}"
            th:classappend="${year == selectedYear} ? ' selected' : ''"
-           th:hx-get="@{/site/arts/list(year=${year},hideNsfw=${hideNsfw},searchMode=YEAR)}"
-           hx-target="#art-browser" hx-swap="outerHTML">2024</a>
+           th:hx-get="@{/site/arts/list(year=${year},searchMode='YEAR')}"
+           hx-target="#art-browser" hx-swap="outerHTML" hx-include="#hide-nsfw">2024</a>
     </div>
     <form th:if="${generalSearch}" class="search-control"
-          th:hx-get="@{/site/arts/list(hideNsfw=${hideNsfw})}"
-          hx-target="#art-browser" hx-swap="outerHTML">
+          th:hx-get="@{/site/arts/list}"
+          hx-target="#art-browser" hx-swap="outerHTML" hx-include="#hide-nsfw">
         <label for="art-search">Filter</label>
         <input id="art-search" type="search" name="searchParams"
-               th:value="${searchParams}" hx-preserve>
+               th:value="${searchParams}" hx-preserve="">
         <span class="search-hint" aria-label="Search syntax help">
             ?
             <span class="search-hint-content" role="tooltip">
