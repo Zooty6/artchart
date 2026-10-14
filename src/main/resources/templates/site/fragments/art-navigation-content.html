@@ -1,12 +1,5 @@
 <div id="year-navigation-content" th:fragment="content" xmlns:th="http://www.thymeleaf.org">
-    <div th:if="${!generalSearch}">
-        <a th:each="year : ${years}"
-           th:href="@{/site/arts(year=${year},hideNsfw=${hideNsfw})}"
-           th:text="${year}"
-           th:classappend="${year == selectedYear} ? ' selected' : ''"
-           th:hx-get="@{/site/arts/list(year=${year},searchMode='YEAR')}"
-           hx-target="#art-browser" hx-swap="outerHTML" hx-include="#hide-nsfw">2024</a>
-    </div>
+    <div th:replace="~{site/fragments/art-navigation-content :: yearLinks}"></div>
     <form th:if="${generalSearch}" class="search-control"
           th:hx-get="@{/site/arts/list}"
           hx-target="#art-browser" hx-swap="outerHTML" hx-include="#hide-nsfw">
@@ -34,4 +27,12 @@
         <input type="hidden" name="searchMode" value="GENERAL">
         <button type="submit">Search</button>
     </form>
+</div>
+<div th:fragment="yearLinks" th:if="${!generalSearch}" xmlns:th="http://www.thymeleaf.org">
+    <a th:each="year : ${years}"
+       th:href="@{/site/arts(year=${year},hideNsfw=${hideNsfw})}"
+       th:text="${year}"
+       th:classappend="${year == selectedYear} ? ' selected' : ''"
+       th:hx-get="@{/site/arts/list(year=${year},searchMode='YEAR')}"
+       hx-target="#art-browser" hx-swap="outerHTML" hx-include="#hide-nsfw">2024</a>
 </div>

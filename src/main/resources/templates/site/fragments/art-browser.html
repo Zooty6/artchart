@@ -26,4 +26,7 @@
          th:classappend="${searchError == null} ? ' hidden' : ''"
          th:text="${searchError}"></div>
     <section id="art-list" th:replace="~{site/fragments/art-list :: artList}"></section>
+    <div class="year-navigation" aria-label="Years" th:if="${!generalSearch}">
+        <div th:replace="~{site/fragments/art-navigation-content :: yearLinks}"></div>
+    </div>
 </section>
