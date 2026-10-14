@@ -4,8 +4,9 @@
         <label id="search-mode-toggle" class="filter-control mode-toggle">
             <input type="checkbox" value="GENERAL"
                    th:checked="${generalSearch}"
-                   th:hx-get="@{/site/arts/list(year=${selectedYear},searchMode=${otherSearchMode},hideNsfw=${hideNsfw})}"
-                   hx-trigger="change" hx-target="#year-navigation-content" hx-swap="outerHTML">
+                   th:hx-get="@{/site/arts/list(year=${selectedYear},searchMode=${otherSearchMode})}"
+                   hx-trigger="change" hx-target="#year-navigation-content" hx-swap="outerHTML"
+                   hx-include="#hide-nsfw">
             General search
         </label>
     </div>
@@ -13,10 +14,11 @@
         <h2 th:if="${!generalSearch && selectedYear != null}" th:text="'Arts delivered in ' + ${selectedYear}">Arts</h2>
         <h2 th:if="${generalSearch}">Search results</h2>
         <label class="filter-control">
-            <input type="checkbox" name="hideNsfw" value="true"
+            <input id="hide-nsfw" type="checkbox" name="hideNsfw" value="true"
                    th:checked="${hideNsfw}"
                    th:hx-get="@{/site/arts/list(year=${selectedYear},searchMode=${searchMode},searchParams=${searchParams})}"
-                   hx-trigger="change" hx-target="#art-list" hx-select="#art-list" hx-swap="outerHTML">
+                   hx-trigger="change" hx-target="#art-list" hx-select="#art-list" hx-swap="outerHTML"
+                   hx-include="this">
             Hide NSFW
         </label>
     </div>

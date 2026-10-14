@@ -2,7 +2,8 @@
 <label id="search-mode-toggle" class="filter-control mode-toggle" hx-swap-oob="outerHTML" xmlns:th="http://www.thymeleaf.org">
     <input type="checkbox" value="GENERAL"
            th:checked="${generalSearch}"
-           th:hx-get="@{/site/arts/list(year=${selectedYear},searchMode=${otherSearchMode},hideNsfw=${hideNsfw})}"
-           hx-trigger="change" hx-target="#year-navigation-content" hx-swap="outerHTML">
+           th:hx-get="@{/site/arts/list(year=${selectedYear},searchMode=${otherSearchMode})}"
+           hx-trigger="change" hx-target="#year-navigation-content" hx-swap="outerHTML"
+           hx-include="#hide-nsfw">
     General search
 </label>
