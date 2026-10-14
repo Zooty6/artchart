@@ -1,6 +1,7 @@
 package dev.zooty.artcharts.controllers.site
 
 import dev.zooty.artcharts.services.api.MediaFileService
+import dev.zooty.artcharts.services.api.MediaThumbnailService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.Resource
 import org.springframework.http.ContentDisposition
@@ -28,11 +29,17 @@ data class MediaManifestItem(
 @RequestMapping("/site/media")
 class SiteMediaController(
     private val mediaFileService: MediaFileService,
+    private val mediaThumbnailService: MediaThumbnailService,
     @param:Value($$"${artcharts.media-cache-max-age-seconds}") private val cacheMaxAgeSeconds: Long,
 ) {
     @GetMapping("/{id}")
     fun media(@PathVariable id: Long): ResponseEntity<Resource> {
         return mediaResponse(mediaFileService.resolveForArt(id).first())
+    }
+
+    @GetMapping("/{id}/thumbnail")
+    fun thumbnail(@PathVariable id: Long): ResponseEntity<Resource> {
+        return mediaResponse(mediaThumbnailService.resolveThumbnailForArt(id))
     }
 
     @GetMapping("/{id}/{index}")

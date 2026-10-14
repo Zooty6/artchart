@@ -3,6 +3,7 @@ package dev.zooty.artcharts.controllers.site
 import dev.zooty.artcharts.exceptions.ResourceNotFoundException
 import dev.zooty.artcharts.services.api.MediaFile
 import dev.zooty.artcharts.services.api.MediaFileService
+import dev.zooty.artcharts.services.api.MediaThumbnailService
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,6 +23,20 @@ class SiteMediaControllerTest {
 
     @MockitoBean
     lateinit var mediaFileService: MediaFileService
+
+    @MockitoBean
+    lateinit var mediaThumbnailService: MediaThumbnailService
+
+    @Test
+    fun `thumbnail endpoint returns generated thumbnail`() {
+        `when`(mediaThumbnailService.resolveThumbnailForArt(1L)).thenReturn(
+            MediaFile(ByteArrayResource("thumb".toByteArray()), MediaType.IMAGE_JPEG, "thumbnail-image.jpg")
+        )
+
+        mockMvc.perform(get("/site/media/1/thumbnail"))
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "image/jpeg"))
+    }
 
     @Test
     fun `media endpoint returns inline media`() {

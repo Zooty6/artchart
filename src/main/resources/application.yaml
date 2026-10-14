@@ -1,6 +1,9 @@
 spring:
   application:
     name: artcharts
+  threads:
+    virtual:
+      enabled: true
   servlet:
     multipart:
       max-file-size: ${ARTCHART_FILE_UPLOAD_LIMIT:100MB}

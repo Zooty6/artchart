@@ -4,7 +4,7 @@
     <div class="art-grid">
         <article class="art-card" th:each="art : ${arts}">
             <a th:href="@{/site/arts/{id}(id=${art.id})}">
-                <img th:src="@{/site/media/{id}(id=${art.id})}" th:alt="${art.fileName}">
+                <img th:src="@{/site/media/{id}/thumbnail(id=${art.id})}" th:alt="${art.fileName}">
             </a>
             <div class="art-card-content">
                 <h3><a th:href="@{/site/arts/{id}(id=${art.id})}" th:text="${art.fileName}">file.png</a></h3>

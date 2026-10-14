@@ -10,5 +10,5 @@ import org.springframework.context.annotation.Configuration
 @EnableCaching
 class CacheConfiguration {
     @Bean
-    fun cacheManager(): CacheManager = ConcurrentMapCacheManager("art-years")
+    fun cacheManager(): CacheManager = ConcurrentMapCacheManager("art-years", "media-thumbnails")
 }
