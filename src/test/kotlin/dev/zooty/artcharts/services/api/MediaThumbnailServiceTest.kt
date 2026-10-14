@@ -43,6 +43,19 @@ class MediaThumbnailServiceTest {
     }
 
     @Test
+    fun `creates a thumbnail from a WebP image`() {
+        val source = createMedia("art.webp")
+        val webp = "UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEAAUAmJaQAA3AA/v89WAAAAA=="
+        Files.write(source, java.util.Base64.getDecoder().decode(webp))
+
+        val thumbnail = thumbnailService(source, "art.webp").resolveThumbnailForArt(1L)
+
+        assertEquals("image/jpeg", thumbnail.mediaType.toString())
+        assertTrue(thumbnail.resource.contentLength() > 0)
+        assertTrue(ImageIO.read(thumbnail.resource.inputStream) != null)
+    }
+
+    @Test
     fun `keeps GIF thumbnails animated`() {
         val source = createMedia("art.gif")
         writeAnimatedGif(source)
