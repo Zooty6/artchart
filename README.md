@@ -1,5 +1,12 @@
 # Artchart
 
+[![Tests](https://github.com/Zooty6/artchart/actions/workflows/tests.yml/badge.svg)](https://github.com/Zooty6/artchart/actions/workflows/tests.yml)
+[![Coverage](https://codecov.io/gh/Zooty6/artchart/graph/badge.svg)](https://codecov.io/gh/Zooty6/artchart)
+[![Latest release](https://img.shields.io/github/v/release/Zooty6/artchart)](https://github.com/Zooty6/artchart/releases/latest)
+[![License: Unlicense](https://img.shields.io/badge/license-Unlicense-blue.svg)](LICENSE)
+![Java](https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fraw.githubusercontent.com%2FZooty6%2Fartchart%2Fmaster%2Fpom.xml&query=%2F%2F*%5Blocal-name()%3D'project'%5D%2F*%5Blocal-name()%3D'properties'%5D%2F*%5Blocal-name()%3D'java.version'%5D%2Ftext()&label=Java&color=blue)
+![Kotlin](https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fraw.githubusercontent.com%2FZooty6%2Fartchart%2Fmaster%2Fpom.xml&query=%2F%2F*%5Blocal-name()%3D'project'%5D%2F*%5Blocal-name()%3D'properties'%5D%2F*%5Blocal-name()%3D'kotlin.version'%5D%2Ftext()&label=Kotlin&color=7F52FF)
+
 Artchart is a project for maintaining records of art pieces, making them browsable and to 
 generate several charts of their attributes for statistical purposes.  
 The project is a spring boot application written in kotlin.
