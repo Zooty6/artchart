@@ -1,4 +1,4 @@
-package dev.zooty.artcharts.persistence.entity
+﻿package dev.zooty.artcharts.persistence.entity
 
 import mu.KotlinLogging
 import org.hibernate.type.descriptor.WrapperOptions
@@ -92,7 +92,7 @@ class PriceType : UserType<Price> {
     }
 
     private fun extractValue(priceString: String, currencyString: String): Double {
-        return priceString.split(currencyString)[1].trim().toDouble()
+        return priceString.uppercase().split(currencyString.uppercase())[1].trim().toDouble()
     }
 
     override fun isMutable(): Boolean {
