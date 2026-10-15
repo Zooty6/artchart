@@ -43,6 +43,18 @@ class MediaThumbnailServiceTest {
     }
 
     @Test
+    fun `creates a thumbnail from a JFIF image`() {
+        val source = createMedia("art.jfif")
+        ImageIO.write(BufferedImage(640, 480, BufferedImage.TYPE_INT_RGB), "jpeg", source.toFile())
+
+        val thumbnail = thumbnailService(source, "art.jfif").resolveThumbnailForArt(1L)
+        val image = ImageIO.read(thumbnail.resource.inputStream)
+
+        assertEquals("image/jpeg", thumbnail.mediaType.toString())
+        assertTrue(image.width <= 320 && image.height <= 240)
+    }
+
+    @Test
     fun `creates a thumbnail from a WebP image`() {
         val source = createMedia("art.webp")
         val webp = "UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEAAUAmJaQAA3AA/v89WAAAAA=="

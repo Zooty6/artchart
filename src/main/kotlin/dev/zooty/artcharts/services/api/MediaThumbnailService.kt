@@ -33,7 +33,7 @@ class MediaThumbnailService(private val mediaFileService: MediaFileService) {
         private const val MAX_PREVIEW_BLOCK_BYTES = 64L * 1024 * 1024
         private val TEST_BLOCK = "TEST".toByteArray()
         private val END_BLOCK = "ENDB".toByteArray()
-        private val IMAGE_EXTENSIONS = setOf(".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff", ".wbmp", ".webp")
+        private val IMAGE_EXTENSIONS = setOf(".jpg", ".jpeg", ".jfif", ".png", ".bmp", ".tif", ".tiff", ".wbmp", ".webp")
     }
 
 

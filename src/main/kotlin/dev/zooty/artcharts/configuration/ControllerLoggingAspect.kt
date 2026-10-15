@@ -25,7 +25,7 @@ class ControllerLoggingAspect {
         val requestDescription = request?.let { "${it.method} ${it.requestURI}" } ?: "unknown request"
         val startedAt = System.nanoTime()
 
-        log.info("Controller call started: {} ({})", operation, requestDescription)
+        log.debug("Controller call started: {} ({})", operation, requestDescription)
 
         var outcome = "successful"
         try {
@@ -35,7 +35,7 @@ class ControllerLoggingAspect {
             throw exception
         } finally {
             val durationMs = (System.nanoTime() - startedAt) / 1_000_000
-            log.info("Controller call finished: {} ({}, {} ms)", operation, outcome, durationMs)
+            log.debug("Controller call finished: {} ({}, {} ms)", operation, outcome, durationMs)
         }
     }
 
