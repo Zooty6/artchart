@@ -1,5 +1,7 @@
 package dev.zooty.artcharts.controllers.site
 
+import dev.zooty.artcharts.exceptions.ResourceNotFoundException
+import dev.zooty.artcharts.services.api.MediaFile
 import dev.zooty.artcharts.services.api.MediaFileService
 import dev.zooty.artcharts.services.api.MediaThumbnailService
 import org.springframework.beans.factory.annotation.Value
@@ -46,7 +48,7 @@ class SiteMediaController(
     fun indexedMedia(@PathVariable id: Long, @PathVariable index: Int): ResponseEntity<Resource> {
         val mediaFiles = mediaFileService.resolveForArt(id)
         if (index !in 1..mediaFiles.size) {
-            throw dev.zooty.artcharts.exceptions.ResourceNotFoundException("Media index $index not found for art $id")
+            throw ResourceNotFoundException("Media index $index not found for art $id")
         }
         return mediaResponse(mediaFiles[index - 1])
     }
@@ -65,7 +67,7 @@ class SiteMediaController(
         return ResponseEntity.ok(MediaManifest(items.size, items))
     }
 
-    private fun mediaResponse(media: dev.zooty.artcharts.services.api.MediaFile): ResponseEntity<Resource> {
+    private fun mediaResponse(media: MediaFile): ResponseEntity<Resource> {
         val headers = HttpHeaders()
         headers.contentType = media.mediaType
         headers.contentDisposition = ContentDisposition.inline().build()
