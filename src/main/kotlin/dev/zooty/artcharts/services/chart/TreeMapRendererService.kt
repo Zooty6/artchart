@@ -7,6 +7,7 @@ import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Font
 import java.awt.RenderingHints
+import java.awt.font.TextLayout
 import java.awt.geom.Rectangle2D
 import kotlin.math.max
 import kotlin.math.min
@@ -64,16 +65,28 @@ class TreeMapRendererService {
         }
 
         if (metrics.stringWidth(label) < rect.w - 4 && metrics.height < rect.h - 4) {
-            svgGraphics2D.drawString(label, (rect.x + 5).toInt(), (rect.y + metrics.ascent + 5).toInt())
+            drawOutlinedLabel(svgGraphics2D, label, (rect.x + 5).toInt(), (rect.y + metrics.ascent + 5).toInt())
         } else if (rect.w > 20 && rect.h > 20) {
             // If still doesn't fit but rectangle is large enough, try to show at least something or just force it with tiny font
             val tinyFont = Font("SansSerif", Font.PLAIN, 8)
             svgGraphics2D.font = tinyFont
             metrics = svgGraphics2D.fontMetrics
             if (metrics.stringWidth(label) < rect.w - 2 && metrics.height < rect.h - 2) {
-                svgGraphics2D.drawString(label, (rect.x + 2).toInt(), (rect.y + metrics.ascent + 2).toInt())
+                drawOutlinedLabel(svgGraphics2D, label, (rect.x + 2).toInt(), (rect.y + metrics.ascent + 2).toInt())
             }
         }
+    }
+
+    private fun drawOutlinedLabel(svgGraphics2D: SVGGraphics2D, label: String, x: Int, y: Int) {
+        val textOutline = TextLayout(label, svgGraphics2D.font, svgGraphics2D.fontRenderContext).getOutline(null)
+        val positionedOutline = java.awt.geom.AffineTransform.getTranslateInstance(x.toDouble(), y.toDouble())
+            .createTransformedShape(textOutline)
+
+        svgGraphics2D.color = Color.BLACK
+        svgGraphics2D.stroke = BasicStroke(1.0f)
+        svgGraphics2D.draw(positionedOutline)
+        svgGraphics2D.color = Color.WHITE
+        svgGraphics2D.fill(positionedOutline)
     }
 
     private data class TreemapItem(val label: String, val value: Double)
