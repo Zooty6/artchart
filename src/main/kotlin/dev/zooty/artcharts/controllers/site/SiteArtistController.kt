@@ -23,6 +23,7 @@ class SiteArtistController(
 ) {
     companion object {
         private const val VIEW_ARTIST_FORM = "site/artists/new"
+        private const val VIEW_ARTIST_EDIT = "site/artists/edit"
         private const val VIEW_ARTIST_SUGGESTIONS = "site/fragments/artist-suggestions"
         private const val REDIRECT_SITE = "redirect:/site"
     }
@@ -36,7 +37,7 @@ class SiteArtistController(
     @GetMapping("/edit")
     fun editArtist(model: Model): String {
         model.addAttribute("artist", UpdateArtistRequest())
-        return "site/artists/edit"
+        return VIEW_ARTIST_EDIT
     }
 
     @PostMapping
