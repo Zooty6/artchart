@@ -28,6 +28,20 @@ a {
     background: white;
 }
 
+.year-navigation > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem;
+    min-width: 0;
+}
+
+.year-navigation > div > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem;
+    min-width: 0;
+}
+
 .navigation a, .chart-navigation a, .year-navigation a {
     padding: .4rem .65rem;
 }
