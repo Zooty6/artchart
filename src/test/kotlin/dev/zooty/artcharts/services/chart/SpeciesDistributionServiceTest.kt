@@ -49,6 +49,24 @@ class SpeciesDistributionServiceTest {
         assertTrue(svg.startsWith("<svg"))
     }
 
+    @Test
+    fun `bar chart renders species distribution`() {
+        `when`(artRepository.findAll()).thenReturn(
+            listOf(
+                art(species = "cat"),
+                art(species = "cat"),
+                art(species = "dog")
+            )
+        )
+        val service = SpeciesDistributionService(SvgConverterService(), artRepository, TreeMapRendererService())
+
+        val svg = service.speciesDistribution(500, 400, ChartType.BAR)
+
+        assertTrue(svg.startsWith("<svg"))
+        assertTrue(svg.contains("cat"))
+        assertTrue(svg.contains("dog"))
+    }
+
     private fun art(species: String) = Art(
         id = 1,
         otherCharacters = null,
