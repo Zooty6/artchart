@@ -1,8 +1,8 @@
 package dev.zooty.artcharts.services.chart
 
+import dev.zooty.artcharts.TestFixtures
 import dev.zooty.artcharts.persistence.ArtRepository
 import dev.zooty.artcharts.persistence.entity.Tag
-import dev.zooty.artcharts.TestFixtures
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -54,6 +54,24 @@ class TagDistributionServiceTest {
         assertEquals(2, renderer.dataset.keys.size)
         assertEquals(2L, renderer.dataset.getValue("cute"))
         assertEquals(1L, renderer.dataset.getValue("blue"))
+    }
+
+    @Test
+    fun `bar chart renders tags matching the requested category`() {
+        `when`(artRepository.findAllBy()).thenReturn(
+            Stream.of(
+                TestFixtures.art(tags = mutableSetOf(Tag("cute", "style"), Tag("blue", "color"))),
+                TestFixtures.art(tags = mutableSetOf(Tag("cute", "style")))
+            )
+        )
+
+        val svg = TagDistributionService(
+            SvgConverterService(), artRepository, TreeMapRendererService()
+        ).tagDistribution(500, 400, ChartType.BAR, "style")
+
+        assertTrue(svg.startsWith("<svg"))
+        assertTrue(svg.contains("cute"))
+        assertTrue(!svg.contains("blue"))
     }
 
     private class RecordingTreeMapRendererService : TreeMapRendererService() {
