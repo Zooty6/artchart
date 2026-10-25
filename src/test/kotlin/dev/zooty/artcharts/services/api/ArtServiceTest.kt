@@ -17,10 +17,10 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
 import org.mockito.Mockito.verify
+import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
-import java.util.Optional
+import java.util.*
 
 @ExtendWith(MockitoExtension::class)
 class ArtServiceTest {
@@ -137,7 +137,7 @@ class ArtServiceTest {
         fileName = "art.png",
         price = Price(Currency.USD, 10.0),
         note = null,
-        artist = Artist(1, "Artist", null, null, null, null, null, null, null, null, null, null, null),
+        artist = Artist(1, "Artist", null, null, null, null, null, null, null, null, null, null, null, null, null),
         isNsfw = false,
         link = "https://example.com",
     )

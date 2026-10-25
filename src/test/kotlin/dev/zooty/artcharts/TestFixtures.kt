@@ -8,7 +8,7 @@ import dev.zooty.artcharts.persistence.entity.Tag
 
 object TestFixtures {
     fun artist(name: String = "Artist") = Artist(
-        1L, name, null, null, null, null, null, null, null, null, null, null, null
+        1L, name, null, null, null, null, null, null, null, null, null, null, null, null, null
     )
 
     fun art(

@@ -30,6 +30,8 @@ class SiteArtistControllerTest {
             .andExpect(status().isOk)
             .andExpect(view().name("site/artists/new"))
             .andExpect(content().string(org.hamcrest.Matchers.containsString("New artist")))
+            .andExpect(content().string(org.hamcrest.Matchers.containsString("name=\"bsky\"")))
+            .andExpect(content().string(org.hamcrest.Matchers.containsString("name=\"lavatop\"")))
     }
 
     @Test

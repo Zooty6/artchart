@@ -2,9 +2,9 @@ package dev.zooty.artcharts.dto
 
 import dev.zooty.artcharts.TestFixtures
 import dev.zooty.artcharts.persistence.entity.Currency
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
-import org.junit.jupiter.api.Test
 
 class CreateRequestTest {
     @Test
@@ -15,12 +15,16 @@ class CreateRequestTest {
             twitter = "",
             note = "  ",
             vgen = "vgen.example",
+            bsky = " bsky.example ",
+            lavatop = " ",
         ).toEntity()
 
         assertNull(artist.furaffinity)
         assertNull(artist.twitter)
         assertNull(artist.note)
         assertEquals("vgen.example", artist.vgen)
+        assertEquals("bsky.example", artist.bsky)
+        assertNull(artist.lavatop)
     }
 
     @Test
@@ -31,11 +35,15 @@ class CreateRequestTest {
             name = " Updated Artist ",
             twitter = " ",
             site = " artist.example ",
+            bsky = " bsky.example ",
+            lavatop = " ",
         ).applyTo(artist)
 
         assertEquals("Updated Artist", artist.name)
         assertNull(artist.twitter)
         assertEquals("artist.example", artist.site)
+        assertEquals("bsky.example", artist.bsky)
+        assertNull(artist.lavatop)
     }
 
     @Test

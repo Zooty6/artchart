@@ -9,12 +9,12 @@ import dev.zooty.artcharts.persistence.entity.Artist
 import dev.zooty.artcharts.persistence.entity.Currency
 import dev.zooty.artcharts.persistence.entity.Price
 import dev.zooty.artcharts.persistence.entity.Tag
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.client.RestTestClient
 
@@ -187,7 +187,7 @@ class ArtControllerIT {
     }
 
     private fun artist(name: String) = Artist(
-        0L, name, null, null, null, null, null, null, null, null, null, null, null
+        0L, name, null, null, null, null, null, null, null, null, null, null, null, null, null
     )
 
     private fun art(

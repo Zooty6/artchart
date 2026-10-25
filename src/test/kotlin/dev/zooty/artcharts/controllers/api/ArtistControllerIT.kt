@@ -85,16 +85,18 @@ class ArtistControllerIT {
         restTestClient.post()
             .uri("/api/artist")
             .contentType(MediaType.APPLICATION_JSON)
-            .body(CreateArtistRequest(name = " New Artist ", twitter = "@new-artist"))
+            .body(CreateArtistRequest(name = " New Artist ", twitter = "@new-artist", bsky = "new.example", lavatop = "new"))
             .exchange()
             .expectStatus().isOk
             .expectBody()
             .jsonPath("$.id").exists()
             .jsonPath("$.name").isEqualTo("New Artist")
             .jsonPath("$.twitter").isEqualTo("@new-artist")
+            .jsonPath("$.bsky").isEqualTo("new.example")
+            .jsonPath("$.lavatop").isEqualTo("new")
     }
 
     private fun artist(name: String) = Artist(
-        0L, name, null, null, null, null, null, null, null, null, null, null, null
+        0L, name, null, null, null, null, null, null, null, null, null, null, null, null, null
     )
 }
