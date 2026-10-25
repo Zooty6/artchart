@@ -79,7 +79,7 @@ class SpendingServiceTest {
         fileName = "art.png",
         price = price,
         note = null,
-        artist = Artist(1, "Artist", null, null, null, null, null, null, null, null, null, null, null),
+        artist = Artist(1, "Artist", null, null, null, null, null, null, null, null, null, null, null, null, null),
         isNsfw = false,
         link = "https://example.com",
     )

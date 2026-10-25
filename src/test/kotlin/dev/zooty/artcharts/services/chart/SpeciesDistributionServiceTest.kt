@@ -79,7 +79,7 @@ class SpeciesDistributionServiceTest {
         fileName = "art.png",
         price = Price(Currency.USD, 10.0),
         note = null,
-        artist = Artist(1, "Artist", null, null, null, null, null, null, null, null, null, null, null),
+        artist = Artist(1, "Artist", null, null, null, null, null, null, null, null, null, null, null, null, null),
         isNsfw = false,
         link = "https://example.com",
     )

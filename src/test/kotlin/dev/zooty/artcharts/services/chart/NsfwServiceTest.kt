@@ -5,8 +5,6 @@ import dev.zooty.artcharts.persistence.entity.Art
 import dev.zooty.artcharts.persistence.entity.Artist
 import dev.zooty.artcharts.persistence.entity.Currency
 import dev.zooty.artcharts.persistence.entity.Price
-import org.jfree.chart.ChartFactory
-import org.jfree.data.general.DefaultPieDataset
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -25,7 +23,6 @@ class NsfwServiceTest {
         `when`(artRepository.findAll()).thenReturn(listOf(art(false), art(true), art(true)))
         val service = NsfwService(SvgConverterService(), artRepository)
 
-        val chartField = NsfwService::class.java.getDeclaredMethod("nsfwRatio", Int::class.java, Int::class.java)
         val svg = service.nsfwRatio(640, 480)
 
         assertTrue(svg.startsWith("<svg"))
@@ -43,7 +40,7 @@ class NsfwServiceTest {
         fileName = "art.png",
         price = Price(Currency.USD, 10.0),
         note = null,
-        artist = Artist(1, "Artist", null, null, null, null, null, null, null, null, null, null, null),
+        artist = Artist(1, "Artist", null, null, null, null, null, null, null, null, null, null, null, null, null),
         isNsfw = isNsfw,
         link = "https://example.com",
     )

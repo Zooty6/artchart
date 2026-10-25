@@ -1,6 +1,10 @@
 package dev.zooty.artcharts.persistence.entity
 
-import jakarta.persistence.*
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.Table
 
 @Entity
 @Table(name = "artists")
@@ -11,6 +15,7 @@ class Artist(
     var name: String,
     var furaffinity: String?,
     var twitter: String?,
+    var bsky: String?,
     var discord: String?,
     var deviantart: String?,
     var note: String?,
@@ -19,5 +24,6 @@ class Artist(
     var boosty: String?,
     var telegram: String?,
     var facebook: String?,
-    var vgen: String?
+    var vgen: String?,
+    var lavatop: String?
 )

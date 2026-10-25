@@ -65,7 +65,7 @@
             const artist = await response.json();
             setField('name', artist.name);
             ['furaffinity', 'twitter', 'discord', 'deviantart', 'paypalEmail', 'site',
-                'boosty', 'telegram', 'facebook', 'vgen', 'note'].forEach(name => setField(name, artist[name]));
+                'bsky', 'boosty', 'telegram', 'facebook', 'vgen', 'lavatop', 'note'].forEach(field => setField(field, artist[field]));
             form.action = '/site/artists/' + artist.id;
             form.classList.remove('hidden');
         } catch (error) {

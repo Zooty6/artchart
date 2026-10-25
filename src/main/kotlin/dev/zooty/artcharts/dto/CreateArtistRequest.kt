@@ -7,6 +7,7 @@ data class CreateArtistRequest(
     @field:NotBlank val name: String = "",
     val furaffinity: String? = null,
     val twitter: String? = null,
+    val bsky: String? = null,
     val discord: String? = null,
     val deviantart: String? = null,
     val note: String? = null,
@@ -16,11 +17,12 @@ data class CreateArtistRequest(
     val telegram: String? = null,
     val facebook: String? = null,
     val vgen: String? = null,
+    val lavatop: String? = null,
 ) {
     fun toEntity() = Artist(
-        0L, name.trim(), furaffinity.nullIfBlank(), twitter.nullIfBlank(),
+        0L, name.trim(), furaffinity.nullIfBlank(), twitter.nullIfBlank(), bsky.nullIfBlank(),
         discord.nullIfBlank(), deviantart.nullIfBlank(), note.nullIfBlank(),
         paypalEmail.nullIfBlank(), site.nullIfBlank(), boosty.nullIfBlank(),
-        telegram.nullIfBlank(), facebook.nullIfBlank(), vgen.nullIfBlank()
+        telegram.nullIfBlank(), facebook.nullIfBlank(), vgen.nullIfBlank(), lavatop.nullIfBlank()
     )
 }

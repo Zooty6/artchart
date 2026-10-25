@@ -8,11 +8,11 @@ import dev.zooty.artcharts.persistence.entity.Price
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.EnumSource
 
 @ExtendWith(MockitoExtension::class)
 class CharacterGraphServiceTest {
@@ -64,7 +64,7 @@ class CharacterGraphServiceTest {
         fileName = "art.png",
         price = Price(Currency.USD, 10.0),
         note = null,
-        artist = Artist(1, "Artist", null, null, null, null, null, null, null, null, null, null, null),
+        artist = Artist(1, "Artist", null, null, null, null, null, null, null, null, null, null, null, null, null),
         isNsfw = false,
         link = "https://example.com",
     )
