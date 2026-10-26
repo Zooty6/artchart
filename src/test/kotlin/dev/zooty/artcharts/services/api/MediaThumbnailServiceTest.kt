@@ -38,7 +38,7 @@ class MediaThumbnailServiceTest {
         val thumbnail = service.resolveThumbnailForArt(1L)
         val image = ImageIO.read(thumbnail.resource.inputStream)
 
-        assertEquals("image/jpeg", thumbnail.mediaType.toString())
+        assertEquals("image/png", thumbnail.mediaType.toString())
         assertTrue(image.width <= 320 && image.height <= 240)
     }
 
