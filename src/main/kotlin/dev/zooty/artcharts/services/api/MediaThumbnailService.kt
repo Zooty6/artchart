@@ -222,10 +222,12 @@ class MediaThumbnailService(private val mediaFileService: MediaFileService) {
 
     private fun createImageThumbnail(media: MediaFile): Thumbnail {
         val output = ByteArrayOutputStream()
+        val outputFormat = if (media.fileName.endsWith(".png", ignoreCase = true)) "png" else "jpg"
         media.resource.inputStream.use { input ->
-            Thumbnails.of(input).size(320, 240).outputFormat("jpg").toOutputStream(output)
+            Thumbnails.of(input).size(320, 240).outputFormat(outputFormat).toOutputStream(output)
         }
-        return Thumbnail(output.toByteArray(), MediaType.IMAGE_JPEG)
+        val mediaType = if (outputFormat == "png") MediaType.IMAGE_PNG else MediaType.IMAGE_JPEG
+        return Thumbnail(output.toByteArray(), mediaType)
     }
 
     private fun createGifThumbnail(media: MediaFile): Thumbnail {
