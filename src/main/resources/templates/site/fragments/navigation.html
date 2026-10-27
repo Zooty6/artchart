@@ -7,5 +7,36 @@
         <a href="/site/arts/new">New art</a>
         <a href="/site/charts">Charts</a>
         <a href="/swagger">API documentation</a>
+        <button class="theme-toggle" type="button" role="switch" aria-checked="false"
+                aria-label="Dark theme" title="Toggle dark theme" onclick="toggleTheme()">
+            <span class="theme-toggle-thumb" aria-hidden="true"></span>
+            <svg class="theme-toggle-sun" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                <circle cx="12" cy="12" r="4"></circle>
+                <path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"></path>
+            </svg>
+            <svg class="theme-toggle-moon" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20.5 13.4A8.5 8.5 0 0 1 10.6 3.5a8.5 8.5 0 1 0 9.9 9.9Z"></path>
+            </svg>
+        </button>
     </nav>
+    <script>
+        (() => {
+            const savedTheme = localStorage.getItem('artcharts-theme');
+            const theme = savedTheme === 'dark' ? 'dark' : 'light';
+            document.documentElement.dataset.theme = theme;
+            const button = document.querySelector('.theme-toggle');
+            if (button) {
+                button.setAttribute('aria-checked', String(theme === 'dark'));
+            }
+        })();
+        function toggleTheme() {
+            const theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+            document.documentElement.dataset.theme = theme;
+            localStorage.setItem('artcharts-theme', theme);
+            const button = document.querySelector('.theme-toggle');
+            button.setAttribute('aria-checked', String(theme === 'dark'));
+        }
+    </script>
 </header>
