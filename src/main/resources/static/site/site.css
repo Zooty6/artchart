@@ -461,6 +461,10 @@ button {
     margin: 0;
 }
 
+#art-list {
+    padding-bottom: 1rem;
+}
+
 #delete-art-button {
     color: var(--danger);
     background: transparent;
