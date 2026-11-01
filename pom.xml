@@ -27,7 +27,7 @@
         <ffmpeg.version>8.1.2-${javacv.version}</ffmpeg.version>
         <kotlin-logging.version>3.0.5</kotlin-logging.version>
         <jgrapht.version>1.5.3</jgrapht.version>
-        <sqlite-jdbc.version>3.53.4.0</sqlite-jdbc.version>
+        <sqlite-jdbc.version>3.54.1.0</sqlite-jdbc.version>
         <hsqldb.version>2.7.4</hsqldb.version>
         <jacoco.version>0.8.15</jacoco.version>
     </properties>
