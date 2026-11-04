@@ -3,11 +3,11 @@ package dev.zooty.artcharts.model.search
 import dev.zooty.artcharts.TestFixtures
 import dev.zooty.artcharts.persistence.entity.Art
 import dev.zooty.artcharts.persistence.entity.Tag
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.*
 
 class ArtFilterTest {
 
@@ -17,6 +17,7 @@ class ArtFilterTest {
             "tag" to TagArtFilter::class,
             "artist" to ArtistArtFilter::class,
             "otherCharacters" to OtherCharacterArtFilter::class,
+            "other" to OtherCharacterArtFilter::class,
             "type" to TypeArtFilter::class,
             "quality" to QualityArtFilter::class,
             "nsfw" to NsfwArtFilter::class,

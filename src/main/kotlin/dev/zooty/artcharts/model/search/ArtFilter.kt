@@ -12,7 +12,7 @@ sealed interface ArtFilter {
             return when (split[0]) {
                 "tag" -> TagArtFilter(split[1])
                 "artist" -> ArtistArtFilter(split[1])
-                "otherCharacters" -> OtherCharacterArtFilter(split[1])
+                "otherCharacters", "other" -> OtherCharacterArtFilter(split[1])
                 "type" -> TypeArtFilter(split[1])
                 "quality" -> QualityArtFilter(split[1])
                 "nsfw" -> NsfwArtFilter(split[1])
