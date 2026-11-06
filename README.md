@@ -46,12 +46,12 @@ PowerShell:
 ```powershell
 docker run --rm --name artcharts `
   -p 8080:8080 `
-  --env-file .env `
+  -e ARTCHART_CURRENCYAPI_APIKEY=your_currencyapi_key `
   -e ARTCHART_SELF_NAME=myName `
   -e ARTCHART_DATASOURCE_URL=jdbc:sqlite:/data/artcharts.db `
   -e ARTCHART_MEDIA_ROOT=/art `
-  -v "${DB_FOLDER}\artcharts.db:/data/artcharts.db" `
-  -v "${ARTS_FOLDER}:/art" `
+  -v "${env:DB_FOLDER}:/data" `
+  -v "${env:ARTS_FOLDER}:/art" `
   artcharts:local
 ```
 
@@ -60,20 +60,19 @@ Bash:
 ```bash
 docker run --rm --name artcharts \
   -p 8080:8080 \
-  --env-file .env \
+  -e ARTCHART_CURRENCYAPI_APIKEY=your_currencyapi_key \
   -e ARTCHART_SELF_NAME=myName \
   -e ARTCHART_DATASOURCE_URL=jdbc:sqlite:/data/artcharts.db \
   -e ARTCHART_MEDIA_ROOT=/art \
-  -v "$(DB_FOLDER)/artcharts.db:/data/artcharts.db" \
-  -v "$(ARTS_FOLDER):/art" \
+  -v "$DB_FOLDER:/data" \
+  -v "$ARTS_FOLDER:/art" \
   artcharts:local
 ```
 
-Point `$ARTS_FOLDER` and `DB_FOLDER` to the correct path before starting the container. The individual file is
-mounted at `/data/artcharts.db`, and the `ARTCHART_DATASOURCE_URL` override makes the application use that path. The
-database volume is intentionally mounted without `:ro`, because the application may need to write to the database.
+Point `$ARTS_FOLDER` and `$DB_FOLDER` to the correct path before starting the container. The individual file is
+mounted at `/data/artcharts.db`, and the `ARTCHART_DATASOURCE_URL` override makes the application use that path. 
 
-The mounted artwork directory must follow the layout
+The mounted artwork directory follows the layout
 `<ARTS_FOLDER>/<SFW|NSFW>/<year>/<fileName>`.
 
 The latest docker image is available by `docker pull ghcr.io/zooty6/artchart:latest`.
