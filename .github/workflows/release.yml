@@ -154,5 +154,6 @@ jobs:
             gh release create "$tag" \
               --target "$(git rev-parse HEAD)" \
               --title "$tag" \
-              --generate-notes
+              --generate-notes \
+              "target/artcharts-$VERSION.jar#artcharts-$VERSION.jar"
           fi
