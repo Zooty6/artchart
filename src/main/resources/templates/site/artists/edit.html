@@ -14,6 +14,7 @@
     <input id="artist-search" list="artist-suggestions" autocomplete="off" placeholder="Artist name">
     <datalist id="artist-suggestions"></datalist>
     <p id="artist-search-status" class="error" aria-live="polite"></p>
+    <input id="artist-id" type="hidden" th:value="${artistId ?: ''}">
 
     <form id="artist-edit-form" action="/site/artists" method="post" class="form-grid hidden" th:object="${artist}">
         <div th:replace="~{site/fragments/artist-fields :: fields}"></div>
@@ -79,6 +80,25 @@
         searchTimer = setTimeout(searchArtists, 250);
     });
     search.addEventListener('change', loadArtist);
+    const artistId = document.getElementById('artist-id').value;
+    if (artistId) {
+        fetch('/api/artist/' + encodeURIComponent(artistId))
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Artist not found');
+                }
+                return response.json();
+            })
+            .then(artist => {
+                search.value = artist.name;
+                const option = document.createElement('option');
+                option.value = artist.name;
+                option.dataset.id = artist.id;
+                suggestions.appendChild(option);
+                return loadArtist();
+            })
+            .catch(error => { status.textContent = 'Could not load artist data.'; console.error(error); });
+    }
 </script>
 </body>
 </html>

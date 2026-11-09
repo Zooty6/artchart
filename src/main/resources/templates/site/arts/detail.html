@@ -30,7 +30,7 @@
             <form id="art-details-form" th:action="@{/site/arts/{id}(id=${art.id})}" th:object="${artUpdate}" method="post">
             <dl class="details">
                 <dt>Artist</dt>
-                <dd th:text="${art.artist.name}">Artist</dd>
+                <dd><span th:text="${art.artist.name}">Artist</span> <a class="icon-link" th:href="@{/site/artists/edit(artistId=${art.artist.id})}" aria-label="Edit artist" title="Edit artist">&#9998;</a></dd>
                 <dt><label for="art-type">Type</label></dt>
                 <dd><span class="detail-value" th:text="${art.type}">Type</span><input id="art-type" class="detail-edit" th:field="*{type}" disabled required></dd>
                 <dt><label for="art-quality">Quality</label></dt>
