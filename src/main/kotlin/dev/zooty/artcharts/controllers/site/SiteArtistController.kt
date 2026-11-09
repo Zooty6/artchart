@@ -1,9 +1,9 @@
 package dev.zooty.artcharts.controllers.site
 
 import dev.zooty.artcharts.dto.CreateArtistRequest
+import dev.zooty.artcharts.dto.UpdateArtistRequest
 import dev.zooty.artcharts.persistence.ArtistRepository
 import dev.zooty.artcharts.services.api.ArtistService
-import dev.zooty.artcharts.dto.UpdateArtistRequest
 import jakarta.validation.Valid
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -35,8 +35,9 @@ class SiteArtistController(
     }
 
     @GetMapping("/edit")
-    fun editArtist(model: Model): String {
+    fun editArtist(@RequestParam(required = false) artistId: Long?, model: Model): String {
         model.addAttribute("artist", UpdateArtistRequest())
+        model.addAttribute("artistId", artistId)
         return VIEW_ARTIST_EDIT
     }
 
