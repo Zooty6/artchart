@@ -43,23 +43,17 @@ class MediaThumbnailService(private val mediaFileService: MediaFileService) {
     private fun createThumbnail(media: MediaFile): MediaFile {
         if (media.fileName == "placeholder.svg") return media
         val format = media.format()
-        if (format == ThumbnailFormat.UNKNOWN) {
-            logger.warn("Cannot create thumbnail for unsupported media format: {}", media.fileName)
-            return placeholderThumbnail()
-        }
-        if (format == ThumbnailFormat.BLEND) {
-            val thumbnail = createBlendThumbnail(media) ?: return placeholderThumbnail()
-            return mediaFile(media, thumbnail)
-        }
 
-        val thumbnail = when (format) {
-            ThumbnailFormat.GIF -> createGifThumbnail(media)
-            ThumbnailFormat.MP4 -> createVideoThumbnail(media)
-            ThumbnailFormat.BLEND -> error("Blend thumbnails are handled separately")
-            ThumbnailFormat.IMAGE -> createImageThumbnail(media)
-            ThumbnailFormat.UNKNOWN -> error("Unsupported media format was already handled")
+        return when(format) {
+            ThumbnailFormat.GIF -> mediaFile(media, createGifThumbnail(media))
+            ThumbnailFormat.MP4 -> mediaFile(media, createVideoThumbnail(media))
+            ThumbnailFormat.BLEND -> mediaFile(media,  createBlendThumbnail(media) ?: return placeholderThumbnail())
+            ThumbnailFormat.IMAGE -> mediaFile(media, createImageThumbnail(media))
+            ThumbnailFormat.UNKNOWN -> {
+                logger.warn("Cannot create thumbnail for unsupported media format: {}", media.fileName)
+                placeholderThumbnail()
+            }
         }
-        return mediaFile(media, thumbnail)
     }
 
     private fun mediaFile(media: MediaFile, thumbnail: Thumbnail): MediaFile =
