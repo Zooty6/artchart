@@ -19,11 +19,12 @@ class CharacterGraphService(
     private val svgService: SvgConverterService,
     private val artRepository: ArtRepository
 ) {
+    companion object {
+        private const val MIN_DASHES = 3
+    }
+
     @Value($$"${artcharts.self.name}")
     private lateinit var selfName: String
-
-    fun characterGraph(graphLayout: GraphLayout, isSelfIncluded: Boolean): String =
-        characterGraph(DEFAULT_WIDTH, DEFAULT_HEIGHT, graphLayout, isSelfIncluded)
 
     fun characterGraph(width: Int, height: Int, graphLayout: GraphLayout, isSelfIncluded: Boolean): String {
         val graph = createCharacterGraph(isSelfIncluded)
@@ -49,12 +50,12 @@ class CharacterGraphService(
     }
 
     private fun createConnections(characters: List<String>, selfIncluded: Boolean): List<Pair<String, String>> {
-        val charactersWithZooty = (if (selfIncluded) characters + selfName else characters).sorted()
-        return charactersWithZooty
+        val charactersWithSelf = (if (selfIncluded) characters + selfName else characters).sorted()
+        return charactersWithSelf
             .indices
             .flatMap { i ->
-                (i + 1 until charactersWithZooty.size).map { j ->
-                    Pair(charactersWithZooty[i], charactersWithZooty[j])
+                (i + 1 until charactersWithSelf.size).map { j ->
+                    Pair(charactersWithSelf[i], charactersWithSelf[j])
                 }
             }.toList()
     }
@@ -125,11 +126,5 @@ class CharacterGraphService(
             GraphLayout.FAST_ORGANIC -> svgService.mxSvgExport(mxFastOrganicLayout(JGraphXAdapter(graph)))
             GraphLayout.LIST -> renderGraphAsListSvg(graph, width, height)
         }
-    }
-
-    companion object {
-        private const val DEFAULT_WIDTH = 1800
-        private const val DEFAULT_HEIGHT = 900
-        private const val MIN_DASHES = 3
     }
 }

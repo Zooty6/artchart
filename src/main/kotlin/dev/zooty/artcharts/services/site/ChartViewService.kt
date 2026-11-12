@@ -8,21 +8,20 @@ import dev.zooty.artcharts.services.chart.GraphLayout
 import org.springframework.stereotype.Service
 import org.springframework.web.util.UriComponentsBuilder
 
+private const val DEFAULT_CHART = "artistDistribution"
+private const val DEFAULT_WIDTH = 1800
+private const val DEFAULT_HEIGHT = 900
+private const val MAX_CHART_DIMENSION = 5000
+private const val CHART_ARTIST_DISTRIBUTION = "artistDistribution"
+private const val CHART_CURRENCY_DISTRIBUTION = "currencyDistribution"
+private const val CHART_SPEND_OVER_TIME = "spendOverTime"
+private const val CHART_NSFW_RATIO = "nsfwRatio"
+private const val CHART_SPECIES_DISTRIBUTION = "speciesDistribution"
+private const val CHART_TAG_DISTRIBUTION = "tagDistribution"
+private const val CHART_CHARACTER_GRAPH = "characterGraph"
+
 @Service
 class ChartViewService(private val tagService: TagService) {
-    companion object {
-        private const val DEFAULT_CHART = "artistDistribution"
-        private const val DEFAULT_WIDTH = 1800
-        private const val DEFAULT_HEIGHT = 900
-        private const val MAX_CHART_DIMENSION = 5000
-        private const val CHART_ARTIST_DISTRIBUTION = "artistDistribution"
-        private const val CHART_CURRENCY_DISTRIBUTION = "currencyDistribution"
-        private const val CHART_SPEND_OVER_TIME = "spendOverTime"
-        private const val CHART_NSFW_RATIO = "nsfwRatio"
-        private const val CHART_SPECIES_DISTRIBUTION = "speciesDistribution"
-        private const val CHART_TAG_DISTRIBUTION = "tagDistribution"
-        private const val CHART_CHARACTER_GRAPH = "characterGraph"
-    }
 
     private val chartOptions = listOf(
         CHART_ARTIST_DISTRIBUTION,
