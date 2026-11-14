@@ -15,6 +15,7 @@ class ArtFilterTest {
     fun `factory creates every supported filter`() {
         val values = mapOf(
             "tag" to TagArtFilter::class,
+            "species" to SpeciesArtFilter::class,
             "artist" to ArtistArtFilter::class,
             "otherCharacters" to OtherCharacterArtFilter::class,
             "other" to OtherCharacterArtFilter::class,
@@ -45,6 +46,7 @@ class ArtFilterTest {
             otherCharacters = "Red Panda",
             type = "Digital Commission",
             quality = "High Quality",
+            species = "foxTaur",
             tags = mutableSetOf(Tag("Cute-Furry", "style")),
         )
 
@@ -52,6 +54,7 @@ class ArtFilterTest {
         assertTrue(OtherCharacterArtFilter("panda").filter(art))
         assertTrue(TypeArtFilter("commission").filter(art))
         assertTrue(QualityArtFilter("quality").filter(art))
+        assertTrue(SpeciesArtFilter("Fox").filter(art))
         assertTrue(TagArtFilter("furry").filter(art))
         assertFalse(OtherCharacterArtFilter("dragon").filter(art))
         assertFalse(QualityArtFilter("low").filter(art))
@@ -102,6 +105,7 @@ class ArtFilterTest {
         otherCharacters: String? = "Other",
         type: String = "commission",
         quality: String? = "High",
+        species: String? = null,
         orderedDate: String? = "2024-01-01",
         payedDate: String? = "2024-01-10",
         deliveredDate: String = "2024-01-20",
@@ -116,7 +120,7 @@ class ArtFilterTest {
             otherCharacters = otherCharacters,
             type = type,
             quality = quality,
-            species = original.species,
+            species = species ?: original.species,
             orderedDate = orderedDate,
             payedDate = payedDate,
             deliveredDate = deliveredDate,

@@ -11,6 +11,7 @@ sealed interface ArtFilter {
             require(split.size == 2) { "Invalid filter string: $filterString" }
             return when (split[0]) {
                 "tag" -> TagArtFilter(split[1])
+                "species" -> SpeciesArtFilter(split[1])
                 "artist" -> ArtistArtFilter(split[1])
                 "otherCharacters", "other" -> OtherCharacterArtFilter(split[1])
                 "type" -> TypeArtFilter(split[1])
