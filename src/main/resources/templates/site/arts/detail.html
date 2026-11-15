@@ -52,6 +52,8 @@
                 </dd>
                 <dt><label for="art-other-characters">Other characters</label></dt>
                 <dd><span class="detail-value" th:text="${art.otherCharacters ?: '-'}">-</span><input id="art-other-characters" class="detail-edit" th:field="*{otherCharacters}" disabled></dd>
+                <dt class="detail-edit"><label for="art-nsfw">NSFW</label></dt>
+                <dd><input id="art-nsfw" class="detail-edit" type="checkbox" th:field="*{isNsfw}" disabled></dd>
             </dl>
                 <p class="error" th:if="${#fields.hasErrors('*')}" th:errors="all"></p>
             </form>
