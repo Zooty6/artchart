@@ -17,6 +17,7 @@ data class UpdateArtRequest(
     @field:NotNull var currency: Currency? = Currency.UNKNOWN,
     val amount: Double = 0.0,
     val link: String? = null,
+    val isNsfw: Boolean = false,
 ) {
     companion object {
         fun from(art: Art) = UpdateArtRequest(
@@ -30,6 +31,7 @@ data class UpdateArtRequest(
             currency = art.price.currency,
             amount = art.price.amount,
             link = art.link,
+            isNsfw = art.isNsfw,
         )
     }
 
@@ -43,5 +45,6 @@ data class UpdateArtRequest(
         art.deliveredDate = deliveredDate.trim()
         art.price = Price(currency ?: Currency.UNKNOWN, amount)
         art.link = link.nullIfBlank()
+        art.isNsfw = isNsfw
     }
 }
