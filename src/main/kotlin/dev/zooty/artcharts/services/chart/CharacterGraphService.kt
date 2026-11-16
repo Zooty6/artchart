@@ -35,7 +35,7 @@ class CharacterGraphService(
         val graph = SimpleWeightedGraph<String, VisibleWeightedEdge>(VisibleWeightedEdge::class.java)
         artRepository.findAll()
             .filter { it.otherCharacters?.isNotBlank() ?: false }
-            .map { it.otherCharacters!!.split(", ") }
+            .map { it.otherCharacters!!.split(", ", " ") }
             .flatMap { createConnections(it, isSelfIncluded) }
             .groupingBy { it }
             .eachCount()

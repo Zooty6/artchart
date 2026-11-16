@@ -42,7 +42,7 @@ class CharacterGraphServiceTest {
     fun `LIST layout renders weighted connections with aligned columns`() {
         `when`(artRepository.findAll()).thenReturn(
             List(10) { art(otherCharacters = "Al, Bob") } +
-                List(2) { art(otherCharacters = "LongName, C") }
+                List(2) { art(otherCharacters = "LongName C") }
         )
         val service = CharacterGraphService(SvgConverterService(), artRepository)
 
