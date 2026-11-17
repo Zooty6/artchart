@@ -18,11 +18,15 @@ import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
+import org.w3c.dom.Element
+import org.w3c.dom.Node
 import org.xml.sax.InputSource
+import java.awt.Color
 import java.io.StringReader
 import java.time.LocalDate
 import java.time.ZoneOffset
 import javax.xml.parsers.DocumentBuilderFactory
+import kotlin.math.pow
 
 @ExtendWith(MockitoExtension::class)
 class DeliveryTimeServiceTest {
@@ -30,6 +34,25 @@ class DeliveryTimeServiceTest {
     lateinit var artRepository: ArtRepository
 
     private val svgService = RecordingSvgConverter()
+    private lateinit var svgRoot: Element
+
+    @Test
+    fun `artwork labels are larger and match dark line colors across palette repetitions`() {
+        val plot = render((1L..17L).map { art(it, "2024-01-01", "2024-02-01") })
+        assertEquals(14.0f, plot.rangeAxis.tickLabelFont.size2D)
+
+        val texts = svgRoot.getElementsByTagNameNS("http://www.w3.org/2000/svg", "text")
+        val labels = (0 until texts.length).map { texts.item(it) as Element }
+            .filter { it.textContent.contains("art.png (#") }
+        assertEquals(17, labels.size)
+        labels.forEach { label ->
+            val id = label.textContent.substringAfter("(#").substringBefore(")").toInt()
+            val color = plot.renderer.getItemPaint(id - 1, 0) as Color
+            assertTrue(color.red != color.green || color.green != color.blue, "Artwork colors must not be gray")
+            assertTrue(contrastWithWhite(color) >= 4.5, "Artwork colors must remain readable on white")
+            assertEquals("rgb(${color.red},${color.green},${color.blue})", inheritedAttribute(label))
+        }
+    }
 
     @Test
     fun `each artwork has a separate horizontal segment with exact date endpoints`() {
@@ -138,11 +161,38 @@ class DeliveryTimeServiceTest {
             setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
         }
         val root = factory.newDocumentBuilder().parse(InputSource(StringReader(svg))).documentElement
+        svgRoot = root
         assertEquals("svg", root.localName)
         assertEquals("http://www.w3.org/2000/svg", root.namespaceURI)
         assertEquals("800", root.getAttribute("width"))
         assertEquals("600", root.getAttribute("height"))
         return svgService.chart.xyPlot
+    }
+
+    private fun inheritedAttribute(element: Element, name: String = "fill"): String {
+        var node: Node? = element
+        while (node is Element) {
+            if (node.hasAttribute(name)) {
+                return node.getAttribute(name)
+            }
+            val style = Regex("(?:^|;)\\s*${Regex.escape(name)}\\s*:\\s*([^;]+)")
+                .find(node.getAttribute("style"))
+            if (style != null) {
+                return style.groupValues[1].trim()
+            }
+            node = node.parentNode
+        }
+        error("Missing SVG attribute: $name")
+    }
+
+    private fun contrastWithWhite(color: Color): Double {
+        fun linearize(channel: Int): Double {
+            val value = channel / 255.0
+            return if (value <= 0.04045) value / 12.92 else ((value + 0.055) / 1.055).pow(2.4)
+        }
+        val luminance = 0.2126 * linearize(color.red) + 0.7152 * linearize(color.green) +
+            0.0722 * linearize(color.blue)
+        return 1.05 / (luminance + 0.05)
     }
 
     private fun art(id: Long, ordered: String?, delivered: String): Art = TestFixtures.art(id = id).apply {
