@@ -8,6 +8,7 @@ import org.bytedeco.javacv.FFmpegFrameRecorder
 import org.bytedeco.javacv.Java2DFrameConverter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import org.mockito.Mockito.`when`
@@ -68,6 +69,7 @@ class MediaThumbnailServiceTest {
     }
 
     @Test
+    @Tag("slow")
     fun `keeps GIF thumbnails animated`() {
         val source = createMedia("art.gif")
         writeAnimatedGif(source)

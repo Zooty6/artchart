@@ -3,6 +3,7 @@ package dev.zooty.artcharts.controllers
 import dev.zooty.artcharts.services.chart.ArtistDistributionService
 import dev.zooty.artcharts.services.chart.CharacterGraphService
 import dev.zooty.artcharts.services.chart.ChartType
+import dev.zooty.artcharts.services.chart.DeliveryTimeService
 import dev.zooty.artcharts.services.chart.GraphLayout
 import dev.zooty.artcharts.services.chart.NsfwService
 import dev.zooty.artcharts.services.chart.SpeciesDistributionService
@@ -20,6 +21,7 @@ class ChartController(
     private val speciesDistributionService: SpeciesDistributionService,
     private val characterGraphService: CharacterGraphService,
     private val tagDistributionService: TagDistributionService,
+    private val deliveryTimeService: DeliveryTimeService,
 ) {
     private val defaultWidth: Int = 1800
     private val defaultHeight: Int = 900
@@ -82,4 +84,11 @@ class ChartController(
         graphLayout ?: GraphLayout.ORGANIC,
         isSelfIncluded ?: false
     )
+
+    @GetMapping("/chart/delivery", produces = ["image/svg+xml"])
+    fun deliveryTime(
+        @RequestParam("width") width: Int?,
+        @RequestParam("height") height: Int?,
+        @RequestParam("year") yearFilter: String?
+    ): String = deliveryTimeService.deliveryTimeGraph(width ?: defaultWidth, height ?: defaultHeight, yearFilter)
 }
