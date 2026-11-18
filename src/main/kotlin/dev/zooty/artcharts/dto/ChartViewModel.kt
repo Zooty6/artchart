@@ -19,4 +19,6 @@ data class ChartViewModel(
     val selfIncluded: Boolean,
     val currencyOptions: List<Currency>,
     val chartUrl: String,
+    val chartLabels: Map<String, String> = emptyMap(),
+    val yearFilter: String? = null,
 )
