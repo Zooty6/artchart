@@ -17,9 +17,9 @@ sealed interface ArtFilter {
                 "type" -> TypeArtFilter(split[1])
                 "quality" -> QualityArtFilter(split[1])
                 "nsfw" -> NsfwArtFilter(split[1])
-                "deliveredDate" -> DeliveryDateArtFilter(split[1])
-                "paidDate" -> PaidDateArtFilter(split[1])
-                "orderedDate" -> OrderDateArtFilter(split[1])
+                "deliveredDate", "delivered" -> DeliveryDateArtFilter(split[1])
+                "paidDate", "paid" -> PaidDateArtFilter(split[1])
+                "orderedDate", "ordered" -> OrderDateArtFilter(split[1])
                 else -> throw IllegalArgumentException("Invalid filter string: $filterString")
             }
         }
