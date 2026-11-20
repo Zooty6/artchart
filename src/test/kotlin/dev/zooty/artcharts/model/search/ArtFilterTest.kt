@@ -93,6 +93,20 @@ class ArtFilterTest {
     }
 
     @Test
+    fun `date filters work on year only dates`() {
+        val art = art(orderedDate = "2024", payedDate = "2024", deliveredDate = "2025")
+
+        assertTrue(OrderDateArtFilter("2024-06-06").filter(art))
+        assertTrue(PaidDateArtFilter("2024-06-06").filter(art))
+        assertTrue(PaidDateArtFilter("2024-07-07").filter(art))
+        assertFalse(PaidDateArtFilter("2025-07-07").filter(art))
+        assertTrue(DeliveryDateArtFilter("2025-06-06").filter(art))
+        assertTrue(OrderDateArtFilter(">=2024-06-06").filter(art))
+        assertTrue(PaidDateArtFilter("<2025-01-01").filter(art))
+        assertFalse(OrderDateArtFilter(">2024-06-06").filter(art))
+    }
+
+    @Test
     fun `date filters reject null dates`() {
         val art = art(orderedDate = null, payedDate = null)
 
