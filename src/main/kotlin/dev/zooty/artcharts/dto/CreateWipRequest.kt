@@ -14,6 +14,7 @@ class CreateWipRequest (
     @field:NotBlank val species: String = "",
     val orderedDate: String? = null,
     val payedDate: String? = null,
+    val deadlineDate: String? = null,
     @field:NotNull val currency: Currency = Currency.UNKNOWN,
     val amount: Double = 0.0,
     val note: String? = null,
@@ -22,7 +23,7 @@ class CreateWipRequest (
 ) {
     fun toEntity(artist: Artist): Wip = Wip(
         0L, otherCharacters.nullIfBlank(), type.trim(), quality.nullIfBlank(), species.trim(),
-        orderedDate.nullIfBlank(), payedDate.nullIfBlank(), Price(currency, amount), 
+        orderedDate.nullIfBlank(), payedDate.nullIfBlank(), deadlineDate.nullIfBlank(), Price(currency, amount),
         note.nullIfBlank(), artist, isNsfw,
     )
 }

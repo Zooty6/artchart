@@ -11,7 +11,7 @@ class WipRequestTest {
     fun `create trims values and converts blank optional fields to null`() {
         val wip = CreateWipRequest(
             type = " commission ", species = " cat ", artistName = "Artist",
-            otherCharacters = " ", quality = " ", orderedDate = " ", payedDate = " ", note = " ",
+            otherCharacters = " ", quality = " ", orderedDate = " ", payedDate = " ", deadlineDate = " ", note = " ",
             currency = Currency.USD, amount = 12.0, isNsfw = true,
         ).toEntity(TestFixtures.artist())
 
@@ -25,6 +25,7 @@ class WipRequestTest {
         assertNull(wip.quality)
         assertNull(wip.orderedDate)
         assertNull(wip.payedDate)
+        assertNull(wip.deadlineDate)
         assertNull(wip.note)
     }
 
@@ -33,7 +34,7 @@ class WipRequestTest {
         val wip = TestFixtures.wip()
         val artist = wip.artist
 
-        UpdateWipRequest(type = " sketch ", species = " fox ", note = " ").applyTo(wip)
+        UpdateWipRequest(type = " sketch ", species = " fox ", deadlineDate = " ", note = " ").applyTo(wip)
 
         assertEquals(1L, wip.id)
         assertEquals(artist, wip.artist)
@@ -43,6 +44,7 @@ class WipRequestTest {
         assertNull(wip.quality)
         assertNull(wip.orderedDate)
         assertNull(wip.payedDate)
+        assertNull(wip.deadlineDate)
         assertNull(wip.note)
     }
 

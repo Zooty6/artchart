@@ -13,6 +13,7 @@ class UpdateWipRequest (
     @field:NotBlank val species: String = "",
     val orderedDate: String? = null,
     val payedDate: String? = null,
+    val deadlineDate: String? = null,
     @field:NotNull val currency: Currency = Currency.UNKNOWN,
     val amount: Double = 0.0,
     val note: String? = null,
@@ -25,6 +26,7 @@ class UpdateWipRequest (
         wip.species = species.trim()
         wip.orderedDate = orderedDate.nullIfBlank()
         wip.payedDate = payedDate.nullIfBlank()
+        wip.deadlineDate = deadlineDate.nullIfBlank()
         wip.price = Price(currency, amount)
         wip.note = note.nullIfBlank()
         wip.isNsfw = isNsfw

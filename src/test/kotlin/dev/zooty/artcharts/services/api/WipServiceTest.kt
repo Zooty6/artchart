@@ -98,10 +98,11 @@ class WipServiceTest {
         val wip = TestFixtures.wip()
         `when`(wipRepository.findById(1L)).thenReturn(Optional.of(wip))
 
-        service.update(1L, UpdateWipRequest(type = " sketch ", species = " fox ", amount = 25.0, isNsfw = true))
+        service.update(1L, UpdateWipRequest(type = " sketch ", species = " fox ", deadlineDate = "2024-03-01", amount = 25.0, isNsfw = true))
 
         assertEquals("sketch", wip.type)
         assertEquals("fox", wip.species)
+        assertEquals("2024-03-01", wip.deadlineDate)
         assertEquals(25.0, wip.price.amount)
         assertEquals(true, wip.isNsfw)
     }
