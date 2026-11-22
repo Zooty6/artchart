@@ -8,7 +8,6 @@ import dev.zooty.artcharts.persistence.entity.Art
 import mu.KotlinLogging
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 
 private val logger = KotlinLogging.logger {}
@@ -19,7 +18,6 @@ class ArtCreationService(
     private val artistRepository: ArtistRepository,
     private val mediaFileService: MediaFileService
 ) {
-    @Transactional
     @CacheEvict(cacheNames = ["art-years"], allEntries = true)
     fun create(request: CreateArtRequest, files: List<MultipartFile>): Art {
         if (files.isNotEmpty()) trySaveFiles(files, request)

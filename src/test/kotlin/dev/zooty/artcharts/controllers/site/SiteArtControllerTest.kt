@@ -91,7 +91,7 @@ class SiteArtControllerTest {
             amount = 10.0,
             artistName = "Artist",
         )
-        `when`(artCreationService.create(request, emptyList()))
+        `when`(artService.create(request, emptyList()))
             .thenReturn(createdArt)
 
         mockMvc.perform(
@@ -107,7 +107,7 @@ class SiteArtControllerTest {
             .andExpect(status().is3xxRedirection)
             .andExpect(view().name("redirect:/site/arts/42"))
 
-        verify(artCreationService).create(request, emptyList())
+        verify(artService).create(request, emptyList())
     }
 
     @Test
@@ -123,7 +123,7 @@ class SiteArtControllerTest {
             artistName = "Artist",
         )
         val file = MockMultipartFile("file", "art.png", "image/png", "image".toByteArray())
-        `when`(artCreationService.create(request, listOf(file))).thenReturn(createdArt)
+        `when`(artService.create(request, listOf(file))).thenReturn(createdArt)
 
         mockMvc.perform(
             multipart("/site/arts")
@@ -139,7 +139,7 @@ class SiteArtControllerTest {
             .andExpect(status().is3xxRedirection)
             .andExpect(view().name("redirect:/site/arts/42"))
 
-        verify(artCreationService).create(request, listOf(file))
+        verify(artService).create(request, listOf(file))
     }
 
     @Test

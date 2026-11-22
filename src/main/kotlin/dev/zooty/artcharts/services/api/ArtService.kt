@@ -1,17 +1,29 @@
 package dev.zooty.artcharts.services.api
 
+import dev.zooty.artcharts.dto.CreateArtRequest
 import dev.zooty.artcharts.dto.TagDto
 import dev.zooty.artcharts.dto.UpdateArtRequest
 import dev.zooty.artcharts.exceptions.ResourceNotFoundException
 import dev.zooty.artcharts.persistence.ArtRepository
 import dev.zooty.artcharts.persistence.TagRepository
+import dev.zooty.artcharts.persistence.entity.Art
 import dev.zooty.artcharts.persistence.entity.Tag
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.multipart.MultipartFile
 
 @Service
-class ArtService(val artRepository: ArtRepository, val tagRepository: TagRepository) {
+class ArtService(
+    val artRepository: ArtRepository,
+    val tagRepository: TagRepository,
+    val artCreationService: ArtCreationService
+) {
+
+    @Transactional
+    fun create(request: CreateArtRequest, files: List<MultipartFile>): Art =
+        artCreationService.create(request, files)
+
     @Transactional
     @CacheEvict(cacheNames = ["art-years"], allEntries = true)
     fun delete(id: Long) {

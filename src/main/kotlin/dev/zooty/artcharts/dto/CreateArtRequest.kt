@@ -16,7 +16,7 @@ data class CreateArtRequest(
     val payedDate: String? = null,
     @field:NotBlank val deliveredDate: String = "",
     @field:NotBlank val fileName: String = "",
-    @field:NotNull val currency: Currency? = Currency.UNKNOWN,
+    @field:NotNull val currency: Currency = Currency.UNKNOWN,
     val amount: Double = 0.0,
     val note: String? = null,
     @field:NotBlank val artistName: String = "",
@@ -26,7 +26,6 @@ data class CreateArtRequest(
     fun toEntity(artist: Artist) = Art(
         0L, otherCharacters.nullIfBlank(), type.trim(), quality.nullIfBlank(), species.trim(),
         orderedDate.nullIfBlank(), payedDate.nullIfBlank(), deliveredDate.trim(), fileName.trim(),
-        Price(currency ?: Currency.UNKNOWN, amount), note.nullIfBlank(), artist, isNsfw,
-        link.nullIfBlank()
+        Price(currency, amount), note.nullIfBlank(), artist, isNsfw, link.nullIfBlank()
     )
 }
