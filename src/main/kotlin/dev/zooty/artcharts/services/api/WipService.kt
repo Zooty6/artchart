@@ -27,7 +27,7 @@ class WipService(
     fun create(request: CreateWipRequest): Wip {
         return wipRepository.save(
             request.toEntity(
-                artistRepository.findByNameIgnoreCase(request.artistName)
+                artistRepository.findByNameIgnoreCase(request.artistName.trim())
                     ?: throw ResourceNotFoundException("No artist with name ${request.artistName} found")
             )
         )
@@ -42,7 +42,7 @@ class WipService(
 
     @Transactional
     fun deliverArt(wipId: Long, request: DeliverArtRequest, files: List<MultipartFile>): Art {
-        val wip = wipRepository.findById(wipId).orElseThrow { throw ResourceNotFoundException("No wip with id $wipId found") }
+        val wip = wipRepository.findById(wipId).orElseThrow { ResourceNotFoundException("No wip with id $wipId found") }
         wipRepository.delete(wip)
         return artCreationService.create(request.toCreateRequest(wip), files)
     }

@@ -26,7 +26,7 @@ class UpdateWipRequest (
         wip.orderedDate = orderedDate.nullIfBlank()
         wip.payedDate = payedDate.nullIfBlank()
         wip.price = Price(currency, amount)
-        wip.note = note
+        wip.note = note.nullIfBlank()
         wip.isNsfw = isNsfw
     }
 
