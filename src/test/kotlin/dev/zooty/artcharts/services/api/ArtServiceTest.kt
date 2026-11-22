@@ -1,5 +1,7 @@
 package dev.zooty.artcharts.services.api
 
+import dev.zooty.artcharts.TestFixtures
+import dev.zooty.artcharts.dto.CreateArtRequest
 import dev.zooty.artcharts.dto.TagDto
 import dev.zooty.artcharts.dto.UpdateArtRequest
 import dev.zooty.artcharts.exceptions.ResourceNotFoundException
@@ -16,10 +18,12 @@ import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.any
+import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
+import org.springframework.mock.web.MockMultipartFile
 import java.util.*
 
 @ExtendWith(MockitoExtension::class)
@@ -29,12 +33,43 @@ class ArtServiceTest {
     lateinit var artRepository: ArtRepository
     @Mock
     lateinit var tagRepository: TagRepository
+    @Mock
+    lateinit var artCreationService: ArtCreationService
+    @InjectMocks
+    lateinit var service: ArtService
+    
+    @Test
+    fun `create art`() {
+        val request = CreateArtRequest(
+            type = "  illustration ",
+            otherCharacters = "  ",
+            quality = " high ",
+            species = " fox ",
+            orderedDate = "2025-02-01",
+            payedDate = "2025-02-02",
+            deliveredDate = " 2025-02-03 ",
+            currency = Currency.EUR,
+            amount = 25.5,
+            link = "  https://updated.example ",
+        )
+        val files = listOf(
+            MockMultipartFile("file", "01.png", "image/png", "first".toByteArray()),
+            MockMultipartFile("file", "02.png", "image/png", "second".toByteArray()),
+        )
+        val artist = TestFixtures.artist()
+        val artEntity = request.toEntity(artist)
+        `when`(artCreationService.create(request, files)).thenReturn(artEntity)
+
+        val response = service.create(request, files)
+
+        verify(artCreationService).create(request, files)
+        assertEquals(artEntity, response)
+    }
 
     @Test
     fun `delete removes art and its tag associations`() {
         val art = art().also { it.tags.add(Tag("cute", "style")) }
         `when`(artRepository.findById(1L)).thenReturn(Optional.of(art))
-        val service = ArtService(artRepository, tagRepository)
 
         service.delete(1L)
 
@@ -45,7 +80,6 @@ class ArtServiceTest {
     @Test
     fun `delete throws when art is missing`() {
         `when`(artRepository.findById(99L)).thenReturn(Optional.empty())
-        val service = ArtService(artRepository, tagRepository)
 
         assertThrows(ResourceNotFoundException::class.java) {
             service.delete(99L)
@@ -58,7 +92,6 @@ class ArtServiceTest {
         val tag = Tag("cute", "style")
         `when`(artRepository.findById(1L)).thenReturn(Optional.of(art))
         `when`(tagRepository.findByName("cute")).thenReturn(Optional.of(tag))
-        val service = ArtService(artRepository, tagRepository)
 
         service.addTag(1L, TagDto("cute", "style"))
 
@@ -72,7 +105,6 @@ class ArtServiceTest {
         `when`(artRepository.findById(1L)).thenReturn(Optional.of(art))
         `when`(tagRepository.findByName("new-tag")).thenReturn(Optional.empty())
         `when`(tagRepository.save(any(Tag::class.java))).thenAnswer { it.arguments[0] as Tag }
-        val service = ArtService(artRepository, tagRepository)
 
         service.addTag(1L, TagDto("new-tag", "misc"))
 
@@ -84,7 +116,6 @@ class ArtServiceTest {
     @Test
     fun `addTag throws when art is missing`() {
         `when`(artRepository.findById(99L)).thenReturn(Optional.empty())
-        val service = ArtService(artRepository, tagRepository)
 
         assertThrows(ResourceNotFoundException::class.java) {
             service.addTag(99L, TagDto("tag", "cat"))
@@ -108,7 +139,6 @@ class ArtServiceTest {
             link = "  https://updated.example ",
         )
         `when`(artRepository.findById(1L)).thenReturn(Optional.of(art))
-        val service = ArtService(artRepository, tagRepository)
 
         service.update(1L, request)
 

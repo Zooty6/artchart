@@ -5,13 +5,12 @@ import dev.zooty.artcharts.dto.TagDto
 import dev.zooty.artcharts.exceptions.ResourceNotFoundException
 import dev.zooty.artcharts.persistence.ArtRepository
 import dev.zooty.artcharts.persistence.entity.Art
-import dev.zooty.artcharts.services.api.ArtCreationService
 import dev.zooty.artcharts.services.api.ArtSearchService
 import dev.zooty.artcharts.services.api.ArtService
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import jakarta.validation.Valid
-import lombok.extern.slf4j.Slf4j
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -22,12 +21,10 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
-@Slf4j
 @RestController
 class ArtController(
     val artRepository: ArtRepository,
     val artService: ArtService,
-    val artCreationService: ArtCreationService,
     val artSearchService: ArtSearchService
 ) {
     @GetMapping("/api/art", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -37,8 +34,8 @@ class ArtController(
 
     @PostMapping("/api/art", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun createArt(@Valid @RequestBody request: CreateArtRequest): ResponseEntity<Art> =
-        ResponseEntity.status(org.springframework.http.HttpStatus.CREATED)
-            .body(artCreationService.create(request, emptyList()))
+        ResponseEntity.status(HttpStatus.CREATED)
+            .body(artService.create(request, emptyList()))
 
     @GetMapping("/api/art/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getArt(@PathVariable id: Long): Art = artRepository.findById(id)

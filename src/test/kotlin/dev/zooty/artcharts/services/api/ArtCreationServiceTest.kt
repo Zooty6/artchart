@@ -9,6 +9,7 @@ import dev.zooty.artcharts.persistence.entity.Currency
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.verifyNoInteractions
@@ -37,14 +38,14 @@ class ArtCreationServiceTest {
             MockMultipartFile("file", "02.png", "image/png", "second".toByteArray()),
         )
         `when`(artistRepository.findByNameIgnoreCase("Artist")).thenReturn(artist)
-        `when`(artRepository.save(org.mockito.ArgumentMatchers.any(Art::class.java))).thenReturn(createdArt)
+        `when`(artRepository.save(any(Art::class.java))).thenReturn(createdArt)
 
         val result = ArtCreationService(artRepository, artistRepository, mediaFileService)
             .create(request, files)
 
         assertEquals(createdArt, result)
         verify(mediaFileService).saveFiles(files, "gallery", "2024-01-03", false)
-        verify(artRepository).save(org.mockito.ArgumentMatchers.any(Art::class.java))
+        verify(artRepository).save(any(Art::class.java))
     }
 
     @Test
@@ -53,7 +54,7 @@ class ArtCreationServiceTest {
         val artist = TestFixtures.artist()
         val createdArt = TestFixtures.art()
         `when`(artistRepository.findByNameIgnoreCase("Artist")).thenReturn(artist)
-        `when`(artRepository.save(org.mockito.ArgumentMatchers.any(Art::class.java))).thenReturn(createdArt)
+        `when`(artRepository.save(any(Art::class.java))).thenReturn(createdArt)
 
         ArtCreationService(artRepository, artistRepository, mediaFileService)
             .create(request, emptyList())

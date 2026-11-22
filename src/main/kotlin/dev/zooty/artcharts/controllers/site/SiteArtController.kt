@@ -6,7 +6,6 @@ import dev.zooty.artcharts.dto.UpdateArtRequest
 import dev.zooty.artcharts.exceptions.ResourceNotFoundException
 import dev.zooty.artcharts.persistence.ArtRepository
 import dev.zooty.artcharts.persistence.entity.Currency
-import dev.zooty.artcharts.services.api.ArtCreationService
 import dev.zooty.artcharts.services.api.ArtService
 import dev.zooty.artcharts.services.site.SiteQueryService
 import jakarta.servlet.http.HttpServletRequest
@@ -29,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile
 class SiteArtController(
     private val siteQueryService: SiteQueryService,
     private val artRepository: ArtRepository,
-    private val artCreationService: ArtCreationService,
     private val artService: ArtService,
 ) {
     companion object {
@@ -218,7 +216,7 @@ class SiteArtController(
             return VIEW_ART_FORM
         }
         return try {
-            REDIRECT_ART + artCreationService.create(art, files.orEmpty()).id
+            REDIRECT_ART + artService.create(art, files.orEmpty()).id
         } catch (_: ResourceNotFoundException) {
             bindingResult.rejectValue("artistName", "artist.notFound", "No artist with this name exists")
             model.addAttribute("currencies", Currency.entries)
