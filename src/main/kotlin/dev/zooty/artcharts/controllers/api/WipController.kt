@@ -15,12 +15,14 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 
 
-@RestController("/api/wip")
+@RestController
+@RequestMapping("/api/wip")
 class WipController(val wipService: WipService) {
     @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getWips(): List<Wip> = wipService.getWips()
@@ -41,10 +43,16 @@ class WipController(val wipService: WipService) {
         return ResponseEntity.noContent().build()
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun deliverArt(
         @PathVariable("id") wipId: Long,
-        @Valid @RequestBody request: DeliverArtRequest,
-        @RequestParam("file", required = false) files: List<MultipartFile>?
+        @Valid @RequestBody request: DeliverArtRequest
+    ): Art = wipService.deliverArt(wipId, request, emptyList())
+
+    @PutMapping("/{id}", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    fun deliverArt(
+        @PathVariable("id") wipId: Long,
+        @Valid @RequestPart("request") request: DeliverArtRequest,
+        @RequestPart("file", required = false) files: List<MultipartFile>?
     ): Art = wipService.deliverArt(wipId, request, files.orEmpty())
 }

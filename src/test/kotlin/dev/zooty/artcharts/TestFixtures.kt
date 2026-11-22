@@ -5,10 +5,16 @@ import dev.zooty.artcharts.persistence.entity.Artist
 import dev.zooty.artcharts.persistence.entity.Currency
 import dev.zooty.artcharts.persistence.entity.Price
 import dev.zooty.artcharts.persistence.entity.Tag
+import dev.zooty.artcharts.persistence.entity.Wip
 
 object TestFixtures {
     fun artist(name: String = "Artist") = Artist(
         1L, name, null, null, null, null, null, null, null, null, null, null, null, null, null
+    )
+
+    fun wip(id: Long = 1L, artist: Artist = artist(), isNsfw: Boolean = false) = Wip(
+        id, "Fox", "commission", "High", "cat", "2024-01-01", "2024-01-02",
+        Price(Currency.USD, 10.0), "Note", artist, isNsfw,
     )
 
     fun art(
