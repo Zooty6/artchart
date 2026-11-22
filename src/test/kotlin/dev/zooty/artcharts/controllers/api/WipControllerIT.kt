@@ -93,25 +93,27 @@ class WipControllerIT {
     @Test
     fun `creates wip with normalized fields and persisted price`() {
         restTestClient.post().uri("/api/wip").contentType(MediaType.APPLICATION_JSON)
-            .body(mapOf("currency" to "USD", "type" to " sketch ", "species" to " fox ", "artistName" to " artist ", "amount" to 25.0, "isNsfw" to false))
+            .body(mapOf("currency" to "USD", "type" to " sketch ", "species" to " fox ", "deadlineDate" to "2024-03-01", "artistName" to " artist ", "amount" to 25.0, "isNsfw" to false))
             .exchange().expectStatus().isCreated
             .expectBody().jsonPath("$.type").isEqualTo("sketch")
             .jsonPath("$.artist.name").isEqualTo("Artist")
 
         val created = wipRepository.findAll().single { it.id != wip.id }
         assertEquals("fox", created.species)
+        assertEquals("2024-03-01", created.deadlineDate)
         assertEquals(25.0, created.price.amount)
     }
 
     @Test
     fun `updates persisted fields and clears optional fields`() {
         restTestClient.post().uri("/api/wip/${wip.id}").contentType(MediaType.APPLICATION_JSON)
-            .body(mapOf("currency" to "USD", "type" to " sketch ", "species" to " fox ", "amount" to 42.0, "note" to " ", "isNsfw" to false))
+            .body(mapOf("currency" to "USD", "type" to " sketch ", "species" to " fox ", "deadlineDate" to "2024-03-01", "amount" to 42.0, "note" to " ", "isNsfw" to false))
             .exchange().expectStatus().isNoContent
 
         val updated = wipRepository.findById(wip.id).orElseThrow()
         assertEquals("sketch", updated.type)
         assertEquals("fox", updated.species)
+        assertEquals("2024-03-01", updated.deadlineDate)
         assertEquals(42.0, updated.price.amount)
         assertEquals(wip.artist.id, updated.artist.id)
         assertNull(updated.note)

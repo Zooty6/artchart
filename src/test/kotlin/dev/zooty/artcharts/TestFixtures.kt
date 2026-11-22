@@ -12,9 +12,9 @@ object TestFixtures {
         1L, name, null, null, null, null, null, null, null, null, null, null, null, null, null
     )
 
-    fun wip(id: Long = 1L, artist: Artist = artist(), isNsfw: Boolean = false) = Wip(
-        id, "Fox", "commission", "High", "cat", "2024-01-01", "2024-01-02",
-        Price(Currency.USD, 10.0), "Note", artist, isNsfw,
+    fun wip(id: Long = 1L, artist: Artist = artist(), isNsfw: Boolean = false, deadlineDate: String? = "2024-02-02") = Wip(
+        id, "Fox", "commission", "High", "cat", "2024-01-01",
+        "2024-01-02", deadlineDate, Price(Currency.USD, 10.0), "Note", artist, isNsfw,
     )
 
     fun art(

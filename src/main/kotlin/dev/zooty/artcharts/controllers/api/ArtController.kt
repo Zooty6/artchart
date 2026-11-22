@@ -59,7 +59,7 @@ class ArtController(
     fun addTag(
         @PathVariable id: Long,
         @RequestBody tag: TagDto
-    ): ResponseEntity<Void> { // NOSONAR(kotlin:S6508) swagger needs Void to show no response
+    ): ResponseEntity<Void> {
         artService.addTag(id, tag)
         return ResponseEntity.noContent().build()
     }
