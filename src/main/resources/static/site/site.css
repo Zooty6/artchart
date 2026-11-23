@@ -12,6 +12,7 @@
     --media: #e8edf2;
     --badge: #f3d2d2;
     --danger: #a11;
+    --overdue: #fce2e2;
     color: var(--text);
     background: var(--page);
 }
@@ -29,6 +30,7 @@
     --media: #202d3a;
     --badge: #603b43;
     --danger: #ff9292;
+    --overdue: #4e252c;
 }
 
 body {
@@ -43,6 +45,42 @@ main {
 
 a {
     color: var(--link);
+}
+
+.wip-table-container {
+    overflow-x: auto;
+}
+
+.wip-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+}
+
+.wip-table th, .wip-table td {
+    padding: .65rem .75rem;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+}
+
+.wip-table th {
+    background: var(--surface-muted);
+}
+
+.wip-table tr.overdue {
+    background: var(--overdue);
+}
+
+.wip-table td:last-child {
+    white-space: nowrap;
+}
+
+.wip-table .button {
+    margin-top: 0;
+}
+
+.wip-table td a + a {
+    margin-left: .75rem;
 }
 
 .navigation, .chart-navigation, .year-navigation {

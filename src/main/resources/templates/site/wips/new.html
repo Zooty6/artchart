@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${editingWip != null} ? 'Edit wip - ArtCharts' : 'New wip - ArtCharts'">New wip - ArtCharts</title>
+    <link rel="stylesheet" href="/site/site.css">
+    <script src="/webjars/htmx.org/4.0.0/dist/htmx.min.js" defer></script>
+</head>
+<body class="art-form-page">
+<header th:replace="~{site/fragments/navigation :: navigation}"></header>
+<main>
+    <h1 th:text="${editingWip != null} ? 'Edit wip' : 'New wip'">New wip</h1>
+    <form th:replace="~{site/fragments/wip-form :: wipForm}"></form>
+</main>
+</body>
+</html>
