@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Wips - ArtCharts</title>
+    <link rel="stylesheet" href="/site/site.css">
+</head>
+<body>
+<header th:replace="~{site/fragments/navigation :: navigation}"></header>
+<main>
+    <h1>Wips</h1>
+    <p th:if="${wipSaved}"><output>WIP saved.</output></p>
+    <p th:if="${wips.isEmpty()}">No WIPs yet.</p>
+    <div class="wip-table-container" th:unless="${wips.isEmpty()}">
+        <table class="wip-table">
+            <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Artist name</th>
+                <th scope="col">Species</th>
+                <th scope="col">Ordered</th>
+                <th scope="col">Paid</th>
+                <th scope="col">Deadline</th>
+                <th scope="col">Price</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="wip : ${wips}" th:classappend="${#sets.contains(overdueWipIds, wip.id)} ? 'overdue'">
+                <td th:text="${wip.id}"></td>
+                <td th:text="${wip.artist.name}"></td>
+                <td th:text="${wip.species}"></td>
+                <td th:text="${wip.orderedDate ?: '-'}"></td>
+                <td th:text="${wip.payedDate ?: '-'}"></td>
+                <td th:text="${wip.deadlineDate ?: '-'}"></td>
+                <td th:text="${wip.price.currency + ' ' + wip.price.amount}"></td>
+                <td>
+                    <a class="button" th:href="@{/site/wips/{id}/edit(id=${wip.id})}">Edit</a>
+                    <a class="button" th:href="@{/site/wips/{id}/deliver(id=${wip.id})}">Deliver</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

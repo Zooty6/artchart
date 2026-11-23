@@ -3,21 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>New art - ArtCharts</title>
+    <title th:text="${deliveringWip != null} ? 'Deliver wip - ArtCharts' : 'New art - ArtCharts'">New art - ArtCharts</title>
     <link rel="stylesheet" href="/site/site.css">
     <script src="/webjars/htmx.org/4.0.0/dist/htmx.min.js" defer></script>
 </head>
 <body class="art-form-page">
 <header th:replace="~{site/fragments/navigation :: navigation}"></header>
 <main>
-    <h1>New art</h1>
-    <form th:action="@{/site/arts}" th:object="${art}" method="post" enctype="multipart/form-data" class="form-grid">
-        <label>Artist name *
+    <h1 th:text="${deliveringWip != null} ? 'Deliver wip' : 'New art'">New art</h1>
+    <form th:action="${deliveringWip != null} ? @{/site/wips/{id}/deliver(id=${deliveringWip.id})} : @{/site/arts}" th:object="${art}" method="post" enctype="multipart/form-data" class="form-grid">
+        <label th:if="${deliveringWip == null}">Artist name *
             <input th:field="*{artistName}" list="artist-suggestions" autocomplete="off"
                    hx-get="/site/artists/search" hx-trigger="input changed delay:250ms"
                    hx-target="#artist-suggestions" hx-swap="innerHTML">
             <datalist id="artist-suggestions"></datalist>
             <small class="error" th:errors="*{artistName}"></small>
+        </label>
+        <label th:if="${deliveringWip != null}">Artist name
+            <input th:value="${deliveringWip.artist.name}" readonly>
         </label>
         <label>Type *
             <input th:field="*{type}" list="type-suggestions" autocomplete="off" required
@@ -39,8 +42,10 @@
                    hx-target="#quality-suggestions" hx-swap="innerHTML">
             <datalist id="quality-suggestions"></datalist>
         </label>
-        <label>Ordered date <input type="date" th:field="*{orderedDate}"></label>
-        <label>Paid date <input type="date" th:field="*{payedDate}"></label>
+        <label th:if="${deliveringWip == null}">Ordered date <input type="date" th:field="*{orderedDate}"></label>
+        <label th:if="${deliveringWip != null}">Ordered date <input type="date" th:value="${deliveringWip.orderedDate}" readonly></label>
+        <label th:if="${deliveringWip == null}">Paid date <input type="date" th:field="*{payedDate}"></label>
+        <label th:if="${deliveringWip != null}">Paid date <input type="date" th:value="${deliveringWip.payedDate}" readonly></label>
         <div class="form-field">
             <label for="fileName">File or folder name *</label>
             <span class="file-name-control">
@@ -63,7 +68,7 @@
         <label class="checkbox"><input type="checkbox" th:field="*{isNsfw}"> NSFW</label>
         <label class="full-width">Other characters <textarea th:field="*{otherCharacters}"></textarea></label>
         <label class="full-width">Note <textarea th:field="*{note}"></textarea></label>
-        <button type="submit">Save art</button>
+        <button type="submit" th:text="${deliveringWip != null} ? 'Deliver' : 'Save art'">Save art</button>
     </form>
 <script>
     const artFile = document.getElementById('artFile');
