@@ -14,7 +14,7 @@ import org.hibernate.annotations.Type
 @Table(name = "wip")
 class Wip(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    var id: Long,
     var otherCharacters: String?,
     @NotNull
     var type: String,
