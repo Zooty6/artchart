@@ -31,6 +31,9 @@ class CharacterGraphService(
         return exportGraphToSvg(graph, width, height, graphLayout)
     }
 
+    fun characterConnections(isSelfIncluded: Boolean): List<GraphConnection> =
+        graphConnections(createCharacterGraph(isSelfIncluded))
+
     private fun createCharacterGraph(isSelfIncluded: Boolean): Graph<String, VisibleWeightedEdge> {
         val graph = SimpleWeightedGraph<String, VisibleWeightedEdge>(VisibleWeightedEdge::class.java)
         artRepository.findAll()
@@ -91,27 +94,27 @@ class CharacterGraphService(
                 GraphConnection(
                     source = graph.getEdgeSource(edge),
                     target = graph.getEdgeTarget(edge),
-                    weight = edge.toString(),
+                    weight = graph.getEdgeWeight(edge).toInt(),
                 )
             }
             .sortedWith(compareBy({ it.source }, { it.target }))
 
     private fun formatConnections(connections: List<GraphConnection>): List<String> {
         val sourceColumnWidth = connections.maxOf { it.source.length } + MIN_DASHES
-        val weightColumnWidth = connections.maxOf { it.weight.length }
+        val weightColumnWidth = connections.maxOf { it.weight.toString().length }
         val rightCharacterColumn = sourceColumnWidth + weightColumnWidth + MIN_DASHES
 
         return connections.map { connection ->
             val dashesBeforeWeight = "-".repeat(sourceColumnWidth - connection.source.length)
-            val dashesAfterWeight = "-".repeat(rightCharacterColumn - sourceColumnWidth - connection.weight.length)
+            val dashesAfterWeight = "-".repeat(rightCharacterColumn - sourceColumnWidth - connection.weight.toString().length)
             connection.source + dashesBeforeWeight + connection.weight + dashesAfterWeight + connection.target
         }
     }
 
-    private data class GraphConnection(
+    data class GraphConnection(
         val source: String,
         val target: String,
-        val weight: String,
+        val weight: Int,
     )
 
     private fun exportGraphToSvg(

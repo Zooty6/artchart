@@ -44,6 +44,12 @@ class DeliveryTimeService(
         return svgService.exportToSvg(width, height, chart)
     }
 
+    fun deliveryTimes(year: Year?): List<DeliveryTime> = findDeliveryPeriods(year).map {
+        DeliveryTime(it.art.id, it.ordered.toString(), it.delivered.toString())
+    }
+
+    data class DeliveryTime(val artId: Long, val orderedDate: String, val deliveredDate: String)
+
     private fun findDeliveryPeriods(year: Year?): List<DeliveryPeriod> =
         artRepository.findAll()
             .mapNotNull(::deliveryPeriod)
