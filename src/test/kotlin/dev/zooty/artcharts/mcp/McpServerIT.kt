@@ -45,7 +45,7 @@ class McpServerIT(@LocalServerPort private val port: Int) {
         val response = send(json.writeValueAsString(mapOf("jsonrpc" to "2.0", "method" to "notifications/initialized")))
         assertEquals(202, response.statusCode())
         val tools = rpc("tools/list").path("tools").associateBy { it.path("name").asText() }
-        assertEquals(30, tools.size)
+        assertEquals(31, tools.size)
         assertTrue(tools.containsKey("get_species_distribution_chart"))
         assertFalse(tools.containsKey("get_chart"))
         assertFalse(tools.containsKey("replace_art_media"))
@@ -62,6 +62,8 @@ class McpServerIT(@LocalServerPort private val port: Int) {
     @Test
     fun `manages records media and chart data end to end`() {
         result("create_artist", mapOf("name" to "Test Artist"))
+        assertEquals("Test Artist", result("find_artist_by_name", mapOf("name" to "test artist")).path("name").asText())
+        assertEquals("Artist not found", result("find_artist_by_name", mapOf("name" to "missing artist")).asText())
         val wip = result("create_wip", mapOf(
             "type" to "Illustration", "species" to "Fox", "artistName" to "Test Artist", "orderedDate" to "2026-02-01",
         ))

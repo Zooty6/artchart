@@ -80,6 +80,9 @@ internal class McpTools(
             queryPage(it) { page -> artists.findAll(page) }
         },
         read<IdInput>("get_artist", "Get one artist by its positive database ID. Returns an error if no artist has that ID.") { artist(it.id) },
+        read<ArtistNameInput>("find_artist_by_name", "Find an artist whose name contains the supplied text, case-insensitively. Returns the first matching artist, or the exact text 'Artist not found' when there is no match.") {
+            artists.findTop20ByNameContainingIgnoreCaseOrderByNameAsc(it.name).firstOrNull() ?: "Artist not found"
+        },
         read<SearchInput>("search_artists", "Find artists whose name contains the query, case-insensitively. Supports pagination with page starting at 0 and pageSize from 1 to 100. The result includes items, page, pageSize, and hasNext.") {
             queryPage(it.paging()) { page -> artists.findByNameContainingIgnoreCase(it.query, page) }
         },
@@ -213,6 +216,8 @@ internal data class SearchInput(
 ) {
     fun paging() = PageInput(page, pageSize)
 }
+
+internal data class ArtistNameInput(@field:NotBlank val name: String)
 
 internal data class ArtUpdate(@field:Positive val id: Long, @field:Valid val request: UpdateArtRequest)
 internal data class ArtistUpdate(@field:Positive val id: Long, @field:Valid val request: UpdateArtistRequest)
