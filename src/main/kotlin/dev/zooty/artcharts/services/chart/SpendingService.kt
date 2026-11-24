@@ -4,7 +4,6 @@ import dev.zooty.artcharts.persistence.ArtRepository
 import dev.zooty.artcharts.persistence.entity.Currency
 import dev.zooty.artcharts.persistence.entity.Price
 import dev.zooty.artcharts.services.CurrencyService
-import dev.zooty.artcharts.services.chart.SvgConverterService
 import org.jfree.chart.ChartFactory
 import org.jfree.chart.plot.PlotOrientation
 import org.jfree.data.category.CategoryDataset
@@ -45,7 +44,7 @@ class SpendingService(
         return svgService.exportToSvg(width, height, chart)
     }
 
-    private fun createCurrencyDistributionDataset(filterList: List<String>): DefaultCategoryDataset {
+    fun createCurrencyDistributionDataset(filterList: List<String>): CategoryDataset {
         val arts = artRepository.findAll().toList()
         val dataset = DefaultCategoryDataset()
         arts.filter { it.price.currency != Currency.Gift && it.price.currency != Currency.UNKNOWN }
@@ -70,7 +69,7 @@ class SpendingService(
         return dataset
     }
 
-    private fun createYearlySpendDataset(): CategoryDataset {
+    fun createYearlySpendDataset(): CategoryDataset {
         val dataset = DefaultCategoryDataset()
         artRepository.findAll()
             .filter { it.price.currency != Currency.UNKNOWN && it.price.currency != Currency.Gift }

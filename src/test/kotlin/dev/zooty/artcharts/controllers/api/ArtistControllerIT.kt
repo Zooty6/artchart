@@ -37,6 +37,14 @@ class ArtistControllerIT {
         artistRepository.save(artist("Cat"))
     }
 
+    @Test
+    fun `mcp is disabled by default`() {
+        restTestClient.post().uri("/mcp")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body("""{"jsonrpc":"2.0","id":1,"method":"tools/list"}""")
+            .exchange().expectStatus().isNotFound
+    }
+
     @AfterEach
     fun tearDown() {
         artistRepository.deleteAll()

@@ -49,20 +49,18 @@ class SpeciesDistributionService(
         return svgService.exportToSvg(width, height, chart)
     }
     
+    fun speciesCounts(): Map<String, Int> = artRepository.findAll().groupingBy { it.species }.eachCount()
+
     private fun createSpeciesDistributionCategoryDataset(): CategoryDataset {
         val dataset = DefaultCategoryDataset()
-        artRepository.findAll()
-            .groupingBy { it.species }
-            .eachCount()
+        speciesCounts()
             .forEach { (species, count) -> dataset.addValue(count.toLong(), species, "") }
         return dataset
     }
 
     private fun createSpeciesDistributionDataset(): PieDataset<String> {
         val dataset = DefaultPieDataset<String>()
-        artRepository.findAll()
-            .groupingBy { it.species }
-            .eachCount()
+        speciesCounts()
             .forEach { (species, count) -> dataset.setValue("$species($count)", count) }
         return dataset
     }

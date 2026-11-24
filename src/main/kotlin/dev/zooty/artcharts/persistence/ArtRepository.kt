@@ -1,16 +1,19 @@
 package dev.zooty.artcharts.persistence
 
 import dev.zooty.artcharts.persistence.entity.Art
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
-import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
-import org.yaml.snakeyaml.events.StreamEndEvent
 import java.util.stream.Stream
 
 @Repository
 interface ArtRepository : JpaRepository<Art, Long> {
+    fun existsByIdNotAndFileNameIgnoreCaseAndIsNsfwAndDeliveredDateStartingWith(
+        id: Long, fileName: String, isNsfw: Boolean, deliveredDate: String,
+    ): Boolean
+
     @Query("SELECT a.artist.name, COUNT(a) c FROM Art a GROUP BY a.artist.name ORDER BY c DESC")
     fun findAllGroupByArtist(): List<Array<Any>>
 

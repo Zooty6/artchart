@@ -23,17 +23,13 @@ class NsfwService(
         return svgService.exportToSvg(width, height, chart)
     }
 
+    fun visibilityCounts(): Map<String, Int> = artRepository.findAll()
+        .groupingBy { if (it.isNsfw) "NSFW" else "SFW" }
+        .eachCount()
+
     private fun createNsfwRatioDataset(): PieDataset<String> {
         val dataset = DefaultPieDataset<String>()
-        artRepository.findAll()
-            .groupingBy { it.isNsfw }
-            .eachCount()
-            .forEach {
-                when (it.key) {
-                    true -> dataset.setValue("NSFW(${it.value})", it.value)
-                    false -> dataset.setValue("SFW(${it.value})", it.value)
-                }
-            }
+        visibilityCounts().forEach { (label, count) -> dataset.setValue("$label($count)", count) }
         return dataset
     }
 }

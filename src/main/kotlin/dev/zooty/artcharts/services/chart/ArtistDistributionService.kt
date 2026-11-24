@@ -27,11 +27,13 @@ class ArtistDistributionService(
         return svgService.exportToSvg(width, height, chart)
     }
 
+    fun artistCounts(): Map<String, Long> = artRepository.findAllGroupByArtist()
+        .filter { it[0] != "unknown" }
+        .associate { (artist, count) -> artist as String to count as Long }
+
     private fun createArtistDistributionDataset(): CategoryDataset {
         val dataset = DefaultCategoryDataset()
-        artRepository.findAllGroupByArtist()
-            .filter { it[0] as String != "unknown" }
-            .forEach { dataset.addValue(it[1] as Long, it[0] as String + "(${it[1]})", "") }
+        artistCounts().forEach { (artist, count) -> dataset.addValue(count, "$artist($count)", "") }
         return dataset
     }
 }
