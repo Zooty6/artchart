@@ -1,7 +1,16 @@
 package dev.zooty.artcharts.mcp
 
-import dev.zooty.artcharts.services.chart.*
+import dev.zooty.artcharts.services.chart.ArtistDistributionService
+import dev.zooty.artcharts.services.chart.CharacterGraphService
+import dev.zooty.artcharts.services.chart.ChartType
+import dev.zooty.artcharts.services.chart.DeliveryTimeService
+import dev.zooty.artcharts.services.chart.GraphLayout
+import dev.zooty.artcharts.services.chart.NsfwService
+import dev.zooty.artcharts.services.chart.SpeciesDistributionService
+import dev.zooty.artcharts.services.chart.SpendingService
+import dev.zooty.artcharts.services.chart.TagDistributionService
 import jakarta.validation.constraints.Pattern
+import jakarta.validation.constraints.Positive
 import org.jfree.data.category.CategoryDataset
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
@@ -19,45 +28,53 @@ internal class McpCharts(
     private val delivery: DeliveryTimeService,
     private val links: McpPublicLinks,
 ) {
-    enum class Chart(val path: String) {
-        ARTIST_DISTRIBUTION("artistDistribution"),
-        CURRENCY_DISTRIBUTION("currencyDistribution"),
-        SPEND_OVER_TIME("spendOverTime"),
-        NSFW_RATIO("nsfwRatio"),
-        SPECIES_DISTRIBUTION("speciesDistribution"),
-        TAG_DISTRIBUTION("tagDistribution"),
-        CHARACTER_GRAPH("characterGraph"),
-        DELIVERY("delivery"),
-    }
+    data class Dimensions(@field:Positive val width: Int = DEFAULT_WIDTH, @field:Positive val height: Int = DEFAULT_HEIGHT)
+    data class CurrencyDistribution(val filterList: List<String> = emptyList())
+    data class SpeciesDistribution(val type: ChartType = ChartType.PIE)
+    data class TagDistribution(val type: ChartType = ChartType.PIE, val category: String? = null)
+    data class CharacterGraph(val layout: GraphLayout = GraphLayout.ORGANIC, val selfIncluded: Boolean = false)
+    data class Delivery(@field:Pattern(regexp = "[0-9]{4}") val year: String? = null)
 
-    data class Query(
-        val chart: Chart,
-        val filterList: List<String> = emptyList(),
-        val type: ChartType? = null,
-        val category: String? = null,
-        val layout: GraphLayout? = null,
-        val selfIncluded: Boolean? = null,
-        @field:Pattern(regexp = "[0-9]{4}") val year: String? = null,
-    )
-
-    data class Result(val chart: Chart, val svgUrl: String, val data: Any)
+    data class Result(val svgUrl: String, val data: Any)
     data class SpendingPoint(val year: Int, val usd: Number, val currency: String?)
 
-    fun query(input: Query): Result {
-        val (data, query) = when (input.chart) {
-            Chart.ARTIST_DISTRIBUTION -> artists.artistCounts() to emptyMap()
-            Chart.CURRENCY_DISTRIBUTION -> points(spending.createCurrencyDistributionDataset(input.filterList), true) to
-                mapOf("filterList" to input.filterList)
-            Chart.SPEND_OVER_TIME -> points(spending.createYearlySpendDataset(), false) to emptyMap()
-            Chart.NSFW_RATIO -> nsfw.visibilityCounts() to emptyMap()
-            Chart.SPECIES_DISTRIBUTION -> species.speciesCounts() to mapOf("type" to input.type)
-            Chart.TAG_DISTRIBUTION -> tags.tagCounts(input.category) to mapOf("type" to input.type, "category" to input.category)
-            Chart.CHARACTER_GRAPH -> characters.characterConnections(input.selfIncluded ?: false) to
-                mapOf("layout" to input.layout, "selfIncluded" to input.selfIncluded)
-            Chart.DELIVERY -> delivery.deliveryTimes(input.year?.let(Year::parse)) to mapOf("year" to input.year)
-        }
-        return Result(input.chart, links.url("/chart/${input.chart.path}", query), data)
-    }
+    fun artistDistribution(input: Dimensions) = result("artistDistribution", mapOf("width" to input.width, "height" to input.height), artists.artistCounts())
+
+    fun currencyDistribution(input: CurrencyDistribution) = result(
+        "currencyDistribution",
+        mapOf("width" to DEFAULT_WIDTH, "height" to DEFAULT_HEIGHT, "filterList" to input.filterList),
+        points(spending.createCurrencyDistributionDataset(input.filterList), true),
+    )
+
+    fun spendOverTime(input: Dimensions) = result(
+        "spendOverTime", mapOf("width" to input.width, "height" to input.height),
+        points(spending.createYearlySpendDataset(), false),
+    )
+
+    fun nsfwRatio(input: Dimensions) = result("nsfwRatio", mapOf("width" to input.width, "height" to input.height), nsfw.visibilityCounts())
+
+    fun speciesDistribution(input: SpeciesDistribution) = result(
+        "speciesDistribution", mapOf("width" to DEFAULT_WIDTH, "height" to DEFAULT_HEIGHT, "type" to input.type),
+        species.speciesCounts(),
+    )
+
+    fun tagDistribution(input: TagDistribution) = result(
+        "tagDistribution", mapOf("width" to DEFAULT_WIDTH, "height" to DEFAULT_HEIGHT, "type" to input.type, "category" to input.category),
+        tags.tagCounts(input.category),
+    )
+
+    fun characterGraph(input: CharacterGraph) = result(
+        "characterGraph", mapOf("width" to DEFAULT_WIDTH, "height" to DEFAULT_HEIGHT, "layout" to input.layout, "selfIncluded" to input.selfIncluded),
+        characters.characterConnections(input.selfIncluded),
+    )
+
+    fun delivery(input: Delivery) = result(
+        "delivery", mapOf("width" to DEFAULT_WIDTH, "height" to DEFAULT_HEIGHT, "year" to input.year),
+        delivery.deliveryTimes(input.year?.let(Year::parse)),
+    )
+
+    private fun result(path: String, query: Map<String, Any?>, data: Any) =
+        Result(links.url("/chart/$path", query), data)
 
     private fun points(dataset: CategoryDataset, byCurrency: Boolean): List<SpendingPoint> =
         (0 until dataset.columnCount).flatMap { column ->
@@ -67,4 +84,9 @@ internal class McpCharts(
                 dataset.getValue(row, column)?.let { SpendingPoint(year, it, currency) }
             }
         }
+
+    companion object {
+        const val DEFAULT_WIDTH = 1800
+        const val DEFAULT_HEIGHT = 900
+    }
 }

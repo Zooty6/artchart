@@ -45,7 +45,9 @@ class McpServerIT(@LocalServerPort private val port: Int) {
         val response = send(json.writeValueAsString(mapOf("jsonrpc" to "2.0", "method" to "notifications/initialized")))
         assertEquals(202, response.statusCode())
         val tools = rpc("tools/list").path("tools").associateBy { it.path("name").asText() }
-        assertEquals(23, tools.size)
+        assertEquals(30, tools.size)
+        assertTrue(tools.containsKey("get_species_distribution_chart"))
+        assertFalse(tools.containsKey("get_chart"))
         assertFalse(tools.containsKey("replace_art_media"))
         assertTrue(tools.getValue("list_arts").path("annotations").path("readOnlyHint").asBoolean())
         assertTrue(tools.getValue("delete_art").path("annotations").path("destructiveHint").asBoolean())
@@ -75,10 +77,10 @@ class McpServerIT(@LocalServerPort private val port: Int) {
         assertEquals(id, page.at("/items/0/id").asLong())
         assertTrue(result("list_arts", mapOf("page" to Int.MAX_VALUE)).path("items").isEmpty)
 
-        val chart = result("get_chart", mapOf("chart" to "SPECIES_DISTRIBUTION", "type" to "BAR"))
+        val chart = result("get_species_distribution_chart", mapOf("type" to "BAR"))
         assertEquals(1, chart.at("/data/Fox").asInt())
-        assertEquals("https://art.example/chart/speciesDistribution?type=BAR", chart.path("svgUrl").asText())
-        val svg = get("/chart/speciesDistribution?type=BAR")
+        assertEquals("https://art.example/chart/speciesDistribution?width=1800&height=900&type=BAR", chart.path("svgUrl").asText())
+        val svg = get("/chart/speciesDistribution?width=1800&height=900&type=BAR")
         assertEquals(200, svg.statusCode())
         assertTrue(svg.body().contains("Fox"))
 
@@ -195,6 +197,7 @@ class McpServerIT(@LocalServerPort private val port: Int) {
 
         @JvmStatic
         @DynamicPropertySource
+        @Suppress("unused")
         fun mediaProperties(registry: DynamicPropertyRegistry) {
             registry.add("artcharts.media-root") { requireNotNull(mediaRoot).toString() }
         }
