@@ -69,11 +69,14 @@ class McpPublicLinks(baseUrl: String) {
     private val base = URI(baseUrl.trim().trimEnd('/'))
 
     init {
-        require(base.scheme == "https" && base.host != null && base.userInfo == null &&
-            base.query == null && base.fragment == null) { "Configure an HTTPS MCP public base URL" }
+        val localHttp = base.scheme == "http" && base.host in setOf("localhost", "127.0.0.1", "[::1]")
+        require((base.scheme == "https" || localHttp) && base.host != null && base.userInfo == null &&
+            base.query == null && base.fragment == null) {
+            "Configure an HTTPS MCP public base URL or a loopback HTTP URL"
+        }
     }
 
-    val origin: String = "https://${base.rawAuthority}"
+    val origin: String = "${base.scheme}://${base.rawAuthority}"
 
     fun url(path: String, query: Map<String, Any?> = emptyMap()): String {
         val values = mutableMapOf<String, Any>()
