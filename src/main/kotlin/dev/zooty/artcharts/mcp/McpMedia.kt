@@ -12,8 +12,7 @@ import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
-import java.util.Base64
-import java.util.Locale
+import java.util.*
 
 @Component
 @ConditionalOnProperty("spring.ai.mcp.server.enabled", havingValue = "true")
@@ -36,11 +35,11 @@ internal class McpMedia(
             files.validateMediaName(file.fileName)
             require(names.add(file.fileName.lowercase(Locale.ROOT))) { "Duplicate media file name" }
             validateExtension(file.fileName)
-            require(file.base64.length <= ((remaining + 2) / 3) * 4) { "Media exceeds the 8 MiB limit" }
+            require(file.base64.length <= ((remaining + 2) / 3) * 4) { "Media exceeds the 20 MiB limit" }
             val bytes = Base64.getDecoder().decode(file.base64)
             require(bytes.isNotEmpty()) { "Media file must not be empty" }
             remaining -= bytes.size
-            require(remaining >= 0) { "Media exceeds the 8 MiB limit" }
+            require(remaining >= 0) { "Media exceeds the 20 MiB limit" }
             UploadPart(file.fileName, bytes)
         }
     }
@@ -79,7 +78,7 @@ internal class McpMedia(
     }
 
     private companion object {
-        const val MAX_MEDIA_BYTES = 8 * 1024 * 1024
+        const val MAX_MEDIA_BYTES = 20 * 1024 * 1024
         val supportedExtensions = setOf(
             "png", "jpg", "jpeg", "gif", "webp", "avif", "bmp", "tif", "tiff",
             "mp4", "m4v", "mov", "webm", "mkv", "blend", "psd", "kra", "clip",

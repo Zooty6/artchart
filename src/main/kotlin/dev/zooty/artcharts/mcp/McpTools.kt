@@ -94,7 +94,7 @@ internal class McpTools(
             queryPage(it) { page -> wips.findAll(page) }
         },
         read<IdInput>("get_wip", "Get one work-in-progress record by its positive database ID. Returns an error if no WIP has that ID.") { wipService.getWip(it.id) },
-        write<ArtCreation>("create_art", "Create an artwork and upload 1 to 100 media files as Base64. Combined decoded media must not exceed 8 MiB. Supply request fields for artwork details and a matching fileName. Dates use YYYY-MM-DD. The artist must already exist.") {
+        write<ArtCreation>("create_art", "Create an artwork and upload 1 to 100 media files as Base64. Combined decoded media must not exceed 20 MiB. Supply request fields for artwork details and a matching fileName. Dates use YYYY-MM-DD. The artist must already exist.") {
             val request = it.request.copy(fileName = it.request.fileName.trim(), deliveredDate = it.request.deliveredDate.trim())
             media.validateNewLocation(request.fileName, request.deliveredDate)
             artService.create(request, media.multipartFiles(it.files, request.fileName))
@@ -129,7 +129,7 @@ internal class McpTools(
             wipService.update(it.id, it.request)
             wipService.getWip(it.id)
         },
-        write<Delivery>("deliver_wip", "Convert a WIP into a completed artwork. Supply its positive ID, delivery date (YYYY-MM-DD), and fileName. Artwork details default to the WIP values and can be overridden. Upload zero to 100 Base64 media files, with at most 8 MiB decoded total.") {
+        write<Delivery>("deliver_wip", "Convert a WIP into a completed artwork. Supply its positive ID, delivery date (YYYY-MM-DD), and fileName. Artwork details default to the WIP values and can be overridden. Upload zero to 100 Base64 media files, with at most 20 MiB decoded total.") {
             media.validateNewLocation(it.request.fileName, it.request.deliveredDate)
             wipService.deliverArt(it.id, it.request, media.multipartFiles(it.files, it.request.fileName.trim()))
         },
