@@ -142,7 +142,7 @@ class McpServerIT(@LocalServerPort private val port: Int) {
         val request = """{"jsonrpc":"2.0","id":1,"method":"tools/list"}"""
         assertEquals(403, send(request, "https://another.example").statusCode())
         assertEquals(200, send(request, "https://art.example").statusCode())
-        val size = 12 * 1024 * 1024 + 1
+        val size = 32 * 1024 * 1024 + 1
         Socket("localhost", port).use { socket ->
             socket.soTimeout = 5_000
             val headers = listOf(

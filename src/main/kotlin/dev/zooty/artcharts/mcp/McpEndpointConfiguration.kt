@@ -61,7 +61,7 @@ class McpEndpointConfiguration {
     }
 
     private companion object {
-        const val MAX_REQUEST_BYTES = 12 * 1024 * 1024
+        const val MAX_REQUEST_BYTES = 32 * 1024 * 1024
     }
 }
 
