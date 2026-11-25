@@ -125,6 +125,48 @@ class McpServerIT(@LocalServerPort private val port: Int) {
     }
 
     @Test
+    fun `searches and updates artists tags and work in progress records`() {
+        val artist = result("create_artist", mapOf("name" to "Coverage Artist", "site" to "https://artist.example"))
+        val artistId = artist.path("id").asLong()
+        assertEquals(artistId, result("get_artist", mapOf("id" to artistId)).path("id").asLong())
+        assertTrue(result("list_artists", mapOf("pageSize" to 100)).path("items").any {
+            it.path("id").asLong() == artistId
+        })
+        assertEquals(artistId, result("search_artists", mapOf("query" to "coverage", "pageSize" to 1)).at("/items/0/id").asLong())
+        assertEquals("Updated Coverage Artist", result("update_artist", mapOf(
+            "id" to artistId,
+            "request" to mapOf("name" to "Updated Coverage Artist", "note" to "updated by integration test"),
+        )).path("name").asText())
+
+        val artwork = result("create_art", mapOf(
+            "request" to mapOf(
+                "type" to "Illustration", "species" to "Lynx", "artistName" to "Updated Coverage Artist",
+                "deliveredDate" to "2026-03-10", "fileName" to "lynx.png",
+            ),
+            "files" to uploads("lynx.png"),
+        ))
+        val artId = artwork.path("id").asLong()
+        result("add_art_tag", mapOf("id" to artId, "name" to "integration", "category" to "test"))
+        assertTrue(result("search_tags", mapOf("query" to "integr", "pageSize" to 1)).path("items").any {
+            it.path("name").asText() == "integration"
+        })
+        assertTrue(result("list_tag_categories", emptyMap()).any { it.asText() == "test" })
+        val withoutTag = result("remove_art_tag", mapOf("id" to artId, "name" to "integration"))
+        assertFalse(withoutTag.path("tags").any { it.path("name").asText() == "integration" })
+
+        val wip = result("create_wip", mapOf(
+            "type" to "Sketch", "species" to "Lynx", "artistName" to "Updated Coverage Artist", "orderedDate" to "2026-04-01",
+        ))
+        val wipId = wip.path("id").asLong()
+        assertEquals(wipId, result("list_wips", mapOf("pageSize" to 1)).at("/items/0/id").asLong())
+        result("update_wip", mapOf(
+            "id" to wipId,
+            "request" to mapOf("type" to "Finished sketch", "species" to "Lynx", "currency" to "USD", "amount" to 25),
+        ))
+        assertEquals("Finished sketch", result("get_wip", mapOf("id" to wipId)).path("type").asText())
+    }
+
+    @Test
     fun `uses existing creation behavior when saving media fails`() {
         result("create_artist", mapOf("name" to "Upload Failure Artist"))
         Files.createDirectories(requireNotNull(mediaRoot).resolve("SFW/2026/blocked.png"))
