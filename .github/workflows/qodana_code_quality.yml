@@ -33,5 +33,8 @@ jobs:
           use-caches: true
           post-pr-comment: true
           use-annotations: true
-          upload-result: false
           push-fixes: 'none'
+          upload-result: true
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+          QODANA_ENDPOINT: 'https://qodana.cloud'
