@@ -91,3 +91,14 @@ The web UI is rendered with Thymeleaf and uses HTMX for incremental page updates
 
 Artwork media is served from the directory configured by `ARTCHART_MEDIA_ROOT`. The expected file layout is
 `<ARTCHART_MEDIA_ROOT>/<SFW|NSFW>/<year>/<fileName>`.
+
+## MCP for AI agents
+
+The same Artchart process serves a stateless Streamable HTTP MCP endpoint at `/mcp`. Set
+`ARTCHART_MCP_ENABLED=true` and `ARTCHART_MCP_PUBLIC_BASE_URL=https://art.example.com` to enable it.
+The public URL may include the path prefix used by your reverse proxy.
+
+Configure your MCP client to use Streamable HTTP at `https://art.example.com/mcp` and provide the
+credentials expected by your proxy.   
+Use `tools/list` to discover tool schemas. 
+
